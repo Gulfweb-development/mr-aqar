@@ -1,0 +1,243 @@
+
+.pricing-switcher1{text-align: center;}
+
+.fieldset {
+		display: inline-block;
+		position: relative;
+		padding: 5px;
+		Height:50px;
+		border-radius: 50em;
+		background-color: #eaeaea;
+	}
+
+	input[type="radio"] {
+		position: absolute;
+		opacity: 0;
+	}
+
+	label {
+		position: relative;
+		z-index: 1;
+		display: inline-block;
+		float: left;
+		width: 150px;
+		height: 40px;
+		line-height: 40px;
+		cursor: pointer;
+		color: #000;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    transition-delay: .1s;
+    transition: color .3s ease;
+	}
+    
+  input[type="radio"]:checked + label {
+    color: #fff;
+    text-decoration: none;
+  }
+
+	.switch {
+		/* floating background */
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		height: 40px;
+		width: 150px;
+		background-color: #088dd3;
+		border-radius: 50em;
+		transition: transform .3s;
+	}
+
+	input[type="radio"]:checked + label + .switch, 
+	input[type="radio"]:checked + label:nth-of-type(n) + .switch {
+		/* use label:nth-of-type(n) to fix a bug on safari with multiple adjacent-sibling selectors*/
+  -webkit-transform: translateX(150px);
+  -moz-transform: translateX(150px);
+  -ms-transform: translateX(150px);
+  -o-transform: translateX(150px);
+  transform: translateX(150px);
+	}
+
+
+
+/* floating background */
+
+.fieldset2{
+	display: inline-block;
+	position: relative;
+	padding: 5px;
+	Height:50px;
+	border-radius: 50em;
+	background-color: #eaeaea;
+}
+
+input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+}
+
+label {
+	position: relative;
+	z-index: 1;
+	display: inline-block;
+	float: left;
+	width: 230px;
+	height: 40px;
+	line-height: 40px;
+	cursor: pointer;
+	color: #000;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-weight: bold;
+	transition-delay: .1s;
+	transition: color .3s ease;
+}
+
+input[type="radio"]:checked + label {
+	color: #fff;
+	text-decoration: none;
+}
+
+.switch2{
+	/* floating background */
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	height: 40px;
+	width: 230px;
+	background-color: #088dd3;
+	border-radius: 50em;
+	transition: transform .3s;
+}
+
+input[type="radio"]:checked + label + .switch2,
+input[type="radio"]:checked + label:nth-of-type(n) + .switch2 {
+	/* use label:nth-of-type(n) to fix a bug on safari with multiple adjacent-sibling selectors*/
+	-webkit-transform: translateX(230px);
+	-moz-transform: translateX(230px);
+	-ms-transform: translateX(230px);
+	-o-transform: translateX(230px);
+	transform: translateX(230px);
+}
+
+
+@media only screen and (max-width: 576px) {
+
+
+	.fieldset2{
+		display: inline-block;
+		position: relative;
+		padding: 5px;
+		Height:50px;
+		border-radius: 50em;
+		font-size: 10px;
+		background-color: #eaeaea;
+	}
+
+	input[type="radio"] {
+		position: absolute;
+		opacity: 0;
+	}
+
+	label {
+		position: relative;
+		z-index: 1;
+		display: inline-block;
+		float: left;
+		width: 150px;
+		height: 40px;
+		line-height: 40px;
+		cursor: pointer;
+		color: #000;
+		text-transform: uppercase;
+		text-decoration: none;
+		font-weight: bold;
+		transition-delay: .1s;
+		transition: color .3s ease;
+	}
+
+	input[type="radio"]:checked + label {
+		color: #fff;
+		text-decoration: none;
+	}
+
+	.switch2{
+		/* floating background */
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		height: 40px;
+		width: 150px;
+		background-color: #088dd3;
+		border-radius: 50em;
+		transition: transform .3s;
+	}
+
+	input[type="radio"]:checked + label + .switch2,
+	input[type="radio"]:checked + label:nth-of-type(n) + .switch2 {
+		/* use label:nth-of-type(n) to fix a bug on safari with multiple adjacent-sibling selectors*/
+		-webkit-transform: translateX(150px);
+		-moz-transform: translateX(150px);
+		-ms-transform: translateX(150px);
+		-o-transform: translateX(150px);
+		transform: translateX(150px);
+	}
+
+
+}
+
+
+
+
+
+
+
+/*************************************************************
+ */
+
+
+
+label .paytype {
+	position: relative;
+	z-index: 1;
+	display: inline-block;
+	float: left;
+	width: 130px;
+	height: 30px;
+	line-height: 40px;
+	cursor: pointer;
+	color: #000;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-weight: bold;
+	transition-delay: .1s;
+	transition: color .3s ease;
+}
+
+input[type="radio"]:checked + label {
+	color: #fff;
+	text-decoration: none;
+}
+
+.switch3{
+	/* floating background */
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	height: 40px;
+	width: 130px;
+	background-color: #088dd3;
+	border-radius: 50em;
+	transition: transform .3s;
+}
+
+input[type="radio"]:checked + label + .switch3,
+input[type="radio"]:checked + label:nth-of-type(n) + .switch3 {
+	/* use label:nth-of-type(n) to fix a bug on safari with multiple adjacent-sibling selectors*/
+	-webkit-transform: translateX(130px);
+	-moz-transform: translateX(130px);
+	-ms-transform: translateX(130px);
+	-o-transform: translateX(130px);
+	transform: translateX(130px);
+}

@@ -1,0 +1,29 @@
+.driver-licence-image {
+    border: 1px solid darkgray;
+    border-radius: 5px;
+}
+
+.custom-badge {
+    border-radius: 5px;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    /* margin: 10px; */
+    padding: 5px;
+    width: 100px;
+}
+
+.hint {
+    margin: 0 10px;
+}
+
+.create-job {
+    margin-right: 25px;
+    width: 220px;
+}
+
+.custom-map-icon {
+    cursor: pointer;
+    font-size: 26px;
+    margin-top: 5px;
+}
