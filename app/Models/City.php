@@ -15,5 +15,10 @@ class City extends Model
         return $this->hasMany(Area::class)->orderBy('name_en');
     }
 
+    public function advertising()
+    {
+        return $this->hasMany(Advertising::class);
+    }
+
 
 }

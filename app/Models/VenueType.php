@@ -10,5 +10,8 @@ class VenueType extends Model
     protected $guarded=['id'];
     public $table="venue_type";
 
+    public function advertising(){
+        return  $this->hasMany(Advertising::class, 'venue_type');
+    }
 
 }

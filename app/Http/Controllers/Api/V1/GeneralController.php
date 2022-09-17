@@ -23,11 +23,23 @@ class GeneralController extends ApiBaseController
         $paymentTypes=PaymentType::where('is_enable',1)->get();
         return $this->success("",['settings'=>$settings,'venueTypes'=>$venueTypes,'paymentTypes'=>$paymentTypes]);
     }
+
     public function getCities()
     {
-        $cities=City::with("areas")->orderBy('id','DESC')->get();
+        $cities=City::withCount(['advertising' => function($query){
+            $query->whereNotNull('expire_at')
+            ->where('expire_at', '>', date('Y-m-d'))
+            ->whereHas("user")->where("purpose", "!=" , 'required_for_rent');
+        }])->with(['areas' => function($query){
+            $query->withCount(['advertising' => function($query){
+                $query->whereNotNull('expire_at')
+                ->where('expire_at', '>', date('Y-m-d'))
+                ->whereHas("user")->where("purpose", "!=" , 'required_for_rent');
+            }]);
+        }])->orderBy('id','DESC')->get();
         return $this->success("",$cities);
     }
+
     public function getAreas(Request $request)
     {
         $areas=Area::where('is_active',1);

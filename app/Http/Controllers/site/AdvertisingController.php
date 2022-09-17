@@ -5,6 +5,7 @@ namespace App\Http\Controllers\site;
 use App\Events\NewAdvertising;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Site\Advertising\StoreRequest;
+use App\Http\Requests\Site\Advertising\StoreRentRequest;
 use App\Models\Advertising;
 use App\Models\AdvertisingView;
 use App\Models\Area;
@@ -111,7 +112,9 @@ class AdvertisingController extends Controller
     {
         $cities = City::orderBy('name_en')->get();
         $types = VenueType::where('type','Residential')->orderBy('title_en')->get();
-        $purposes = ['rent', 'sell', 'exchange', 'required_for_rent'];
+        $purposes = ['rent', 'sell', 'exchange',
+        //  'required_for_rent'
+        ];
         $credit = $this->getCreditUser(auth()->id());
         if ($credit === [])
             $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
@@ -119,6 +122,20 @@ class AdvertisingController extends Controller
             return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'have_no_package']);
 
         return view('site.advertising.create', compact('cities', 'types', 'purposes', 'credit'));
+    }
+
+    public function createRFR()
+    {
+        $cities = City::orderBy('name_en')->get();
+        $types = VenueType::where('type','Residential')->orderBy('title_en')->get();
+        $purposes = ['rent', 'sell', 'exchange', 'required_for_rent'];
+        $credit = $this->getCreditUser(auth()->id());
+        if ($credit === [])
+            $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
+        if ($credit['count_premium_advertising'] === 0 && $credit['count_normal_advertising'] === 0)
+            return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'have_no_package']);
+
+        return view('site.advertising.mutateRFR', compact('cities', 'types', 'purposes', 'credit'));
     }
 
 
@@ -283,6 +300,45 @@ class AdvertisingController extends Controller
     }
 
     public function store(StoreRequest $request)
+    {
+        try {
+            $result = $this->filterKeywords($request->description);
+
+            if (!$result[0]) {
+                return $this->fail("invalid Keyword (" . $result[1] . ")", -1, $request->all());
+            }
+            $result2 = $this->filterKeywords($request->title_en);
+
+            if (!$result2[0]) {
+                return $this->fail("invalid Keyword (" . $result2[1] . ")", -1, $request->all());
+            }
+
+            $user = auth()->user();
+            $isValid = $this->isValidCreateAdvertising($user->id, $request->advertising_type);
+
+            if ($isValid) {
+                DB::beginTransaction();
+                $advertising = new Advertising();
+                $advertising = $this->saveAdvertising($request, $advertising);
+                $countShowDay = $this->affectCreditUser($user->id, $request->advertising_type);
+                $today = date("Y-m-d");
+                $date = strtotime("+$countShowDay day", strtotime($today));
+                $expireDate = date("Y-m-d", $date);
+                $advertising->expire_at = $expireDate;
+                $advertising->save();
+                DB::commit();
+                // return $this->success("", ['advertising' => $advertising]);
+                return redirect()->route('Main.myAds', app()->getLocale())->with('status', 'ad_created');
+            }
+            return $this->fail(trans("main.expire_your_credit"));
+        } catch (\Exception $exception) {
+            DB::rollback();
+            // return $this->fail($exception->getMessage(), -1, $request->all());
+            return redirect()->back()->withInput()->with('status', 'unsuccess');
+        }
+    }
+
+    public function storeRFR(StoreRentRequest $request)
     {
         try {
             $result = $this->filterKeywords($request->description);

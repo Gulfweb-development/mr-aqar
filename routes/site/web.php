@@ -99,8 +99,10 @@ Route::prefix('advertising')->group(function (){
     Route::get('{hashNumber}/details', $controller.'details')->name('site.ad.detail');
 
     Route::get('/create', $controller.'create')->middleware('auth')->name('site.advertising.create');
+    Route::get('/required_for_rent/create', $controller.'createRFR')->middleware('auth')->name('site.advertising.createRFR');
     Route::POST('/ajax_file_upload_handler', $controller.'ajax_file_upload_handler')->middleware('auth')->name('site.advertising.ajax_file_upload_handler');
-    Route::post('/store', $controller.'store')->middleware('auth')->name('site.advertising.store');;
+    Route::post('/store', $controller.'store')->middleware('auth')->name('site.advertising.store');
+    Route::post('/required_for_rent/store', $controller.'storeRFR')->middleware('auth')->name('site.advertising.storeRFR');
     Route::get('{hashNumber}/edit', $controller.'edit')->name('site.advertising.edit')->middleware('auth');
     Route::post('upgrade_premium', $controller.'upgrade_premium')->name('site.advertising.upgrade_premium')->middleware('auth');
     Route::post('auto_extend', $controller.'auto_extend')->name('site.advertising.auto_extend')->middleware('auth');

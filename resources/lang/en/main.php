@@ -27,10 +27,13 @@ return [
 	'token_required'        =>'invalid token is provided or its missing.',
 	'email_not_register_or_token' =>'Your email is not registered or token is expired. Please go back and resend the link.',
 	'password_reset_done_success'=>'You have successfully reset your old password. Below is the new login credential.',
-	'password_reset_done'=>'You have successfully reset your old password.',
+	'password_reset_done'	=>'You have successfully reset your old password.',
 	'confirmpassword_required'=>'Please enter confirm password',
 	'confirmpassword_mismatched'=>'Confirm is mismatched',
-	'username'=>'Username',
-	'password'=>'Password'
+	'username'				=>'Username',
+	'password'				=>'Password',
+	'require_for_rent'		=> 'Required for rent',
+	'add'                   => 'Add',
+	'request_a_property_in_kuwait'=> 'Request A Property In Kuwait',
 
 ];

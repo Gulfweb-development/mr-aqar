@@ -14,5 +14,11 @@ class Area extends Model
     {
         return $this->belongsTo(City::class);
     }
+    
+    public function advertising()
+    {
+        return $this->hasMany(Advertising::class);
+    }
+
 
 }

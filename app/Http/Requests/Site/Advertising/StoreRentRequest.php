@@ -4,7 +4,7 @@ namespace App\Http\Requests\Site\Advertising;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class StoreRentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,8 @@ class StoreRequest extends FormRequest
     {
         if (!in_array($this->method(), ['PUT', 'PATCH'])) { // create
             $rules = [
-                'phone_number' => 'required|digits:8',
-                'advertising_type' => 'required|in:normal,premium',
+                // 'phone_number' => 'required|digits:8',
+                // 'advertising_type' => 'required|in:normal,premium',
                 'venue_type' => 'required',
                 'purpose' => 'required|in:rent,sell,exchange,required_for_rent',
                 'city_id' => 'required',
@@ -47,8 +47,8 @@ class StoreRequest extends FormRequest
             ];
         } else { // edit
             $rules = [
-                'phone_number' => 'required|digits:8',
-                'advertising_type' => 'nullable',
+                // 'phone_number' => 'required|digits:8',
+                // 'advertising_type' => 'nullable',
                 'venue_type' => 'required',
                 'purpose' => 'required|in:rent,sell,exchange,required_for_rent',
                 'city_id' => 'required',
@@ -56,6 +56,7 @@ class StoreRequest extends FormRequest
                 'price' => 'nullable|numeric',
             ];
         }
+        
         return $rules;
     }
 }

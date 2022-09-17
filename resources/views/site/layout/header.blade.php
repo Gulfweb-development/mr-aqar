@@ -42,11 +42,13 @@
         <div class="mdc-drawer__content">
             <div class="vertical-menu">
                 <div>
-                    <a href="{{route('site.advertising.create', app()->getLocale())}}" class="mdc-button mdc-button--raised mb-4" style="color: white">
-                        <span class="mdc-button__ripple"></span>
-                        <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
-                        <i class="material-icons mdc-button__icon">add</i>
-                    </a>
+                    @if (!request()->is(app()->getLocale().'/required'))
+                        <a href="{{route('site.advertising.create', app()->getLocale())}}" class="mdc-button mdc-button--raised mb-4 " style="color: white">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
+                            <i class="material-icons mdc-button__icon">add</i>
+                        </a>
+                    @endif
                 </div>
                 <div>
                     <a href="{{'/'.app()->getLocale(). '/' }}" class="mdc-button" style="{{Route::currentRouteName() == 'Main.index' ? 'background-color: var(--mdc-theme-primary); color: #fff;' : ''}}">
@@ -264,10 +266,20 @@
 {{--                        <span class="mdc-fab__ripple"></span>--}}
 {{--                        <span class="mdc-fab__icon material-icons">add</span>--}}
 {{--                    </a>--}}
-                    <a href="{{route('site.advertising.create', app()->getLocale())}}" class="mdc-button mdc-button--raised d-none d-sm-none d-md-flex d-lg-flex d-xl-flex">
+                    @if (request()->is(app()->getLocale().'/required'))
+                    <a href="{{route('site.advertising.createRFR', app()->getLocale())}}" class="mdc-button mdc-button--raised mb-4 " style="color: white">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
+                        <i class="material-icons mdc-button__icon">add</i>
                     </a>
+                    @else
+                    <a href="{{route('site.advertising.create', app()->getLocale())}}" class="mdc-button mdc-button--raised mb-4 " style="color: white">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
+                        <i class="material-icons mdc-button__icon">add</i>
+                    </a>
+                    @endif
+                   
                 </div>
             </div>
         </div>
