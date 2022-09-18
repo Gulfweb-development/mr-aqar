@@ -48,7 +48,7 @@
                 <div>
                     @if (!request()->is(app()->getLocale().'/required'))
                     <a href="{{route('site.advertising.create', app()->getLocale())}}"
-                        class="mdc-button mdc-button--raised mb-4 mt-3 text-white">
+                        class="mdc-button mdc-button--raised mb-4 mt-3 text-white"  style="color: white; background: #ff7e22">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
                         <i class="material-icons mdc-button__icon">add</i>
@@ -330,7 +330,7 @@
                         {{-- </a>--}}
                     @if (!request()->is(app()->getLocale().'/required'))
                     <a href="{{route('site.advertising.create', app()->getLocale())}}"
-                        class="mdc-button mdc-button--raised center d-none d-lg-flex" style="color: white">
+                        class="mdc-button mdc-button--raised center d-none d-lg-flex" style="color: white; background: #ff7e22">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
                         <i class="material-icons mdc-button__icon">add</i>
