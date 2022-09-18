@@ -13,8 +13,8 @@
         {{-- </div>--}}
     <div class="px-3 mt-7">
         <div class="theme-container">
-            <div class="mdc-card main-content-header mb-5 sec-min-h center">
-                <div class="row around-xs">
+            <div class="mdc-card main-content-header mb-5 sec-min-h ">
+                <div class="row">
                     <div class="col-12">
                         {!! app()->getLocale() == 'en' ? @$aboutus_large_en : @$aboutus_large_ar !!}
                     </div>
