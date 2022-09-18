@@ -508,7 +508,9 @@ class AdvertisingController extends Controller
         $credit = $this->getCreditUser(auth()->id());
         if ($credit === [])
             $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
-
+        if(str_contains(request()->path(), 'required_for_rent')){
+            return view('site.advertising.mutateRFR', compact('advertising', 'cities', 'types', 'purposes', 'credit'));
+        }
         return view('site.advertising.edit', compact('advertising', 'cities', 'types', 'purposes', 'credit'));
     }
 

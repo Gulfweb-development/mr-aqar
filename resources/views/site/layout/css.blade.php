@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('asset/css/responsive.css') }}">
 
     <link rel="stylesheet" href="{{ asset('asset/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('asset/css/custom.css') }}">
 
     <style>
         .alert {

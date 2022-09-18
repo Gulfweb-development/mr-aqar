@@ -1326,6 +1326,10 @@ main.content-offset-to-top .main-content-header{
   margin-top: -80px;
   border-top: 5px solid var(--mdc-theme-primary);
 }
+
+.sec-min-h {
+    min-height: 60vh !important;
+}
 .section{
   position: relative;
   overflow: hidden;

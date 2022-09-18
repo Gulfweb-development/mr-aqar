@@ -20,10 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 ////////////// index page
 Route::get('/','MainController@index')->name('Main.index');
+Route::get('/advertising','MainController@index')->name('Main.index');
 Route::get('/aboutus','MainController@aboutus')->name('Main.aboutus');
 Route::get('/contact','MessageController@create')->name('Message.create');
 Route::post('/contact', 'MessageController@store')->name('message.store');
-Route::get('required', function() {return view('site.pages.main', ['required_for_rent' => true]);})->name('required_for_rent');
+Route::get('required', function() {return view('site.pages.main', ['sell' => true]);})->name('required_for_rent');
 
 ////////////// companies
 Route::group(['prefix' => 'companies'] , function (){
@@ -101,9 +102,10 @@ Route::prefix('advertising')->group(function (){
     Route::get('/create', $controller.'create')->middleware('auth')->name('site.advertising.create');
     Route::get('/required_for_rent/create', $controller.'createRFR')->middleware('auth')->name('site.advertising.createRFR');
     Route::POST('/ajax_file_upload_handler', $controller.'ajax_file_upload_handler')->middleware('auth')->name('site.advertising.ajax_file_upload_handler');
-    Route::post('/store', $controller.'store')->middleware('auth')->name('site.advertising.store');
+    Route::post('/store', 'AdvertisingController@store')->middleware('auth')->name('site.advertising.store');
     Route::post('/required_for_rent/store', $controller.'storeRFR')->middleware('auth')->name('site.advertising.storeRFR');
-    Route::get('{hashNumber}/edit', $controller.'edit')->name('site.advertising.edit')->middleware('auth');
+    Route::get('{hashNumber}/required_for_rent/edit', $controller.'edit')->name('site.advertising.edit')->middleware('auth');
+    Route::get('{hashNumber}/edit', $controller.'edit')->name('site.advertising.advertising.edit')->middleware('auth');
     Route::post('upgrade_premium', $controller.'upgrade_premium')->name('site.advertising.upgrade_premium')->middleware('auth');
     Route::post('auto_extend', $controller.'auto_extend')->name('site.advertising.auto_extend')->middleware('auth');
     Route::PUT('/update', $controller.'updateAdvertising')->name('site.advertising.updateAdvertising')->middleware('auth');

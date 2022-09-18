@@ -50,7 +50,7 @@
                             </div>
 
                             <div class="listing-badge">
-                                @if($ad->advertising_type == "premium") {{__('premium_title')}}
+                                @if($ad->advertising_type == "premium") {{__('premium_short')}}
                                 @elseif($ad->advertising_type == "normal") {{__('normal_title')}}
                                 @endif
                             </div>

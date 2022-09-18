@@ -100,7 +100,7 @@ export default {
                 return
             }
 
-            this.searchTitle = `${purpose} ${type} ${fee}${areas} (${count} ${ad})`
+            this.searchTitle = `${purpose} ${type} ${fee} ${areas} (${count} ${ad})`
         },
         selectOpened () {
             document.querySelector('#select_header').classList.remove('d-none')
@@ -140,6 +140,15 @@ export default {
 
         if (document.querySelector('.multiselect__placeholder')) {
             this.filter_areas_title = document.querySelector('.multiselect__placeholder').innerText
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const purpose = urlParams.get('purpose');
+        
+        if(purpose){
+            document.querySelector(`input[value="${purpose}"]`).checked = true;
+            this.purpose = purpose;
+            this.search(true);
         }
     },
     watch: {

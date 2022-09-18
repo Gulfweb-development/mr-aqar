@@ -255,5 +255,8 @@
     "number_of_normal_ads" : "Number of normal ads",
     "showing_new_ads" : "Latest posted ads:",
     "have_no_package" : "You don't have packages. Please first buy the package and then try to add an ad.",
-    "balance" : "Balance"
+    "balance" : "Balance",
+	"in_kuwait": "In Kuwait",
+    "request_a_property": "Request a property",
+    "contact_us": "Contact us"
 }

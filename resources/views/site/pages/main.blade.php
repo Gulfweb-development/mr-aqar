@@ -3,6 +3,7 @@
 @isset($company)
     @section('title', $company->company_name . ' | ' . $company->company_phone)
 @endisset
+
 @isset($required_for_rent)
     @section('title', __('required_for_rent_page_title'))
 @endisset

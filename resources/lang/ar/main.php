@@ -35,5 +35,5 @@ return [
 	'oldpasswordnotexist'   =>'كلمة السر القديمة غير مسجلة',
 	'require_for_rent'		=> 'تتطلب للإيجار',
 	'add'                   => 'إضافة',
-	'request_a_property_in_kuwait'=> 'طلب عقار في الكويت',
+	'request_a_property_in_kuwait' => 'طلب عقار في الكويت',
 ];

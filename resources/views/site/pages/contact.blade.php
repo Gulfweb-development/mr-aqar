@@ -14,7 +14,7 @@
 {{--    </div>--}}
     <div class="px-3 mt-7">
         <div class="theme-container">
-            <div class="mdc-card main-content-header mb-5">
+            <div class="mdc-card main-content-header mb-5 sec-min-h center">
                 <div class="row around-xs">
 {{--                    <div class="col-xs-12 col-sm-3">--}}
 {{--                        <div class="column center-xs middle-xs text-center">--}}
@@ -27,7 +27,7 @@
 {{--                            @endif--}}
 {{--                        </div>--}}
 {{--                    </div>--}}
-                    <div class="col-xs-12 col-sm-3">
+                    {{-- <div class="col-xs-12 col-sm-3">
                         <div class="column center-xs middle-xs text-center">
                             <i class="material-icons mat-icon-lg primary-color">call</i>
                             <h3 class="primary-color py-1">{{__('administrator')}} :</h3>
@@ -41,17 +41,18 @@
                             <h3 class="primary-color py-1">{{__('email_us') }} :</h3>
                             <a class="text-muted fw-500" href="mailto:{{ $email }}">{{ $email }}</a>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-3">
+                    </div> --}}
+                    <div class="col-12">
                         <div class="column center-xs middle-xs text-center">
+                            <h3 class="primary-color py-1">{{__('contact_us')}}</h3>
                             <i class="material-icons mat-icon-lg primary-color">public</i>
-                            <h3 class="primary-color py-1">{{__('visit_us_title')}} :</h3>
+                            <a class="text-muted fw-500" href="mailto:{{ $email }}">{{ $email }}</a>
                             <a class="text-muted fw-500" href="{{ $website }}">{{ $website }}</a>
 
                             @include('site.sections.socials')
                         </div>
                     </div>
-                    <div class="col-xs-12 mt-3 px-3 p-relative">
+                    {{-- <div class="col-xs-12 mt-3 px-3 p-relative">
                         <div class="divider w-100"></div>
                     </div>
                     <h3 class="w-100 text-center pt-3">{{__('dropaline')}}</h3>
@@ -141,7 +142,7 @@
                                 <span class="mdc-button__label">{{__('send_title')}}</span>
                             </button>
                         </div>
-                    </form>
+                    </form> --}}
                 </div>
 {{--                <div class="mt-5">--}}
 {{--                    <iframe--}}

@@ -67,7 +67,7 @@
                                                     <div class="mdc-radio__inner-circle"></div>
                                                 </div>
                                             </div>
-                                            <label for="premium">{{__('premium_title')}}</label>
+                                            <label for="premium">{{__('premium_short')}}</label>
                                             @if($credit['count_premium_advertising'] > 0)
                                                 <span class="text-success m{{$unSide}}-5">{{$credit['count_premium_advertising']}} {{__('remaining_title')}}</span>
                                             @else

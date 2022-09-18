@@ -6,9 +6,9 @@
     <div>
 
         @if (request()->is(app()->getLocale().'/required')) 
-            <a href="{{route('site.advertising.createRFR', app()->getLocale())}}" class="mdc-button mdc-button--raised mt-4  w-100 d-sm-block d-lg-none " style="color: white">
+            <a href="{{route('site.advertising.createRFR', app()->getLocale())}}" class="mdc-button mdc-button--raised mt-4  w-100 d-sm-block d-md-none " style="color: white; background: #ff7e22">
                 <span class="mdc-button__ripple"></span>    
-                <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
+                <span class="mdc-button__label">{{ __('request_a_property') }}</span>
                 <i class="material-icons mdc-button__icon">add</i>
             </a>
         @endif
@@ -87,7 +87,7 @@
                         <div class="mdc-form-field">
                             <div class="mdc-radio">
                                 <input class="mdc-radio__native-control" type="radio" v-model="purpose" id="sell"
-                                    name="purpose" value="sell">
+                                    name="purpose" value="sell"  {{ request()->purpose === 'sell' ? 'checked' : '' }}>
                                 <div class="mdc-radio__background">
                                     <div class="mdc-radio__outer-circle"></div>
                                     <div class="mdc-radio__inner-circle"></div>

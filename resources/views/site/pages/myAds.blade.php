@@ -44,8 +44,9 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
                     <th class="mdc-data-table__header-cell uppercase sm:px-2 center-xs-important" style="padding-{{$edge}}: 0 !important;">{{ __('image') }}</th>
                     <th class="mdc-data-table__header-cell uppercase sm:px-2 center-xs-important d-none-mobile">{{__('ADVERTISE_TYPE')}}</th>
                     <th class="mdc-data-table__header-cell uppercase sm:px-2 center-xs-important">{{ __('location_title') }}</th>
+                    <th class="mdc-data-table__header-cell uppercase sm:px-2 center-xs-important display-table-control">{{ __('price') }}</th>
                     <th class="mdc-data-table__header-cell uppercase sm:px-2 center-xs-important display-table-control">{{ __('action_title') }}</th>
-                    <th class="mdc-data-table__header-cell uppercase sm:px-2 center-xs-important">{{ __('auto_extend_title') }}</th>
+                    {{-- <th class="mdc-data-table__header-cell uppercase sm:px-2 center-xs-important">{{ __('auto_extend_title') }}</th> --}}
                 </tr>
             </thead>
             <tbody class="mdc-data-table__content">
@@ -77,7 +78,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
                         </td>
                         <td class="mdc-data-table__cell sm:px-2 center-xs-important d-none-mobile">
                             @if($ad->advertising_type == "premium")
-                                {{__('premium_title')}}
+                                {{__('premium_short')}}
                             @elseif($ad->advertising_type == "normal")
                                 {{__('normal_title')}}
                             @endif
@@ -112,6 +113,9 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
                                 @endif
                             </div>
                         </td>
+                        <td class="text-center">
+                            {{ $ad->price }}
+                        </td>
                         <td class="mdc-data-table__cell sm:px-2 center-xs-important display-table-control">
                             <form id="delete-form-{{$ad->id}}" class="d-inline-block" method="post"
                                   action="{{ route('site.advertising.destroy',app()->getLocale()) }}">
@@ -138,7 +142,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
                                    onclick="showUpgradeModal('{{$ad->id}}')">workspace_premium</a>
                             @endif
                         </td>
-                        <td class="sm:px-2 center-xs-important">
+                        {{-- <td class="sm:px-2 center-xs-important">
                             @if(! $ad->expire_at)
                             <div class="col-xs-12 py-3 row middle-xs justify-content-center">
                                 <div class="mdc-switch">
@@ -178,7 +182,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
                                 })
                             </script>
                             @endif
-                        </td>
+                        </td> --}}
                     </tr>
                 @endforeach
             </tbody>
