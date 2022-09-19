@@ -36,4 +36,6 @@ return [
 	'require_for_rent'		=> 'تتطلب للإيجار',
 	'add'                   => 'إضافة',
 	'request_a_property_in_kuwait' => 'طلب عقار في الكويت',
+	'insufficient_credit'   => 'ليس لديك رصيد لاضافة الاعلان',
+	'buy_a_package'         => 'شراء باقة',
 ];

@@ -330,7 +330,7 @@ class AdvertisingController extends Controller
                 // return $this->success("", ['advertising' => $advertising]);
                 return redirect()->route('Main.myAds', app()->getLocale())->with('status', 'ad_created');
             }
-            return $this->fail(trans("main.expire_your_credit"));
+            return $this->fail(trans("main.insufficient_credit").' <a href="/'.app()->getLocale().'/buypackage" >'.trans("main.buy_a_package").'</a>');
         } catch (\Exception $exception) {
             DB::rollback();
             // return $this->fail($exception->getMessage(), -1, $request->all());
@@ -369,7 +369,7 @@ class AdvertisingController extends Controller
                 // return $this->success("", ['advertising' => $advertising]);
                 return redirect()->route('Main.myAds', app()->getLocale())->with('status', 'ad_created');
             }
-            return $this->fail(trans("main.expire_your_credit"));
+            return $this->fail(trans("main.insufficient_credit").' <a href="/'.app()->getLocale().'/buypackage" >'.trans("main.buy_a_package").'</a>');
         } catch (\Exception $exception) {
             DB::rollback();
             // return $this->fail($exception->getMessage(), -1, $request->all());
@@ -518,6 +518,13 @@ class AdvertisingController extends Controller
     {
         try {
             $advertising = Advertising::findOrFail($request->id);
+            
+            $user = auth()->user();
+            $isValid = $this->isValidCreateAdvertising($user->id, $request->advertising_type);
+
+            if (!@$isValid) {
+                return $this->fail(trans("main.insufficient_credit").' <a href="/'.app()->getLocale().'/buypackage" >'.trans("main.buy_a_package").'</a>');
+            }
             if (isset($advertising)) {
                 $advertising = $this->saveAdvertising($request, $advertising);
                 return redirect()->route('Main.myAds', app()->getLocale())->with('controller-success', trans('edited'));

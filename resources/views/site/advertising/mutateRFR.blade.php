@@ -18,7 +18,6 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
 <!-- End listing Details Area -->
 
 
-
 <main>
     <div class="px-3">
         <div class="theme-container">
@@ -45,6 +44,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                     </div>
                                     <input type="hidden" name="purpose" id="purpose" value="required_for_rent">
                                     <input type="hidden" name="advertising_type" id="advertising_type" value="normal">
+                                    <input type="hidden" name="id" value="{{ @$advertising->id }}">
                                     <div class="col-xs-12 col-sm-6 p-2">
                                         <div class="mdc-text-field mdc-text-field--outlined">
                                             <input class="mdc-text-field__input" placeholder="{{__('full_name_title')}}"

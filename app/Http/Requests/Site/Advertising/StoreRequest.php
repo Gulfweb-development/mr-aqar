@@ -23,9 +23,10 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
+        $phone_required = request()->purpose != 'required_for_rent'?'required' :'nullable';
         if (!in_array($this->method(), ['PUT', 'PATCH'])) { // create
             $rules = [
-                'phone_number' => 'required|digits:8',
+                'phone_number' =>  $phone_required.'|digits:8',
                 'advertising_type' => 'required|in:normal,premium',
                 'venue_type' => 'required',
                 'purpose' => 'required|in:rent,sell,exchange,required_for_rent',
@@ -47,7 +48,7 @@ class StoreRequest extends FormRequest
             ];
         } else { // edit
             $rules = [
-                'phone_number' => 'required|digits:8',
+                'phone_number' => $phone_required.'|digits:8',
                 'advertising_type' => 'nullable',
                 'venue_type' => 'required',
                 'purpose' => 'required|in:rent,sell,exchange,required_for_rent',

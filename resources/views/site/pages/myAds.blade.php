@@ -114,7 +114,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
                             </div>
                         </td>
                         <td class="text-center">
-                            {{ $ad->price }}
+                            {{ $ad->price }} {{ __('kd_title') }}
                         </td>
                         <td class="mdc-data-table__cell sm:px-2 center-xs-important display-table-control">
                             <form id="delete-form-{{$ad->id}}" class="d-inline-block" method="post"

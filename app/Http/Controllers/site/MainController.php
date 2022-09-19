@@ -62,18 +62,18 @@ class MainController extends Controller
     public function aboutus()
     {
 
-	    $aboutus_large_ar = Setting::where('setting_key' , 'aboutus_large_ar')->value('setting_value');
-		$aboutus_large_en = Setting::where('setting_key' , 'aboutus_large_en')->value('setting_value');
-		$aboutus_large_pic1 =   Setting::where('setting_key' , 'aboutus_large_pic1')->value('setting_value');
-		$aboutus_large_pic2 =   Setting::where('setting_key' , 'aboutus_large_pic2')->value('setting_value');
+        $aboutus_large_ar = Setting::where('setting_key', 'aboutus_large_ar')->value('setting_value');
+        $aboutus_large_en = Setting::where('setting_key', 'aboutus_large_en')->value('setting_value');
+        $aboutus_large_pic1 =   Setting::where('setting_key', 'aboutus_large_pic1')->value('setting_value');
+        $aboutus_large_pic2 =   Setting::where('setting_key', 'aboutus_large_pic2')->value('setting_value');
 
-		$our_story_en =   Setting::where('setting_key' , 'our_story_en')->value('setting_value');
-		$our_story_ar =   Setting::where('setting_key' , 'our_story_ar')->value('setting_value');
-		$our_value_en =   Setting::where('setting_key' , 'our_value_en')->value('setting_value');
-		$our_value_ar =   Setting::where('setting_key' , 'our_value_ar')->value('setting_value');
-		$our_promise_en =   Setting::where('setting_key' , 'our_promise_en')->value('setting_value');
-		$our_promise_ar =   Setting::where('setting_key' , 'our_promise_ar')->value('setting_value');
-        return view('site.pages.aboutus',compact('aboutus_large_ar','aboutus_large_en','aboutus_large_pic1','aboutus_large_pic2','our_story_en','our_story_ar','our_value_en','our_value_ar','our_promise_en','our_promise_ar'));
+        $our_story_en =   Setting::where('setting_key', 'our_story_en')->value('setting_value');
+        $our_story_ar =   Setting::where('setting_key', 'our_story_ar')->value('setting_value');
+        $our_value_en =   Setting::where('setting_key', 'our_value_en')->value('setting_value');
+        $our_value_ar =   Setting::where('setting_key', 'our_value_ar')->value('setting_value');
+        $our_promise_en =   Setting::where('setting_key', 'our_promise_en')->value('setting_value');
+        $our_promise_ar =   Setting::where('setting_key', 'our_promise_ar')->value('setting_value');
+        return view('site.pages.aboutus', compact('aboutus_large_ar', 'aboutus_large_en', 'aboutus_large_pic1', 'aboutus_large_pic2', 'our_story_en', 'our_story_ar', 'our_value_en', 'our_value_ar', 'our_promise_en', 'our_promise_ar'));
     }
 
     /*
@@ -83,7 +83,7 @@ class MainController extends Controller
     */
 
     // get available ads for user
-    public static function getBalance($ignoreGift=false)
+    public static function getBalance($ignoreGift = false)
     {
         $user = auth()->user();
         $date = date("Y-m-d");
@@ -95,39 +95,39 @@ class MainController extends Controller
             ->whereColumn('count_advertising', '>=', 'count_usage')
             ->whereColumn('count_premium', '>=', 'count_usage_premium')
             ->orderBy('id', 'desc');
-if ($ignoreGift){
-    $listBalance=$listBalance->where('title_en',"!=",'gift credit');
-}
-        $listBalance=$listBalance->get();
+        if ($ignoreGift) {
+            $listBalance = $listBalance->where('title_en', "!=", 'gift credit');
+        }
+        $listBalance = $listBalance->get();
         if ($listBalance->count() >= 1) {
             $expireAt = $listBalance[0]->expire_at;
-            $type = $listBalance[0]->type;
-            $titleAr = $listBalance[0]->itle_ar;
-            $titleEn = $listBalance[0]->title_en;
+            $type     = $listBalance[0]->type;
+            $titleAr  = $listBalance[0]->title_ar;
+            $titleEn  = $listBalance[0]->title_en;
 
-            $count = 0;
-            $countPremium = 0;
-            $countUsage = 0;
+            $count             = 0;
+            $countPremium      = 0;
+            $countUsage        = 0;
             $countPremiumUsage = 0;
             foreach ($listBalance as $item) {
-                $count += $item->count_advertising;
-                $countPremium += $item->count_premium;
-                $countUsage += $item->count_usage;
+                $count             += $item->count_advertising;
+                $countUsage        += $item->count_usage;
+                $countPremium      += $item->count_premium;
                 $countPremiumUsage += $item->count_usage_premium;
             }
-            $av = $count - $countUsage;
-            $avp = $countPremium - $countPremiumUsage;
+            $av     = $count - $countUsage;
+            $avp    = $countPremium - $countPremiumUsage;
             $record = [
-                'type' => $type,
-                'title_en' => $titleEn,
-                'title_ar' => $titleAr,
-                'expire_at' => $expireAt,
-                'count_advertising' => $count,
-                'count_usage' => $countUsage,
-                'count_premium' => $countPremium,
+                'type'                => $type,
+                'title_en'            => $titleEn,
+                'title_ar'            => $titleAr,
+                'expire_at'           => $expireAt,
+                'count_advertising'   => $count,
+                'count_usage'         => $countUsage,
+                'count_premium'       => $countPremium,
                 'count_premium_usage' => $countPremiumUsage,
-                'available' => $av,
-                'available_premium' => $avp
+                'available'           => $av,
+                'available_premium'   => $avp
             ];
             if ($record['available'] === 0 && $record['available_premium'] === 0)
                 $record = 0;
@@ -163,7 +163,7 @@ if ($ignoreGift){
         $wishList = User::whereId(Auth::user()->id)->with(['archiveAdvertising' => function ($q) {
             $q->where('expire_at', '>=', Carbon::now()->format('Y-m-d'))->with(['user', 'city', 'area']);
         }])->first();
-//        return $wishList->archiveAdvertising;
+        //        return $wishList->archiveAdvertising;
         if (\request()->wantsJson()) {
             return [
                 'balance' => $record,
@@ -190,17 +190,20 @@ if ($ignoreGift){
         ]);
     }
 
-	public function paymentDetails(Request $request){
-	if(empty($request->paymentid)){abort('404');}
+    public function paymentDetails(Request $request)
+    {
+        if (empty($request->paymentid)) {
+            abort('404');
+        }
 
-	$record       = $this->getBalance();
+        $record       = $this->getBalance();
 
-	$payments     = Payment::where('payments.id',$request->paymentid);
-	$payments     = $payments->select('tbl_transaction_api.*','payments.*')
-	                         ->join('tbl_transaction_api','tbl_transaction_api.api_ref_id','=','payments.ref_id');
-	$payments     = $payments->first();
-	return view('site.pages.paymentDetails',['balance'=>$record,'paymentsDetails'=>$payments]);
-	}
+        $payments     = Payment::where('payments.id', $request->paymentid);
+        $payments     = $payments->select('tbl_transaction_api.*', 'payments.*')
+            ->join('tbl_transaction_api', 'tbl_transaction_api.api_ref_id', '=', 'payments.ref_id');
+        $payments     = $payments->first();
+        return view('site.pages.paymentDetails', ['balance' => $record, 'paymentsDetails' => $payments]);
+    }
 
     //my ads
     public function myAds()
@@ -222,7 +225,7 @@ if ($ignoreGift){
     // buy package
     public function buyPackage()
     {
-        cache()->forget('balance_values'.auth()->id());
+        cache()->forget('balance_values' . auth()->id());
         $record = $this->getBalance();
 
         if (auth()->user()->type_usage == 'individual') {
@@ -264,7 +267,7 @@ if ($ignoreGift){
     {
         try {
             $user = auth()->user();
-            cache()->forget('balance_values'.auth()->id());
+            cache()->forget('balance_values' . auth()->id());
             $validate = Validator::make($request->all(), [
                 'package_id' => 'required|numeric',
                 'type' => 'required|in:static,normal',
@@ -272,17 +275,17 @@ if ($ignoreGift){
                 'payment_type' => 'required|in:Cash,MyFatoorah',
             ]);
             if ($validate->fails()) {
-                return redirect()->route('Main.buyPackage',app()->getLocale())->with(['status' => 'validation_failed']);
+                return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'validation_failed']);
             }
             $package = Package::find($request->package_id);
             // untill now request data is validated
             // now we check user doesn't choose a package that already bought
-            if ($package->type=="normal"){
+            if ($package->type == "normal") {
                 if ($user->package_id != null && $user->package_id != 0) {
-                 $balance=$this->getBalance(true);
-    //                dd($this->getBalance());
-                    if ($balance!==0 && $balance['available']>0 && $balance['available_premium']>0) {
-                            return redirect(app()->getLocale().'/buypackage#result')->with(['status' => 'ads_remaining']);
+                    $balance = $this->getBalance(true);
+                    //                dd($this->getBalance());
+                    if ($balance !== 0 && $balance['available'] > 0 && $balance['available_premium'] > 0) {
+                        return redirect(app()->getLocale() . '/buypackage#result')->with(['status' => 'ads_remaining']);
                     }
                 }
             }
@@ -345,17 +348,17 @@ if ($ignoreGift){
             $payment->save();
 
 
-            if ($request->get('payment_type') == "MyFatoorah" and $price > 0 ) {
-                $payUrl = $this->sendRequestForPayment($price, $ref, $package , $count , $payment);
-                return redirect($payUrl) ;
-            }
-            else{ // if payment type is cash
-                $res->accept_by_admin=1;
-                $res->is_payed=1;
+            if ($request->get('payment_type') == "MyFatoorah" and $price > 0) {
+                $payUrl = $this->sendRequestForPayment($price, $ref, $package, $count, $payment);
+                return redirect($payUrl);
+            } else { 
+                // if payment type is cash
+                $res->accept_by_admin = 1;
+                $res->is_payed = 1;
 
-                $package_id = $res->package_id ;
-                $user->package_id = $package_id ;
-                $user->save() ;
+                $package_id = $res->package_id;
+                $user->package_id = $package_id;
+                $user->save();
                 $res->save();
 
                 if ($user->type_usage == 'company' && $user->companied_at === null)
@@ -364,7 +367,6 @@ if ($ignoreGift){
                 return redirect()->route('Main.myAds', app()->getLocale())->with(['status' => 'package_bought']);
                 // return redirect(app()->getLocale().'/paymenthistory#result')->with(['status' => 'package_bought']);
                 //return redirect('/paymenthistory#result',app()->getLocale())->with(['status' => 'package_bought']);
-
             }
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
@@ -376,7 +378,7 @@ if ($ignoreGift){
         return substr(time(), 5, 4) . rand(1000, 9999) . $userId;
     }
 
-    private function sendRequestForPayment($price, $orderid, $package, $quantity , $payment)
+    private function sendRequestForPayment($price, $orderid, $package, $quantity, $payment)
     {
         $post_string = '{
             "InvoiceValue":"' . $price . '",
@@ -393,14 +395,14 @@ if ($ignoreGift){
                 "ProductId":null,
                 "ProductName": "Purchasing from Online Store Kuwait Kash5astore",
                 "Quantity":' . $quantity . ',
-                "UnitPrice": "' . ( $price / $quantity ) . '"
+                "UnitPrice": "' . ($price / $quantity) . '"
               }
             ],
-                "CallBackUrl":  "' . route('callback',[app()->getLocale() , 'accept' => true]) . '",
+                "CallBackUrl":  "' . route('callback', [app()->getLocale(), 'accept' => true]) . '",
                  "Language": "2",
                  "ExpireDate": "2062-12-31T13:30:17.812Z",
                  "ApiCustomFileds": "",
-                 "ErrorUrl": "' . route('callback',[app()->getLocale() , 'accept' => false]) . '"
+                 "ErrorUrl": "' . route('callback', [app()->getLocale(), 'accept' => false]) . '"
           }';
         $soap_do = curl_init();
         curl_setopt($soap_do, CURLOPT_URL, env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/ApiInvoices/CreateInvoiceIso' : 'https://apidemo.myfatoorah.com/ApiInvoices/CreateInvoiceIso');
@@ -427,7 +429,7 @@ if ($ignoreGift){
                         $res = str_replace("invoiceKey=", "", explode("&", $t[1]));
                         $referenceId = $res[0];
                         curl_close($soap_do);
-                        $payment->pay_id = $referenceId ;
+                        $payment->pay_id = $referenceId;
                         $payment->save();
                         $paymentTransaction =  new \App\Models\OrderTransaction();
                         $paymentTransaction->user_id = $payment->user_id;
@@ -443,11 +445,12 @@ if ($ignoreGift){
                 }
             }
         } else {
-            throw new \Exception($json1['Message'] .' '. $result1);
+            throw new \Exception($json1['Message'] . ' ' . $result1);
         }
     }
 
-    private function MYFToken(){
+    private function MYFToken()
+    {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/Token' : 'https://apidemo.myfatoorah.com/Token');
         curl_setopt($curl, CURLOPT_POST, 1);
@@ -461,25 +464,25 @@ if ($ignoreGift){
         if (isset($json['access_token']) && !empty($json['access_token'])) {
             return $json['access_token'];
         } else
-            throw new \Exception(__('throttle' , ['seconds' => 30 ]));
+            throw new \Exception(__('throttle', ['seconds' => 30]));
     }
     public function paymentResult(Request $request)
     {
         if (empty($request->paymentId)) {
-            return redirect('/'.app()->getLocale(). '/');
+            return redirect('/' . app()->getLocale() . '/');
         }
-        $url =  ( env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/ApiInvoices/Transaction/' :'https://apidemo.myfatoorah.com/ApiInvoices/Transaction/' ) .$request->paymentId;
+        $url =  (env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/ApiInvoices/Transaction/' : 'https://apidemo.myfatoorah.com/ApiInvoices/Transaction/') . $request->paymentId;
         $soap_do1 = curl_init();
-        curl_setopt($soap_do1, CURLOPT_URL,$url );
+        curl_setopt($soap_do1, CURLOPT_URL, $url);
         curl_setopt($soap_do1, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($soap_do1, CURLOPT_TIMEOUT, 10);
-        curl_setopt($soap_do1, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt($soap_do1, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($soap_do1, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($soap_do1, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($soap_do1, CURLOPT_POST, false );
+        curl_setopt($soap_do1, CURLOPT_POST, false);
         curl_setopt($soap_do1, CURLOPT_POST, 0);
         curl_setopt($soap_do1, CURLOPT_HTTPGET, 1);
-        curl_setopt($soap_do1, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8', 'Accept: application/json','Authorization: Bearer '. $this->MYFToken()));
+        curl_setopt($soap_do1, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8', 'Accept: application/json', 'Authorization: Bearer ' . $this->MYFToken()));
         $result_in = curl_exec($soap_do1);
         $err_in = curl_error($soap_do1);
         $file_contents = htmlspecialchars(curl_exec($soap_do1));
@@ -492,7 +495,7 @@ if ($ignoreGift){
         $trackid = $getRecorById['InvoiceId'];
         if ($payment) {
             $refId = $payment->ref_id;
-            if (!empty($getRecorById['TransactionStatus']) && $getRecorById['TransactionStatus']==2) {
+            if (!empty($getRecorById['TransactionStatus']) && $getRecorById['TransactionStatus'] == 2) {
                 $payment->status = "completed";
                 $payment->packageHistory->accept_by_admin = 1;
                 $payment->packageHistory->is_payed = 1;
@@ -512,8 +515,6 @@ if ($ignoreGift){
 
     public function getAreas()
     {
-        return app()->getLocale()=='en'?  Area::orderBy('name_en')->get():Area::orderBy('name_ar')->get();
+        return app()->getLocale() == 'en' ?  Area::orderBy('name_en')->get() : Area::orderBy('name_ar')->get();
     }
-
-
 }

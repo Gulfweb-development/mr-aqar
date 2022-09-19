@@ -35,5 +35,7 @@ return [
 	'require_for_rent'		=> 'Required for rent',
 	'add'                   => 'Add',
 	'request_a_property_in_kuwait'=> 'Request A Property In Kuwait',
+	'insufficient_credit'    => 'You do not have credit to add the ad',
+	'buy_a_package'         => 'Buy A Package',
 
 ];
