@@ -34,7 +34,7 @@ class AdvertisingController extends Controller
         if ($request->wantsJson()) {
             return $this->success("", $advertisings);
         }
-//        return $advertisings;
+        //        return $advertisings;
         return view('site.search-result.search-result', compact('advertisings', 'cities', 'areas'));
     }
 
@@ -46,12 +46,12 @@ class AdvertisingController extends Controller
     {
         $advertising = Advertising::getValidAdvertising()->whereNotNull('expire_at')
             ->where('expire_at', '>', date('Y-m-d'))->whereHas("user");
-//        dd($request->all());
-//        if (isset($request->city_id) && $request->city_id != "-1") {
-//            $advertising = $advertising->where("city_id", $request->city_id);
-//        }
+        //        dd($request->all());
+        //        if (isset($request->city_id) && $request->city_id != "-1") {
+        //            $advertising = $advertising->where("city_id", $request->city_id);
+        //        }
         if (isset($request->area) && $request->area != "-1") {
-          $area=  Area::where('name_en',$request->area)->first();
+            $area =  Area::where('name_en', $request->area)->first();
             $advertising = $advertising->where("area_id", $area->id);
         }
         if (isset($request->advertising_type) && is_array($request->advertising_type)) {
@@ -111,33 +111,18 @@ class AdvertisingController extends Controller
     public function create()
     {
         $cities = City::orderBy('name_en')->get();
-        $types = VenueType::where('type','Residential')->orderBy('title_en')->get();
-        $purposes = ['rent', 'sell', 'exchange',
-        //  'required_for_rent'
+        $types = VenueType::where('type', 'Residential')->orderBy('title_en')->get();
+        $purposes = [
+            'rent', 'sell', 'exchange'
         ];
         $credit = $this->getCreditUser(auth()->id());
         if ($credit === [])
-            $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
+        $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
         if ($credit['count_premium_advertising'] === 0 && $credit['count_normal_advertising'] === 0)
-            return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'have_no_package']);
-
-        return view('site.advertising.create', compact('cities', 'types', 'purposes', 'credit'));
+        return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'have_no_package']);
+        
+        return view('site.advertising.edit', compact('cities', 'types', 'purposes', 'credit'));
     }
-
-    public function createRFR()
-    {
-        $cities = City::orderBy('name_en')->get();
-        $types = VenueType::where('type','Residential')->orderBy('title_en')->get();
-        $purposes = ['rent', 'sell', 'exchange', 'required_for_rent'];
-        $credit = $this->getCreditUser(auth()->id());
-        if ($credit === [])
-            $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
-        if ($credit['count_premium_advertising'] === 0 && $credit['count_normal_advertising'] === 0)
-            return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'have_no_package']);
-
-        return view('site.advertising.mutateRFR', compact('cities', 'types', 'purposes', 'credit'));
-    }
-
 
 
     /**
@@ -228,9 +213,9 @@ class AdvertisingController extends Controller
         $ad = Advertising::find($request->adid);
 
         if ($ad->delete()) {
-            return redirect()->route('Main.myAds',app()->getLocale())->with(['status' => 'success']);
+            return redirect()->route('Main.myAds', app()->getLocale())->with(['status' => 'success']);
         } else {
-            return redirect()->route('Main.myAds',app()->getLocale())->with(['status' => 'unsuccess']);
+            return redirect()->route('Main.myAds', app()->getLocale())->with(['status' => 'unsuccess']);
         }
     }
 
@@ -239,12 +224,12 @@ class AdvertisingController extends Controller
     /////////////////////////////////
 
 
-    public function details($locale,$hashNumber)
+    public function details($locale, $hashNumber)
     {
         $this->addView($hashNumber);
-        $advertising = Advertising::where('hash_number', $hashNumber)->whereDate('expire_at' , '>=' , Carbon::now())->with(['user','city','area', 'advertisingView', 'area', 'city', 'venue'])->firstOrFail();
-//          dd(collect(json_decode($advertising->other_image))->toArray());
-//        return $advertising->advertisingView;
+        $advertising = Advertising::where('hash_number', $hashNumber)->whereDate('expire_at', '>=', Carbon::now())->with(['user', 'city', 'area', 'advertisingView', 'area', 'city', 'venue'])->firstOrFail();
+        //          dd(collect(json_decode($advertising->other_image))->toArray());
+        //        return $advertising->advertisingView;
         $relateds = Advertising::where('expire_at', '>=', Carbon::now())->orderBy('id', 'desc')->where('id', '!=', $advertising->id)->limit(6)->get();
         return view('site.advertising.details', compact('advertising', 'relateds'));
     }
@@ -253,10 +238,10 @@ class AdvertisingController extends Controller
     {
 
         if (Auth::check()) {
-            $advertising = Advertising::where('hash_number', $hashNumber)->with([ 'advertisingView'=>function($q){
+            $advertising = Advertising::where('hash_number', $hashNumber)->with(['advertisingView' => function ($q) {
                 $q->where('user_id', Auth::user()->id)->orWhere('guest_ip', session()->get('user_guest'));
             }])->first();
-//            dd(($advertising->advertisingView));
+            //            dd(($advertising->advertisingView));
             if (count($advertising->advertisingView) === 0) {
                 $advertising->advertisingView()->create([
                     'user_id' => Auth::user()->id,
@@ -264,16 +249,15 @@ class AdvertisingController extends Controller
                 ]);
             }
         } else {
-            $advertising = Advertising::where('hash_number', $hashNumber)->with([ 'advertisingView'=>function($q){
+            $advertising = Advertising::where('hash_number', $hashNumber)->with(['advertisingView' => function ($q) {
                 $q->Where('guest_ip', session()->get('user_guest'));
             }])->first();
             if (count($advertising->advertisingView) === 0) {
                 $advertising->advertisingView()->create([
-                    'guest_ip' =>session()->get('user_guest')
+                    'guest_ip' => session()->get('user_guest')
                 ]);
             }
         }
-
     }
 
     public function payment_result()
@@ -284,7 +268,7 @@ class AdvertisingController extends Controller
 
     public function getCities()
     {
-//        dd(\request()->all());
+        //        dd(\request()->all());
         return City::orderBy('name_en')->get();
     }
 
@@ -294,9 +278,9 @@ class AdvertisingController extends Controller
     }
 
 
-	public function getVenueTypes()
+    public function getVenueTypes()
     {
-        return VenueType::where('type','Residential')->orderBy('title_en')->get();
+        return VenueType::where('type', 'Residential')->orderBy('title_en')->get();
     }
 
     public function store(StoreRequest $request)
@@ -330,15 +314,16 @@ class AdvertisingController extends Controller
                 // return $this->success("", ['advertising' => $advertising]);
                 return redirect()->route('Main.myAds', app()->getLocale())->with('status', 'ad_created');
             }
-            return $this->fail(trans("main.insufficient_credit").' <a href="/'.app()->getLocale().'/buypackage" >'.trans("main.buy_a_package").'</a>');
+            return $this->fail(trans("main.insufficient_credit") . ' <a href="/' . app()->getLocale() . '/buypackage" >' . trans("main.buy_a_package") . '</a>');
         } catch (\Exception $exception) {
+            dd($exception);
             DB::rollback();
             // return $this->fail($exception->getMessage(), -1, $request->all());
             return redirect()->back()->withInput()->with('status', 'unsuccess');
         }
     }
 
-    public function storeRFR(StoreRentRequest $request)
+    public function storeRFR(StoreRequest $request)
     {
         try {
             $result = $this->filterKeywords($request->description);
@@ -369,7 +354,7 @@ class AdvertisingController extends Controller
                 // return $this->success("", ['advertising' => $advertising]);
                 return redirect()->route('Main.myAds', app()->getLocale())->with('status', 'ad_created');
             }
-            return $this->fail(trans("main.insufficient_credit").' <a href="/'.app()->getLocale().'/buypackage" >'.trans("main.buy_a_package").'</a>');
+            return $this->fail(trans("main.insufficient_credit") . ' <a href="/' . app()->getLocale() . '/buypackage" >' . trans("main.buy_a_package") . '</a>');
         } catch (\Exception $exception) {
             DB::rollback();
             // return $this->fail($exception->getMessage(), -1, $request->all());
@@ -378,11 +363,12 @@ class AdvertisingController extends Controller
     }
 
 
-    public function ajax_file_upload_handler(Request $request){
+    public function ajax_file_upload_handler(Request $request)
+    {
         $mainImageFile = $request->file;
         $fileName = $mainImageFile->getClientOriginalName();
-        $storeName = time() .'-'.uniqid(time()).$fileName;
-        $path =$storeName;
+        $storeName = time() . '-' . uniqid(time()) . $fileName;
+        $path = $storeName;
         $mainImageFile->move(public_path('resources/tempUploads/'), $storeName);
         return $path;
     }
@@ -402,7 +388,7 @@ class AdvertisingController extends Controller
         $advertising->type = 'residential';
         $advertising->venue_type = $request->venue_type;
         $advertising->purpose = $request->purpose;
-        if (! in_array($request->method(), ['PUT', 'PATCH']))
+        if (!in_array($request->method(), ['PUT', 'PATCH']))
             $advertising->advertising_type = $request->advertising_type;
         $advertising->description = $request->description;
         $advertising->price = $request->price;
@@ -422,20 +408,14 @@ class AdvertisingController extends Controller
         $advertising->security = $request->security;
         $advertising->location_lat = $request->location_lat;
         $advertising->location_long = $request->location_long;
-        if (! in_array($request->method(), ['PUT', 'PATCH']))
+        if (!in_array($request->method(), ['PUT', 'PATCH']))
             $advertising->hash_number = Advertising::makeHashNumber();
         $advertising->floor_plan = "";
-        $advertising->main_image = "" ;
-        $advertising->other_image = "" ;
-        if ($request->hasFile('main_image')) {
-            $advertising->main_image = $this->saveImage($request->main_image, true);
-        } else  {
-            //dd($request);
-            $advertising->main_image = $request->main_image;
-        }
+        $advertising->main_image = "";
+        $advertising->other_image = "";
 
-        foreach((array) $request->deleted_images as $image) {
-            ! file_exists(public_path(urldecode($image))) ?: unlink(public_path(urldecode($image)));
+        foreach ((array) $request->deleted_images as $image) {
+            !file_exists(public_path(urldecode($image))) ?: unlink(public_path(urldecode($image)));
         }
 
         if ($request->hasFile('floor_plan')) {
@@ -445,9 +425,16 @@ class AdvertisingController extends Controller
         }
 
         $otherImage = [];
-        if (is_array($request["other_image"] ) and count($request["other_image"])  > 0 ) {
-            foreach ( $request["other_image"] as $i => $file){
-                if ($request->hasFile("other_image.".  $i)) {
+        $old_otherImages = @$advertising->other_image
+            && json_decode(@$advertising->other_image)
+            && count(json_decode(@$advertising->other_image))
+            && json_decode(@$advertising->other_image)['other_image']
+            ? json_decode(@$advertising->other_image, true)['other_image']
+            : [];
+
+        if (is_array($request["other_image"]) and count($request["other_image"])  > 0) {
+            foreach ($request["other_image"] as $i => $file) {
+                if ($request->hasFile("other_image." .  $i)) {
                     $path = $this->saveImage($request->file("other_image." . $i), true);
                 } elseif (is_string($file)) {
                     $path = $file;
@@ -455,20 +442,11 @@ class AdvertisingController extends Controller
                     $path = "";
                 }
                 $otherImage["other_image"][] = $path;
+                !(@$old_otherImages[$i] && file_exists(public_path(urldecode(@$old_otherImages[$i])))) ?: unlink(public_path(urldecode(@$old_otherImages[$i])));
             }
         }
-        if ($request->other_images_link) {
-            foreach ($request->other_images_link as $i => $link) {
-                rename(public_path('/resources/tempUploads/' . $link), public_path('resources/uploads/images/originals/' . $link));
-                $this->watermark(public_path('resources/uploads/images/originals/' . $link));
-                if ($i == 0 and ! ( $request->hasFile('main_image') or $request->exists('main_image') ) )
-                    $advertising->main_image = '/resources/uploads/images/' . $link;
-                else
-                    $otherImage["other_image"][] = '/resources/uploads/images/' . $link;
-            }
-        }
-        if ( ( $advertising->main_image == "" or  $advertising->main_image == null ) and isset($otherImage["other_image"][0]) ){
-            $advertising->main_image = $otherImage["other_image"][0] ;
+        if (($advertising->main_image == "" or  $advertising->main_image == null) and isset($otherImage["other_image"][0])) {
+            $advertising->main_image = $otherImage["other_image"][0];
             unset($otherImage["other_image"][0]);
         }
         if (count($otherImage) >= 1) {
@@ -488,7 +466,7 @@ class AdvertisingController extends Controller
 
         $advertising->save();
 
-//        event(new NewAdvertising($advertising));
+        //        event(new NewAdvertising($advertising));
         return $advertising;
     }
 
@@ -496,21 +474,19 @@ class AdvertisingController extends Controller
 
 
 
-    public function edit($locale,$hashNumber)
+    public function edit($locale, $hashNumber)
     {
-        $advertising = Advertising::where('hash_number', $hashNumber)->whereDate('expire_at' , '>=' , Carbon::now())->firstOrFail();
-//        $photo=collect(json_decode($advertising->other_image))->toArray();
-//         dd($photo['other_image1']);
+        $advertising = Advertising::where('hash_number', $hashNumber)->whereDate('expire_at', '>=', Carbon::now())->firstOrFail();
+        //        $photo=collect(json_decode($advertising->other_image))->toArray();
+        //         dd($photo['other_image1']);
 
         $cities = City::orderBy('name_en')->get();
-        $types = VenueType::where('type','Residential')->orderBy('title_en')->get();
+        $types = VenueType::where('type', 'Residential')->orderBy('title_en')->get();
         $purposes = ['rent', 'sell', 'exchange', 'required_for_rent'];
         $credit = $this->getCreditUser(auth()->id());
         if ($credit === [])
             $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
-        if(str_contains(request()->path(), 'required_for_rent')){
-            return view('site.advertising.mutateRFR', compact('advertising', 'cities', 'types', 'purposes', 'credit'));
-        }
+
         return view('site.advertising.edit', compact('advertising', 'cities', 'types', 'purposes', 'credit'));
     }
 
@@ -518,36 +494,34 @@ class AdvertisingController extends Controller
     {
         try {
             $advertising = Advertising::findOrFail($request->id);
-            
+
             $user = auth()->user();
             $isValid = $this->isValidCreateAdvertising($user->id, $request->advertising_type);
 
             if (!@$isValid) {
-                return $this->fail(trans("main.insufficient_credit").' <a href="/'.app()->getLocale().'/buypackage" >'.trans("main.buy_a_package").'</a>');
+                return $this->fail(trans("main.insufficient_credit") . ' <a href="/' . app()->getLocale() . '/buypackage" >' . trans("main.buy_a_package") . '</a>');
             }
             if (isset($advertising)) {
                 $advertising = $this->saveAdvertising($request, $advertising);
                 return redirect()->route('Main.myAds', app()->getLocale())->with('controller-success', trans('edited'));
             }
             return $this->fail("not_found_advertising");
-
         } catch (\Exception $exception) {
-            return $this->fail( $exception->getMessage() .' '. $exception->getLine());
+            return $this->fail($exception->getMessage() . ' ' . $exception->getLine());
         }
-
     }
 
     public function destroyAdvertising()
     {
         $advertising = Advertising::whereId(\request('id'))->where('user_id', Auth::user()->id)->first();
-//        dd($advertising);
+        //        dd($advertising);
 
         $massage = 'unsuccess';
         if ($advertising) {
             $massage = 'success';
             $advertising->delete();
         }
-        return redirect()->route('Main.myAds',app()->getLocale())->with('status', $massage);
+        return redirect()->route('Main.myAds', app()->getLocale())->with('status', $massage);
     }
 
     public function upgrade_premium(Request $request)
@@ -576,8 +550,8 @@ class AdvertisingController extends Controller
     public function auto_extend(Request $request)
     {
         $status = $request->extend === 'enable' ? true : false;
-        if($request->id) {
-            Advertising::whereId($request->id)->whereDate('expire_at' , '>=' , Carbon::now())->update(['auto_extend' => $status]);
+        if ($request->id) {
+            Advertising::whereId($request->id)->whereDate('expire_at', '>=', Carbon::now())->update(['auto_extend' => $status]);
             return $status ? trans('enable_auto_extend') : trans('disable_auto_extend');
         }
         return trans('un_success_alert_title');
@@ -586,18 +560,18 @@ class AdvertisingController extends Controller
     public function simpleSaveVideo()
     {
         dd($i = 1);
-//        dd(\request()->all());
+        //        dd(\request()->all());
     }
 
-    public function advertisingLocation($locale,$hashNumber)
+    public function advertisingLocation($locale, $hashNumber)
     {
-        $advertising=Advertising::where('hash_number',$hashNumber)->first();
-        return view('site.advertising.location',compact('advertising'));
+        $advertising = Advertising::where('hash_number', $hashNumber)->first();
+        return view('site.advertising.location', compact('advertising'));
     }
-    public function advertisingDirection($locale,$hashNumber)
+    public function advertisingDirection($locale, $hashNumber)
     {
-        $advertising=Advertising::where('hash_number',$hashNumber)->first();
-//        return $advertising;
-        return view('site.advertising.direction',compact('advertising'));
+        $advertising = Advertising::where('hash_number', $hashNumber)->first();
+        //        return $advertising;
+        return view('site.advertising.direction', compact('advertising'));
     }
 }

@@ -122,9 +122,14 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $ad->id }}">
 
-                                @if(! $ad->expire_at)
+                                @if(!$ad->expire_at)
+                                @if ($ad->purpose === 'required_for_rent')
+                                    <a href="{{ route('site.advertising.editRFR',[app()->getLocale(),$ad->hash_number]) }}"
+                                    class="mdc-icon-button material-icons primary-color sm:px-2">edit</a>
+                                @else
                                     <a href="{{ route('site.advertising.edit',[app()->getLocale(),$ad->hash_number]) }}"
-                                       class="mdc-icon-button material-icons primary-color sm:px-2">edit</a>
+                                        class="mdc-icon-button material-icons primary-color sm:px-2">edit</a>
+                                @endif
                                 @endif
 
                                 <button type="button" id="delete-btn" onclick="showModal({{ $ad->id }})"
@@ -202,8 +207,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
                 <div class="modal-footer justify-content-between mt-3">
                     <hr>
                     <button type="button" class="btn btn-secondary close mt-3">{{__('cancel_title')}}</button>
-                    <button type="button" class="btn btn-danger mt-3" id="delete">{{__('yes_title')}}
-                        ,{{__('delete_title')}}</button>
+                    <button type="button" class="btn btn-danger mt-3" id="delete">{{__('yes_title')}},{{__('delete_title')}}</button>
                 </div>
             </div>
         </div>
@@ -235,7 +239,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
 @section('pagination')
     {!! $ads->links('vendor.pagination.housekey') !!}
 @endsection
-@section('header')
+@section('head')
     <style>
         .modal {
             display: none; /* Hidden by default */

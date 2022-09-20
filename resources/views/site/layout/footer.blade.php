@@ -40,6 +40,4 @@
         </div>
     </div>
     <div id="back-to-top"><i class="material-icons">arrow_upward</i></div>
-    @include('site.layout.js')
-    </body>
-</html>
+

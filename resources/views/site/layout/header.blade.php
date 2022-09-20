@@ -1,36 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" {!! app()->getLocale() === 'ar' ? ' dir="rtl"' : '' !!}>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $title }} @hasSection('title') - @yield('title') @endif </title>
-    @yield('meta')
-    <link rel="icon" type="image/png" href="{{ asset('images/main/favicon.png') }}">
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- Scripts -->
-    @include('site.layout.css')
-    <script>
-        window.Laravel = {!! json_encode([
-                'csrfToken' => csrf_token(),
-            ]) !!};
-    </script>
-    @yield('header')
-</head>
-
-<body class="mdc-theme--background">
-    <div class="spinner-wrapper" id="preloader">
-        <div class="spinner-container">
-            <div class="spinner-outer">
-                <div class="spinner">
-                    <img src="{{asset('images/main/loading.gif')}}" alt="loading" style="width: 100%;">
-                </div>
-                <p class="spinner-text">{{ __('PageTitle') }}</p>
-            </div>
-        </div>
-    </div>
     <aside class="mdc-drawer mdc-drawer--modal sidenav" {!! app()->getLocale() === 'ar' ? ' dir="rtl"' : '' !!}
         style="z-index: 9999">
         <div class="row end-xs middle-xs py-1 px-3">
@@ -48,13 +16,14 @@
                 <div>
                     @if (!request()->is(app()->getLocale().'/required'))
                     <a href="{{route('site.advertising.create', app()->getLocale())}}"
-                        class="mdc-button mdc-button--raised mb-4 mt-3 text-white"  style="color: white; background: #ff7e22">
+                        class="mdc-button mdc-button--raised mb-4 mt-3 text-white"
+                        style="color: white; background: #ff7e22">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
                         <i class="material-icons mdc-button__icon">add</i>
                     </a>
                     @endif
-                    
+
                 </div>
                 <div>
                     <a href="{{'/'.app()->getLocale(). '/' }}" class="mdc-button"
@@ -71,29 +40,32 @@
                     </a>
                 </div>
                 <div>
-                    <a href="{{'/'.app()->getLocale(). '/advertising?purpose=rent' }}" class="d-inline-block d-lg-none mdc-button"
+                    <a href="{{'/'.app()->getLocale(). '/advertising?purpose=rent' }}"
+                        class="d-inline-block d-lg-none mdc-button"
                         style="{{Route::currentRouteName() == 'rent' ? 'background-color: var(--mdc-theme-primary); color: #fff;' : ''}}">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{__('rent').' '. __('in_kuwait') }}</span>
                     </a>
                 </div>
                 <div>
-                    <a href="{{'/'.app()->getLocale(). '/advertising?purpose=sell' }}" class="d-inline-block d-lg-none mdc-button"
+                    <a href="{{'/'.app()->getLocale(). '/advertising?purpose=sell' }}"
+                        class="d-inline-block d-lg-none mdc-button"
                         style="{{Route::currentRouteName() == 'sell' ? 'background-color: var(--mdc-theme-primary); color: #fff;' : ''}}">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{__('sell').' '. __('in_kuwait') }}</span>
                     </a>
                 </div>
                 <div>
-                    <a href="{{'/'.app()->getLocale(). '/advertising?purpose=exchange' }}" class="d-inline-block d-lg-none mdc-button"
+                    <a href="{{'/'.app()->getLocale(). '/advertising?purpose=exchange' }}"
+                        class="d-inline-block d-lg-none mdc-button"
                         style="{{Route::currentRouteName() == 'exchange' ? 'background-color: var(--mdc-theme-primary); color: #fff;' : ''}}">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{__('exchange').' '. __('in_kuwait') }}</span>
                     </a>
                 </div>
                 <div>
-                    <a href="{{ route('companies', app()->getLocale()) }}" class="mdc-button"
-   d-inline-block d-lg-none                      style="{{Route::currentRouteName() == 'companies' ? 'background-color: var(--mdc-theme-primary); color: #fff;' : ''}}">
+                    <a href="{{ route('companies', app()->getLocale()) }}" class="mdc-button" d-inline-block d-lg-none
+                        style="{{Route::currentRouteName() == 'companies' ? 'background-color: var(--mdc-theme-primary); color: #fff;' : ''}}">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{__('companies').' '. __('in_kuwait') }}</span>
                     </a>
@@ -330,7 +302,8 @@
                         {{-- </a>--}}
                     @if (!request()->is(app()->getLocale().'/required'))
                     <a href="{{route('site.advertising.create', app()->getLocale())}}"
-                        class="mdc-button mdc-button--raised center d-none d-lg-flex" style="color: white; background: #ff7e22">
+                        class="mdc-button mdc-button--raised center d-none d-lg-flex"
+                        style="color: white; background: #ff7e22">
                         <span class="mdc-button__ripple"></span>
                         <span class="mdc-button__label">{{ __('add_listing_title') }}</span>
                         <i class="material-icons mdc-button__icon">add</i>

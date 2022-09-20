@@ -378,6 +378,6 @@
 
 
 @endsection
-@section('header')
+@section('head')
      <link rel="stylesheet" href="{{ asset('asset/css/libs/dropzone.css') }}">
 @endsection

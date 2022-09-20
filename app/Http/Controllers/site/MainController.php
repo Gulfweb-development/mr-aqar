@@ -262,6 +262,11 @@ class MainController extends Controller
         ]);
     }
 
+    // public function choosePaymentMethod(Request $request) {
+    //     session()->flash('orderData', $request);
+    //     $paymentGateways = PaymentGateway::
+    // }
+
     //buy package or credit
     public function buyPackageOrCredit(Request $request)
     {
@@ -269,9 +274,9 @@ class MainController extends Controller
             $user = auth()->user();
             cache()->forget('balance_values' . auth()->id());
             $validate = Validator::make($request->all(), [
-                'package_id' => 'required|numeric',
-                'type' => 'required|in:static,normal',
-                'count' => 'nullable|numeric',
+                'package_id'   => 'required|numeric',
+                'type'         => 'required|in:static,normal',
+                'count'        => 'nullable|numeric',
                 'payment_type' => 'required|in:Cash,MyFatoorah',
             ]);
             if ($validate->fails()) {
@@ -315,35 +320,35 @@ class MainController extends Controller
 
             $ref = $this->makeRefId($user->id);
             $payment = Payment::create([
-                'user_id' => $user->id,
-                'package_id' => $request->package_id,
+                'user_id'      => $user->id,
+                'package_id'   => $request->package_id,
                 'payment_type' => $request->payment_type,
-                'price' => $price,
-                'status' => 'new'
+                'price'        => $price,
+                'status'       => 'new'
             ]);
 
             //todo:: 'is_payed'=>1  change to 0 after implement logic payment
             $res = PackageHistory::create([
-                'title_en' => $package->title_en,
-                'title_ar' => $package->title_ar,
-                'user_id' => $user->id,
-                'type' => $request->type,
-                'package_id' => $request->package_id,
-                'date' => date('Y-m-d'),
-                'is_payed' => 0,
-                'price' => $package->price,
-                'count_day' => $package->count_day,
-                'count_show_day' => $package->count_show_day,
+                'title_en'          => $package->title_en,
+                'title_ar'          => $package->title_ar,
+                'user_id'           => $user->id,
+                'type'              => $request->type,
+                'package_id'        => $request->package_id,
+                'date'              => date('Y-m-d'),
+                'is_payed'          => 0,
+                'price'             => $package->price,
+                'count_day'         => $package->count_day,
+                'count_show_day'    => $package->count_show_day,
                 'count_advertising' => $countN,
-                'count_premium' => $countP,
-                'count' => $count,
-                'expire_at' => $expireDate,
-                'payment_type' => $request->payment_type,
-                'accept_by_admin' => $accept
+                'count_premium'     => $countP,
+                'count'             => $count,
+                'expire_at'         => $expireDate,
+                'payment_type'      => $request->payment_type,
+                'accept_by_admin'   => $accept
             ]);
             $payment->package_history_id = $res->id;
-            $payment->ref_id = $ref;
-            $res->payment_id = $payment->id;
+            $payment->ref_id             = $ref;
+            $res->payment_id             = $payment->id;
             $res->save();
             $payment->save();
 
@@ -354,9 +359,9 @@ class MainController extends Controller
             } else { 
                 // if payment type is cash
                 $res->accept_by_admin = 1;
-                $res->is_payed = 1;
+                $res->is_payed        = 1;
 
-                $package_id = $res->package_id;
+                $package_id       = $res->package_id;
                 $user->package_id = $package_id;
                 $user->save();
                 $res->save();
