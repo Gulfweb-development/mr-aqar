@@ -11,19 +11,12 @@ class MessageController extends Controller
 {
     public function create()
     {
-
-        $whatsapp = Setting::where('setting_key', 'whatsapp')->value('setting_value');
-        $instagram = Setting::where('setting_key', 'instagram')->value('setting_value');
+        
         $email = Setting::where('setting_key', 'email')->value('setting_value');
         $website = Setting::where('setting_key', 'website')->value('setting_value');
-        $phone = Setting::where('setting_key', 'phone')->value('setting_value');
-        $phone2 = Setting::where('setting_key', 'phone2')->value('setting_value');
-        $address = Setting::where('setting_key', 'address')->value('setting_value');
-        $address_ar = Setting::where('setting_key', 'address_ar')->value('setting_value');
-        $info = [$whatsapp, $instagram, $email, $website, $phone, $address];
+        $data[app()->getLocale()] = Setting::where('setting_key', 'contact_'.app()->getLocale())->value('setting_value');
 
-
-        return view('site.pages.contact', compact('whatsapp', 'instagram', 'email', 'website', 'phone', 'phone2', 'address', 'address_ar'));
+        return view('site.pages.contact', compact( 'email', 'website', 'data'));
     }
 
     public function store(Request $request)

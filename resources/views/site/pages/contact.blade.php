@@ -46,6 +46,9 @@
                         <div class="column center-xs middle-xs text-center">
                             <h3 class="primary-color py-1">{{__('contact_us')}}</h3>
                             <i class="material-icons mat-icon-lg primary-color">public</i>
+                            <div>
+                                {!! $data[app()->getLocale()] !!}
+                            </div>
                             <a class="text-muted fw-500" href="mailto:{{ $email }}">{{ $email }}</a>
                             <a class="text-muted fw-500" href="{{ $website }}">{{ $website }}</a>
 

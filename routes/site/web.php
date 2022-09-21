@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/','MainController@index')->name('Main.index');
 Route::get('/advertising','MainController@index')->name('Main.index');
 Route::get('/aboutus','MainController@aboutus')->name('Main.aboutus');
+Route::get('/terms_and_conditions','MainController@termsAndConditions');
+Route::get('/privacy_policy','MainController@privacyPolicy');
 Route::get('/contact','MessageController@create')->name('Message.create');
 Route::post('/contact', 'MessageController@store')->name('message.store');
 Route::get('required', function() {return view('site.pages.main', ['sell' => true]);})->name('required_for_rent');

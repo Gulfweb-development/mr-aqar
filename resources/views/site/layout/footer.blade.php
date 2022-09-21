@@ -22,6 +22,14 @@
                     @else
                         <p> حقوق النشر {{date('Y')}} | كل الحقوق محفوظة.</p>
                     @endif
+                    &ensp;
+                    <p>
+                        <a style="color:#fff" href="/{{ app()->getLocale() }}/terms_and_conditions">{{ __("terms_and_conditions") }}</a>
+                    </p>
+                    &ensp;
+                    <p >
+                        <a style="color:#fff" href="/{{ app()->getLocale() }}/privacy_policy">{{ __("privacy_policy") }}</a>
+                    </p>
                 </div>
             </div>
         </div>

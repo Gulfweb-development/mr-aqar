@@ -421,7 +421,7 @@
     "ad_created_title": "تم إنشاء إعلانك بنجاح",
     "add_ad_title" : "إضافة اعلان",
     "drop_files_to_upload" : "رفع الملفات بنقر للتحميل أو يمكنك سحب الملفات إلى داخل المربع هنا لرفعها",
-    "gallery" : "صالة عرض",
+    "gallery" : "المركز الإعلامي",
     "max" : "أقصى",
     "images" : "الصور",
     "edited" : "تم التعديل بنجاح",
@@ -466,5 +466,7 @@
     "balance" : "الرصید",
 	"in_kuwait": "في الكويت",
     "request_a_property": "طلب عقار",
-    "contact_us": "اتصل بنا"
+    "contact_us": "اتصل بنا",
+    "terms_and_conditions": "الأحكام والشروط",
+    "privacy_policy": "سياسة الخصوصية"
 }

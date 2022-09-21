@@ -71,6 +71,19 @@ class MainController extends Controller
         return view('site.pages.aboutus', compact('aboutus_large_ar', 'aboutus_large_en'));
     }
 
+    public function termsAndConditions(){
+        $data_ar = Setting::where('setting_key', 'terms_and_conditions_ar')->value('setting_value');
+        $data_en = Setting::where('setting_key', 'terms_and_conditions_en')->value('setting_value');
+        return view('site.pages.simplePage', compact('data_ar', 'data_en'));
+    }
+
+    public function privacyPolicy(){
+        $data_ar = Setting::where('setting_key', 'privacy_policy_ar')->value('setting_value');
+        $data_en = Setting::where('setting_key', 'privacy_policy_en')->value('setting_value');
+        
+        return view('site.pages.simplePage', compact('data_ar', 'data_en'));
+    }
+
     /*
     //
     my account page
@@ -346,7 +359,7 @@ class MainController extends Controller
 
             if ($request->get('payment_type') == "MyFatoorah" and $price > 0) {
                 $cbkPay = new CBKPay();
-                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', 'https://www.mr-aqar.com'. '/en/payment-response/cbk');
+                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/en/payment-response/cbk');
                 return $form;
             } else {
                 // if payment type is cash
