@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\site;
 
 
+use App\Classes\Payment\CBKPay;
 use App\Http\Controllers\Controller;
+use App\Models\PaymentResponse;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\Advertising;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use mysql_xdevapi\Exception;
+use PhpParser\Node\Stmt\Switch_;
 
 class MainController extends Controller
 {
@@ -64,16 +67,8 @@ class MainController extends Controller
 
         $aboutus_large_ar = Setting::where('setting_key', 'aboutus_large_ar')->value('setting_value');
         $aboutus_large_en = Setting::where('setting_key', 'aboutus_large_en')->value('setting_value');
-        $aboutus_large_pic1 =   Setting::where('setting_key', 'aboutus_large_pic1')->value('setting_value');
-        $aboutus_large_pic2 =   Setting::where('setting_key', 'aboutus_large_pic2')->value('setting_value');
-
-        $our_story_en =   Setting::where('setting_key', 'our_story_en')->value('setting_value');
-        $our_story_ar =   Setting::where('setting_key', 'our_story_ar')->value('setting_value');
-        $our_value_en =   Setting::where('setting_key', 'our_value_en')->value('setting_value');
-        $our_value_ar =   Setting::where('setting_key', 'our_value_ar')->value('setting_value');
-        $our_promise_en =   Setting::where('setting_key', 'our_promise_en')->value('setting_value');
-        $our_promise_ar =   Setting::where('setting_key', 'our_promise_ar')->value('setting_value');
-        return view('site.pages.aboutus', compact('aboutus_large_ar', 'aboutus_large_en', 'aboutus_large_pic1', 'aboutus_large_pic2', 'our_story_en', 'our_story_ar', 'our_value_en', 'our_value_ar', 'our_promise_en', 'our_promise_ar'));
+        
+        return view('site.pages.aboutus', compact('aboutus_large_ar', 'aboutus_large_en'));
     }
 
     /*
@@ -262,14 +257,10 @@ class MainController extends Controller
         ]);
     }
 
-    // public function choosePaymentMethod(Request $request) {
-    //     session()->flash('orderData', $request);
-    //     $paymentGateways = PaymentGateway::
-    // }
-
     //buy package or credit
     public function buyPackageOrCredit(Request $request)
     {
+
         try {
             $user = auth()->user();
             cache()->forget('balance_values' . auth()->id());
@@ -354,9 +345,10 @@ class MainController extends Controller
 
 
             if ($request->get('payment_type') == "MyFatoorah" and $price > 0) {
-                $payUrl = $this->sendRequestForPayment($price, $ref, $package, $count, $payment);
-                return redirect($payUrl);
-            } else { 
+                $cbkPay = new CBKPay();
+                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', 'https://www.mr-aqar.com'. '/en/payment-response/cbk');
+                return $form;
+            } else {
                 // if payment type is cash
                 $res->accept_by_admin = 1;
                 $res->is_payed        = 1;
@@ -378,81 +370,63 @@ class MainController extends Controller
         }
     }
 
+    public function paymentResponseCBK(Request $request)
+    {
+        try {
+            $paymentResponse = new PaymentResponse();
+            $paymentResponse->response = json_encode($request->all());
+            if (empty($request->encrp)) {
+                throw new Exception('payment failed');
+            }
+            $cbkPay = new CBKPay();
+            $paymentStatus = $cbkPay->getPaymentStatus($request->encrp);
+            if (!@$paymentStatus || (!@$paymentStatus->Status && !@$paymentStatus->ErrorCode)) {
+                throw new Exception("Unable to get payment status");
+            }
+            if (@$paymentStatus->Status) {
+                $message = $cbkPay->getPaymentResultStatus($paymentStatus->Status);
+            } elseif (@$paymentStatus->ErrorCode) {
+                $message = $cbkPay->getCBKError($paymentStatus->ErrorCode);
+            }
+
+            if (@$paymentStatus->Status !== 1 || !@$paymentStatus->ref_id) {
+                $payment->status = "failed";
+                $payment->packageHistory->accept_by_admin = 0;
+                throw new Exception($message);
+            }
+            $paymentResponse->ref_id = $paymentStatus->ref_id;
+            $paymentResponse->status = 'success';
+
+            $payment = Payment::with(['package', 'packageHistory', 'user'])->where('ref_id', $paymentStatus->ref_id)->first();
+            if (!@$payment) {
+                throw new Exception('Sorry something went wrong!!');
+            }
+            $paymentResponse->user_id = $payment->user_id;
+            
+            $refId = $payment->PayId;
+            $payment->user->update(['package_id' => intval($payment->package_id)]);
+            $payment->status = "completed";
+            $payment->description = $getRecorById['Error'];
+            $payment->update();
+            $payment->packageHistory->accept_by_admin = 1;
+            $payment->packageHistory->is_payed = 1;
+            $payment->packageHistory->update();
+            $paymentResponse->payment_id = $payment->id;
+
+            return view("site.pages.payment", compact('message', 'refId', 'paymentResponse', 'payment', 'order'));
+        } catch (\Exception $e) {
+            $message = $e->getMessage() ?? 'Payment Failed!';
+            return view("site.pages.payment", compact('message'));
+        } finally {
+            $paymentResponse->save();
+        }
+    }
+
     public function makeRefId($userId)
     {
         return substr(time(), 5, 4) . rand(1000, 9999) . $userId;
     }
 
-    private function sendRequestForPayment($price, $orderid, $package, $quantity, $payment)
-    {
-        $post_string = '{
-            "InvoiceValue":"' . $price . '",
-            "CustomerName":"' . auth()->user()->name . '",
-            "CustomerReference":"' . $orderid . '",
-            "DisplayCurrencyIsoAlpha":"KWD",
-            "CountryCodeId":"+965",
-            "CustomerMobile":"' . auth()->user()->mobile . '",
-            "CustomerEmail":"' . auth()->user()->email . '",
-            "DisplayCurrencyId": 3,
-            "SendInvoiceOption": 1,
-            "InvoiceItemsCreate": [
-              {
-                "ProductId":null,
-                "ProductName": "Purchasing from Online Store Kuwait Kash5astore",
-                "Quantity":' . $quantity . ',
-                "UnitPrice": "' . ($price / $quantity) . '"
-              }
-            ],
-                "CallBackUrl":  "' . route('callback', [app()->getLocale(), 'accept' => true]) . '",
-                 "Language": "2",
-                 "ExpireDate": "2062-12-31T13:30:17.812Z",
-                 "ApiCustomFileds": "",
-                 "ErrorUrl": "' . route('callback', [app()->getLocale(), 'accept' => false]) . '"
-          }';
-        $soap_do = curl_init();
-        curl_setopt($soap_do, CURLOPT_URL, env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/ApiInvoices/CreateInvoiceIso' : 'https://apidemo.myfatoorah.com/ApiInvoices/CreateInvoiceIso');
-        curl_setopt($soap_do, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($soap_do, CURLOPT_TIMEOUT, 10);
-        curl_setopt($soap_do, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($soap_do, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($soap_do, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($soap_do, CURLOPT_POST, true);
-        curl_setopt($soap_do, CURLOPT_POSTFIELDS, $post_string);
-        curl_setopt($soap_do, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8', 'Content-Length: ' . strlen($post_string), 'Accept: application/json', 'Authorization: Bearer ' . $this->MYFToken()));
-        $result1 = curl_exec($soap_do);
-        //dd($result1);
-        // echo "<pre>";print_r($result1);die;
-        $err = curl_error($soap_do);
-        $json1 = json_decode($result1, true);
-        if (isset($json1['IsSuccess']) && $json1['IsSuccess'] == true) {
-            $RedirectUrl = $json1['RedirectUrl'];
-            if (is_array($json1['PaymentMethods'])) {
-                $ref_Ex = $json1['PaymentMethods'][0];
-                if (array_key_exists('PaymentMethodUrl', $ref_Ex)) {
-                    $t = explode("?", $ref_Ex["PaymentMethodUrl"]);
-                    if (is_array($t)) {
-                        $res = str_replace("invoiceKey=", "", explode("&", $t[1]));
-                        $referenceId = $res[0];
-                        curl_close($soap_do);
-                        $payment->pay_id = $referenceId;
-                        $payment->save();
-                        $paymentTransaction =  new \App\Models\OrderTransaction();
-                        $paymentTransaction->user_id = $payment->user_id;
-                        $paymentTransaction->package_id = $payment->package_id;
-                        $paymentTransaction->api_ref_id = $payment->ref_id;
-                        $paymentTransaction->payment_id = $payment->id;
-                        $paymentTransaction->trackid = $payment->pay_id;
-                        $paymentTransaction->tranid = $payment->pay_id;
-                        $paymentTransaction->type = $package->type;
-                        $paymentTransaction->save();
-                        return $RedirectUrl;
-                    }
-                }
-            }
-        } else {
-            throw new \Exception($json1['Message'] . ' ' . $result1);
-        }
-    }
 
     private function MYFToken()
     {
@@ -471,6 +445,7 @@ class MainController extends Controller
         } else
             throw new \Exception(__('throttle', ['seconds' => 30]));
     }
+
     public function paymentResult(Request $request)
     {
         if (empty($request->paymentId)) {

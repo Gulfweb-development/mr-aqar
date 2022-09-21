@@ -15,12 +15,16 @@ class CanUpgradeToCompany
      */
     public function handle($request, Closure $next)
     {
-        if (auth()->check()) {
-            $balance = \App\Http\Controllers\site\MainController::getBalance();
-            if ($balance !== 0 or auth()->user()->type_usage === 'company')
-                abort(403);
-        } else
+        // if (auth()->check()) {
+        //     $balance = \App\Http\Controllers\site\MainController::getBalance();
+        //     if ($balance !== 0 or auth()->user()->type_usage === 'company')
+        //         abort(403);
+        // } else
+        //     abort(403);
+
+        if (!auth()->check()) {
             abort(403);
+        }
         return $next($request);
     }
 }

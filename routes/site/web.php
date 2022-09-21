@@ -60,8 +60,8 @@ Route::group(['middleware'=>['auth']],function (){
     Route::get('/myads', 'MainController@myAds')->name('Main.myAds');
     Route::delete('/ad/delete/{advertising}', 'AdvertisingController@delete')->name('Advertising.delete');
     Route::get('/buypackage', 'MainController@buyPackage')->name('Main.buyPackage');
-    Route::post('/choose-payment-method', 'MainController@choosePaymentMethod')->name('Main.choosePaymentMethod');
     Route::post('/buypackageorcredit', 'MainController@buyPackageOrCredit')->name('Main.buyPackageOrCredit');
+    Route::post('/payment-response/cbk', 'MainController@paymentResponseCBK')->name('Main.paymentResponseCBK');
 });
 
 

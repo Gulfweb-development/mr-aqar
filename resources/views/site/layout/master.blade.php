@@ -27,7 +27,7 @@
 	@yield('head')
 </head>
 
-<body class="mdc-theme--background">
+<body class="mdc-theme--background" style="overflow-x: hidden">
 	<div class="spinner-wrapper" id="preloader">
 		<div class="spinner-container">
 			<div class="spinner-outer">

@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 /*/
+
+Route::get('/optimize-clear', function () {
+    $run = Artisan::call('optimize:clear');
+    return 'FINISHED';
+});
+
+
 Route::prefix('{locale}')
     ->where(['locale'=>('en|ar')])->middleware(['check_lng'])->group(function (){
     Auth::routes();

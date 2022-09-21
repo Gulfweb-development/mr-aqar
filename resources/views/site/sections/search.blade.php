@@ -25,7 +25,7 @@
             <form action="javascript:void(0);" id="filters" class="search-wrapper">
                 <div class="row md-flex-no-wrap justify-content-center">
                     @if( ! isset($required_for_rent) )
-                    <div class="col-xs-12 col-sm-6 col-md-3 p-2 d-flex align-items-center" id="select_areas">
+                    <div class="col-xs-12 col-md-3 p-2 d-flex align-items-center" id="select_areas">
 
                         <div id="select_header" class="d-lg-none d-md-none d-sm-none d-none">
                             <div class="d-flex align-items-center px-2 py-1" id="select_header_items">
@@ -64,7 +64,7 @@
                         </multiselect>
                     </div>
                     @endif
-                    <div class="col-xs-12 col-sm-6 col-md-3 p-2 d-flex align-items-center">
+                    <div class="col-xs-12 col-md-3 p-2 d-flex align-items-center">
                         <multiselect v-model="venue_type" :options="venue_types" placeholder="{{__('venue_filter')}}"
                             selected-label="{{__('selected')}}" select-label="" deselect-label="{{__('deselect')}}"
                             track-by="id" label="title_{{ app()->getLocale() }}" :searchable="false"><span

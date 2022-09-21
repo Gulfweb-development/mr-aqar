@@ -2769,6 +2769,19 @@ footer .copyright .mdc-button{
   order: 1;
 }
 @media only screen and (max-width: 600px) {
+  .col-sm-6{
+    box-sizing: border-box;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    flex-basis: 50%;
+    max-width: 50%;
+  }
+
+}
+@media only screen and (min-width: 600px) {
   .col-sm,
   .col-sm-1,
   .col-sm-2,

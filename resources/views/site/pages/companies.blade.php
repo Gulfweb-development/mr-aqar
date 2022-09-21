@@ -20,8 +20,8 @@ $side = app()->getLocale() === 'en' ? 'r' : 'l';
                     $companyRoute = route('companies.info', [app()->getLocale(),auth()->user()->company_phone,auth()->user()->company_name]);
                     $cardMessage = '<a href="'. $companyRoute .'" class="links">' . __('see_your_company') . '</a>'
                         . '<br>' . '<a onclick="'. $confirmJs .'" class="center-xs d-block links">' . __('downgrade_account') . '</a>'; @endphp
-            @elseif($balance !== 0)
-                @php $cardMessage = __('already_have_package'); @endphp
+            {{-- @elseif($balance !== 0)
+                @php $cardMessage = __('already_have_package'); @endphp --}}
             @endif
             <div class="col-xs-11 col-sm-7 col-md-5 my-1 mx-auto my-3">
                 <div class="card card-subscribe card-buy shadow companies-card rounded">

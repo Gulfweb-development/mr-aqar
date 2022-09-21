@@ -151,7 +151,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         </div>
                                     @endif
 
-                                    <div class="col-xs-12 col-sm-6 p-2">
+                                    <div class="col-xs-12   p-2">
                                         <div class="mdc-text-field mdc-text-field--outlined">
                                             <input class="mdc-text-field__input" placeholder="{{__('full_name_title')}}"
                                                 value="{{auth()->user()->name}}" disabled required>
@@ -167,7 +167,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                     </div>
 
                                     @if (!str_contains(request()->path(), 'required_for_rent')) 
-                                    <div class="col-xs-12 col-sm-6 p-2">
+                                    <div class="col-xs-12   p-2">
                                         <div class="mdc-text-field mdc-text-field--outlined">
                                             <input class="mdc-text-field__input" name="phone_number"
                                                 placeholder="{{__('phone_number_title')}}"
@@ -189,7 +189,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                     </div>
                                     @endif
 
-                                    <div class="col-xs-12 col-sm-6 p-2">
+                                    <div class="col-xs-12   p-2">
                                         <div class="mdc-select mdc-select--outlined role-list mdc-select--required">
                                             <input id="cityInput" type="hidden" name="city_id"
                                                 value="{{ old('city_id', @$advertising->city_id) }}">
@@ -227,7 +227,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                     </div>
 
 
-                                    <div class="col-xs-12 col-sm-6 p-2">
+                                    <div class="col-xs-12   p-2">
                                         <div class="mdc-select mdc-select--outlined mdc-select--required">
                                             <input type="hidden" name="area_id" id="area_id"
                                                 value="{{ old('area_id', @$advertising->area_id) }}">
@@ -299,7 +299,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         }
                                     </script>
 
-                                    <div class="col-xs-12 col-sm-6 p-2">
+                                    <div class="col-xs-12   p-2">
                                         <div class="mdc-select mdc-select--outlined mdc-select--required">
                                             <input type="hidden" name="venue_type" id="venue_type"
                                                 value="{{ old('venue_type', @$advertising->venue_type) }}">
@@ -339,7 +339,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                     @if (str_contains(request()->path(), 'required_for_rent')) 
                                         <input type="hidden" name="purpose" value="required_for_rent">
                                     @else
-                                        <div class="col-xs-12 col-sm-6 p-2">
+                                        <div class="col-xs-12   p-2">
                                             <div class="mdc-select mdc-select--outlined mdc-select--required">
                                                 <input type="hidden" name="purpose" id="purpose"
                                                     value="{{ old('purpose', @$advertising->purpose) }}">
@@ -374,7 +374,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         </div>
                                     @endif
 
-                                    <div class="col-xs-12 col-sm-6 p-2">
+                                    <div class="col-xs-12   p-2">
                                         <div class="mdc-text-field mdc-text-field--outlined">
                                             <input class="mdc-text-field__input" name="price"
                                                 value="{{ old('price', @$advertising->price) }}"
