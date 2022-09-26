@@ -2,5 +2,11 @@
 	"cSpell.words": [
 		"aqar",
 		"KNET"
+	],
+	"i18n-ally.localesPaths": [
+		"resources/lang",
+		"public/filemanager/lang",
+		"resources/views/messages",
+		"public/resources/select2/src/js/select2/i18n"
 	]
 }
