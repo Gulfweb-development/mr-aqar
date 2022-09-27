@@ -462,11 +462,14 @@
     "price" : "السعر",
     "showing_new_ads" : "أحدث الإعلانات المرسلة:",
     "image" : "صورة",
-    "have_no_package" : "ليس لديك حزم. يرجى أولاً شراء الحزمة ثم محاولة إضافة إعلان.",
+    "have_no_package" : "ليس لديك رصيد ، يرجى شراء الرصيد ثم حاول اضافة الاعلان",
     "balance" : "الرصید",
 	"in_kuwait": "في الكويت",
     "request_a_property": "طلب عقار",
     "contact_us": "اتصل بنا",
     "terms_and_conditions": "الأحكام والشروط",
-    "privacy_policy": "سياسة الخصوصية"
+    "privacy_policy": "سياسة الخصوصية",
+    "sorry_something_went_wrong": "عذرا، هناك خطأ ما",
+    "transaction_id": "رقم المعاملة",
+    "payment_id": "معرف الدفع"
 }

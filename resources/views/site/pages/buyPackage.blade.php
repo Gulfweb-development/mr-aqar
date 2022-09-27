@@ -27,7 +27,7 @@
         <strong>{{__('un_success_title')}}!</strong> {{__('un_success_alert_title')}}!
     </div>
 @elseif((session('status')) == 'have_no_package')
-    <div class="alert alert-success">
+    <div class="alert alert-danger">
         {{ __('have_no_package') }}
     </div>
 @endif
@@ -92,9 +92,12 @@
                             @foreach($statics as $static)
                                 <div class="col-xs-12 col-sm-6 col-md-3 p-2">
                                     <div class="mdc-card pricing-card text-center border-accent p-0 h-100">
-                                        <div class="bg-accent pricing-header p-3">
-                                            <h1>{{__('kd_title')}} @if( $static->old_price >  $static->price ) <small> <span class="del opacity-70">{{ number_format($static->old_price , env('NUMFORMAT' , 0 )) }} </span> </small> @endif {{number_format($static->price , env('NUMFORMAT' , 0 )) }}<small> /{{ app()->getLocale()=="en" ? $static->title_en : $static->title_ar }}{{-- /{{ $static->count_day }} {{__('days')}} --}}</small></h1>
-{{--                                            <p class="desc mb-2">@if(app()->getLocale()=="en"){{$static->title_en}}@else{{$static->title_ar}}@endif</p>--}}
+                                        <div class="bg-accent pricing-header p-2">
+                                            <h1  class="fs-sm-20">{{__('kd_title')}} @if( $static->old_price >  $static->price ) <small> <span class="del opacity-70">{{ $static->old_price }} </span> </small> @endif {{$static->price }}<small> 
+                                                <br>
+                                                {{-- {{ app()->getLocale()=="en" ? $static->title_en : $static->title_ar }} --}}
+                                                {{-- /{{ $static->count_day }} {{__('days')}} --}}</small></h1>
+                                           <p class="desc mb-2">@if(app()->getLocale()=="en"){{$static->title_en}}@else{{$static->title_ar}}@endif</p>
                                         </div>
                                         <div class="p-3 ad-plan-bottom">
                                             <p class="py-2 add-plan-description">@if(app()->getLocale()=="en"){{$static->description_en}}@else{{$static->description_ar}}@endif</p>
@@ -102,7 +105,7 @@
                                             <form method="post" action="{{ route('Main.buyPackageOrCredit',app()->getLocale()) }}" >
                                                 @csrf
                                                 <div>
-                                                    <input type="hidden" class="form-control" name="payment_type" value="MyFatoorah">
+                                                    <input type="hidden" class="form-control" name="payment_type" value="CBKPay">
                                                     <div class="mdc-text-field mdc-text-field--outlined w-100 custom-field mb-3">
                                                         <input type="number" value="1" min="1" class="mdc-text-field__input" placeholder="{{__('noofads')}}" name="count" id="{{ "static-num-" . $static->id }}" required>
                                                         <div class="mdc-notched-outline mdc-notched-outline--upgraded">
@@ -132,8 +135,11 @@
                             @foreach($normals as $normal)
                                 <div class="col-xs-12 col-sm-6 col-md-3 p-2">
                                     <div class="mdc-card pricing-card text-center border-accent p-0 h-100">
-                                        <div class="bg-accent pricing-header p-3">
-                                            <h1>{{__('kd_title')}} @if( $normal->old_price >  $normal->price ) <small> <span class="del opacity-70">{{number_format($normal->old_price , env('NUMFORMAT' , 0 ))}} </span></small> @endif {{number_format($normal->price , env('NUMFORMAT' , 0 ))}}<small> /{{ $normal->count_day }} {{__('days')}}</small></h1>
+                                        <div class="bg-accent pricing-header p-2">
+                                            <h1 class="fs-sm-20">{{__('kd_title')}} @if( $normal->old_price >  $normal->price ) <small> <span class="del opacity-70">{{ $normal->old_price }} </span></small> @endif {{ $normal->price  }}<small>
+                                                <br>
+                                                {{-- {{ $normal->count_day }} {{__('days')}} --}}
+                                            </small></h1>
                                             <p class="desc mb-2">@if(app()->getLocale()=="en"){{$normal->title_en}}@else{{$normal->title_ar}}@endif</p>
                                         </div>
                                         <div class="p-3">
@@ -144,7 +150,7 @@
 
                                             <form method="post" action="{{ route('Main.buyPackageOrCredit',app()->getLocale()) }}" >
                                                 @csrf
-                                                <input type="hidden" class="form-control" name="payment_type" value="MyFatoorah" >
+                                                <input type="hidden" class="form-control" name="payment_type" value="CBKPay" >
                                                 <input type="hidden" name="type" value="normal" >
                                                 <input type="hidden" name="package_id" value="{{ $normal->id }}">
                                                 <button type="submit" class="mdc-button mdc-button--raised">

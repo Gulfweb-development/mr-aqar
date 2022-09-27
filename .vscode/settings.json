@@ -9,4 +9,16 @@
 		"resources/views/messages",
 		"public/resources/select2/src/js/select2/i18n"
 	]
+		// "public/filemanager/lang",
+		// "resources/views/messages",
+		// "public/resources/select2/src/js/select2/i18n"
+	// ],
+	// "i18n-ally.keystyle": "nested",
+	// "i18n-ally.enabledParsers": ["php", "json"]
+	// "i18n-ally.namespace": true,
+	// "i18n-ally.pathMatcher": "{locale?}{namespaces?}.{ext}",
+	// "i18n-ally.keystyle": "nested"
+	// "i18n-ally.enabledParsers": [
+	//   "json"
+	// ]
 }

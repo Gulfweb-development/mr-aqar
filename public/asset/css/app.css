@@ -295,7 +295,7 @@ body {
 }
 
 .card-height {
-  height: 140px;
+  max-height: 137px;
 }
 
 .overflow-hidden {
@@ -340,7 +340,7 @@ span.multiselect__placeholder {
 }
 
 .card-description {
-  color: #575757;
+  color: #7e7e7e;
 }
 
 .center-xs-important {

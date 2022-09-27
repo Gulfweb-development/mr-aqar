@@ -84,7 +84,7 @@ class CBKPay
 			foreach ($formData as $k => $v) {
 				$form .= "<input type='hidden' name='$k' value='$v'>";
 			}
-			$form .= "</form><div style='position: fixed;top: 15%;left: 50%;transform: translate(-50%, -50%);text-align:center'>Redirecting to PG ... <br> <b> DO NOT REFRESH</b><br><img src='processing.gif'></div><script type='text/javascript'>
+			$form .= "</form><div style='position: fixed;top: 15%;left: 50%;transform: translate(-50%, -50%);text-align:center'>Redirecting... <br> <b> DO NOT REFRESH</b><br><img src='/fancybox/source/fancybox_loading@2x.gif'></div><script type='text/javascript'>
                 document.getElementById('pgForm').submit();
             </script>";
 
@@ -94,8 +94,9 @@ class CBKPay
 		}
 	}
 
+
 	/*get response*/
-	public function getPaymentStatus($encrp)
+	public function getPaymentStatusDetails($encrp)
 	{
 		//returns the unencrypted data
 		//get access token 
@@ -137,7 +138,7 @@ class CBKPay
 
 
 	/*verify Payment*/
-	public function getPaymentStatusAlt($trackid)
+	public function getPaymentStatusDetailsAlt($trackid)
 	{
 
 		if ($AccessToken = $this->getAccessToken()) {
@@ -185,6 +186,30 @@ class CBKPay
 			return false;
 		}
 	}
+
+	public function getPaymentStatus($paymentStatusData) {
+		if(!@$paymentStatusData || (!@$paymentStatusData->Status && !@$paymentStatusData->ErrorCode)){
+			return 'failed';
+		}
+
+		if(@$paymentStatus->Status){
+			if(in_array($paymentStatus->Status, ['-1', '0'])){
+				return 'invalid';
+			}else if($paymentStatus->Status == '1'){
+				return 'success';
+			}else if($paymentStatus->Status == '2'){
+				return 'failed';
+			}else if($paymentStatus->Status == '3'){
+				return 'canceled';
+			}
+		}else if(@$paymentStatus->ErrorCode){
+			return 'invalid';
+		}else{
+			return 'failed';
+		}
+		
+	}
+
 
 	/*print predefined CBK PG error*/
 	public function getCBKError($error_code)
@@ -242,25 +267,25 @@ class CBKPay
 		return $error;
 	}
 
-	public function getPaymentResultStatus($statusCode){
+	public function getPaymentResultMsg($statusCode){
 		switch ($statusCode) {
-			case -1:
+			case '-1':
 				$message = ("Session Invalid! Please try again.");
 				break;
 
-			case 0:
+			case '0':
 				$message = ("Session Invalid! Please try again.");
 				break;
 
-			case 1:
+			case '1':
 				$message = ("Payment Successful!!");
 				break;
 
-			case 2:
+			case '2':
 				$message = ("Payment Failed!!");
 				break;
 
-			case 3:
+			case '3':
 				$message = ("Session Expired! Please try again.");
 				break;
 

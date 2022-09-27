@@ -24,7 +24,7 @@ Route::prefix('{locale}')
     ->where(['locale'=>('en|ar')])->middleware(['check_lng'])->group(function (){
     Auth::routes();
 });
-Route::any("/payment-result",'Api\V1\PaymentController@paymentResult');
+// Route::any("/payment-result",'Api\V1\PaymentController@paymentResult');
 //Route::redirect("/",'login');
 Route::get('/testP',function (){
     \App\Http\Controllers\Auth\RegisterController::sendOtp('test' , '96566444569');

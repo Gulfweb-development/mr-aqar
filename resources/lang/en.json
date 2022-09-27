@@ -259,5 +259,8 @@
     "request_a_property": "Request a property",
     "contact_us": "Contact us",
     "terms_and_conditions": "Terms & Conditions",
-    "privacy_policy": "Privacy Policy"
+    "privacy_policy": "Privacy Policy",
+    "sorry_something_went_wrong": "Sorry Somethingwent wrong",
+    "transaction_id": "Transaction Id",
+    "payment_id": "Payment Id"
 }

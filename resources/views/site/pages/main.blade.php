@@ -3,14 +3,9 @@
 @isset($company)
     @section('title', $company->company_name . ' | ' . $company->company_phone)
 @endisset
-
 @isset($required_for_rent)
     @section('title', __('required_for_rent_page_title'))
 @endisset
-@section('meta')
-    <meta name="description" content="{{\App\Http\Controllers\site\MessageController::getSettingDetails('home_description_' . app()->getLocale())}}">
-    <meta name="keywords" content="{{\App\Http\Controllers\site\MessageController::getSettingDetails('keywords_' . app()->getLocale())}}">
-@endsection
 
 @php
 $side = app()->getLocale() === 'en' ? 'r' : 'l';

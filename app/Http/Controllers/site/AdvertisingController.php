@@ -316,8 +316,8 @@ class AdvertisingController extends Controller
             }
             return $this->fail(trans("main.insufficient_credit") . ' <a href="/' . app()->getLocale() . '/buypackage" >' . trans("main.buy_a_package") . '</a>');
         } catch (\Exception $exception) {
-            dd($exception);
             DB::rollback();
+            if(config('app.env') !== 'production') dd($exception);
             // return $this->fail($exception->getMessage(), -1, $request->all());
             return redirect()->back()->withInput()->with('status', 'unsuccess');
         }
@@ -428,7 +428,7 @@ class AdvertisingController extends Controller
         $old_otherImages = @$advertising->other_image
             && json_decode(@$advertising->other_image)
             && count(json_decode(@$advertising->other_image))
-            && json_decode(@$advertising->other_image)['other_image']
+            && json_decode(@$advertising->other_image, true)['other_image']
             ? json_decode(@$advertising->other_image, true)['other_image']
             : [];
 

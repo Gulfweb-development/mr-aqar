@@ -122,70 +122,72 @@
                             </div>
                         </div>
 
-                        <div class="mdc-card p-3 ad-details-gallery">
-                            <div class="main-carousel mb-3">
-{{--                                @if($advertising->advertising_type === 'premium')--}}
-{{--                                    <div class="gallery-badge {{$side == 'l' ? 'right-0' : 'left-0'}}">--}}
-{{--                                        <div class="row property-status" v-if="card.advertising_type === 'premium'">--}}
-{{--                                            <span class="red text-md">{{__('premium_short')}}</span>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                @endif--}}
-                                <div class="swiper-container">
-                                    <div class="swiper-wrapper">
-                                        <div class="swiper-slide center-xs">
-                                            <img src="/asset/assets/images/others/transparent-bg.png" alt="slide image"
-                                                 data-src="{{$advertising->main_image ? asset($advertising->main_image) : route('image.noimagebig', '') }}"
-                                                 zoom="{{$advertising->main_image ? asset($advertising->main_image) : route('image.noimagebig', '') }}"
-                                                 class="slide-item swiper-lazy max-hight-500 zoomable">
-                                            <div class="swiper-lazy-preloader"></div>
-                                        </div>
-                                        @foreach((array) optional(json_decode($advertising->other_image))->other_image as $other_image)
+                        @if ($advertising->purpose !== 'required_for_rent') 
+                            <div class="mdc-card p-3 ad-details-gallery">
+                                <div class="main-carousel mb-3">
+    {{--                                @if($advertising->advertising_type === 'premium')--}}
+    {{--                                    <div class="gallery-badge {{$side == 'l' ? 'right-0' : 'left-0'}}">--}}
+    {{--                                        <div class="row property-status" v-if="card.advertising_type === 'premium'">--}}
+    {{--                                            <span class="red text-md">{{__('premium_short')}}</span>--}}
+    {{--                                        </div>--}}
+    {{--                                    </div>--}}
+    {{--                                @endif--}}
+                                    <div class="swiper-container">
+                                        <div class="swiper-wrapper">
                                             <div class="swiper-slide center-xs">
-                                                <img src="/asset/assets/images/others/transparent-bg.png"
-                                                     alt="slide image" data-src="{{asset($other_image)}}"
-                                                     zoom="{{asset($other_image)}}"
+                                                <img src="/asset/assets/images/others/transparent-bg.png" alt="slide image"
+                                                     data-src="{{$advertising->main_image ? asset($advertising->main_image) : route('image.noimagebig', '') }}"
+                                                     zoom="{{$advertising->main_image ? asset($advertising->main_image) : route('image.noimagebig', '') }}"
                                                      class="slide-item swiper-lazy max-hight-500 zoomable">
                                                 <div class="swiper-lazy-preloader"></div>
                                             </div>
-                                        @endforeach
-                                    </div>
-                                    <button class="swiper-button-prev swipe-arrow mdc-fab mdc-fab--mini primary">
-                                        <span class="mdc-fab__ripple"></span>
-                                        <span class="mdc-fab__icon material-icons">keyboard_arrow_left</span>
-                                    </button>
-                                    <button class="swiper-button-next swipe-arrow mdc-fab mdc-fab--mini primary">
-                                        <span class="mdc-fab__ripple"></span>
-                                        <span class="mdc-fab__icon material-icons">keyboard_arrow_right</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="small-carousel">
-                                <div id="small-carousel" class="swiper-container">
-                                    <div class="swiper-wrapper">
-                                        <div class="swiper-slide center-xs">
-                                            <img src="/asset/assets/images/others/transparent-bg.png" alt="slide image"
-                                                 data-src="{{$advertising->main_image ? asset($advertising->main_image) : route('image.noimagebig', '') }}"
-                                                 class="slide-item swiper-lazy height-150 mx-auto">
-                                            <div class="swiper-lazy-preloader"></div>
+                                            @foreach((array) optional(json_decode($advertising->other_image))->other_image as $other_image)
+                                                <div class="swiper-slide center-xs">
+                                                    <img src="/asset/assets/images/others/transparent-bg.png"
+                                                         alt="slide image" data-src="{{asset($other_image)}}"
+                                                         zoom="{{asset($other_image)}}"
+                                                         class="slide-item swiper-lazy max-hight-500 zoomable">
+                                                    <div class="swiper-lazy-preloader"></div>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                        @foreach((array) optional(json_decode($advertising->other_image))->other_image as $other_image)
+                                        <button class="swiper-button-prev swipe-arrow mdc-fab mdc-fab--mini primary">
+                                            <span class="mdc-fab__ripple"></span>
+                                            <span class="mdc-fab__icon material-icons">keyboard_arrow_left</span>
+                                        </button>
+                                        <button class="swiper-button-next swipe-arrow mdc-fab mdc-fab--mini primary">
+                                            <span class="mdc-fab__ripple"></span>
+                                            <span class="mdc-fab__icon material-icons">keyboard_arrow_right</span>
+                                        </button>
+                                    </div>
+                                </div>
+    
+                                <div class="small-carousel">
+                                    <div id="small-carousel" class="swiper-container">
+                                        <div class="swiper-wrapper">
                                             <div class="swiper-slide center-xs">
-                                                <img src="/asset/assets/images/others/transparent-bg.png"
-                                                     alt="slide image" data-src="{{asset($other_image)}}"
+                                                <img src="/asset/assets/images/others/transparent-bg.png" alt="slide image"
+                                                     data-src="{{$advertising->main_image ? asset($advertising->main_image) : route('image.noimagebig', '') }}"
                                                      class="slide-item swiper-lazy height-150 mx-auto">
                                                 <div class="swiper-lazy-preloader"></div>
                                             </div>
-                                        @endforeach
+                                            @foreach((array) optional(json_decode($advertising->other_image))->other_image as $other_image)
+                                                <div class="swiper-slide center-xs">
+                                                    <img src="/asset/assets/images/others/transparent-bg.png"
+                                                         alt="slide image" data-src="{{asset($other_image)}}"
+                                                         class="slide-item swiper-lazy height-150 mx-auto">
+                                                    <div class="swiper-lazy-preloader"></div>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
 
                         <div class="mdc-card p-3 mt-3 ad-description-box w-100 d-md-none d-lg-none ad-details-company">
                             <div>
-                                <span class="social-icon flex-container rounded-sm border-gray primary-color" id="share"
+                                <span class="social-icon flex-container rounded-sm border-gray primary-color pointer-cursor" id="share"
                                       style="background: #E8E8E7; padding: 2px">
                                     <svg class="material-icons text-muted" style="width:16px;height:16px"
                                          viewBox="0 0 24 24">
@@ -367,7 +369,7 @@
             if (navigator.share) {
                 navigator.share({
                     title: '{{$name}}',
-                    text: '{{ \Illuminate\Support\Str::limit($advertising->description, 100, $end='...')}}',
+                    text: `{{ \Illuminate\Support\Str::limit($advertising->description, 100, $end='...')}}`,
                     url: '{{url()->current()}}'
                 })
                     .then(() => console.log('Share complete'))

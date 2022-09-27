@@ -22,7 +22,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
     Route::post('/test','GeneralController@test');
     Route::get('/test','GeneralController@test');
-    Route::get('/callback','AdvertisingController@paymentResult')->name('api.callback');
+    // Route::get('/callback','AdvertisingController@paymentResult')->name('api.callback');
 
 
     Route::get('/settings','GeneralController@getSettings');

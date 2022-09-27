@@ -2,8 +2,8 @@
     <a :href="href" style="text-decoration: none;" class="text-body">
     <div class="col-xs-12 rounded-sm p-0 mb-3" :class="card.advertising_type === 'premium' ? 'primary-card rounded-sm' : 'b-gray'">
         <div class="border p-2 overflow-hidden card-height">
-            <div class="row">
-                <div class="p-relative col-sm-2 w-sm1/5 p{{$side}}-image p-0 card-image-width-pc" :class="card.advertising_type === 'premium' ? 'image-box' : ''">
+            <div class="row mb-2">
+                <div class="p-relative col-sm-2 w-sm1/5 p{{$side}}-image p-0 card-image-width-pc" :class="{'image-box':card.advertising_type === 'premium', 'd-none' : card.purpose === 'required_for_rent'}">
                     <div :style="`background-image: url('` + (card.main_image ? card.main_image : '{{route('image.noimage', '')}}') + `')`" class="card-image">
 
                     </div>
@@ -24,7 +24,7 @@
                     </div>
 
                     <div :dir="isArabic(card.description) ? 'rtl' : 'ltr'" :class="card.advertising_type === 'premium' ? 'fw-600' : ''" class="d-none d-sm-block d-md-block d-lg-more-block mb-2 text-sm card-description" v-snip:js="1">
-                        @{{card.description  | truncate(180, '...')}}
+                        @{{card.description  | truncate(80, '...')}}
                     </div>
 
                     <span class="mdc-button mdc-button--outlined small-button d-none sm-show-button text-decoration-none text-sm" style="padding: 10px 15px; background: white;">
@@ -35,7 +35,7 @@
             </div>
             <div class="row">
                 <div :dir="isArabic(card.description) ? 'rtl' : 'ltr'" :class="card.advertising_type === 'premium' ? 'fw-600' : ''" class="col-xs-12 p-0 d-sm-none d-md-none d-lg-more-none text-sm card-description" v-snip:css="3">
-                    @{{card.description  | truncate(180, '...')}}
+                    @{{card.description  | truncate(80, '...')}}
                 </div>
             </div>
         </div>

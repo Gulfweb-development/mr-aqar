@@ -3538,3 +3538,7 @@ footer .copyright .mdc-button{
   margin: -16px;
   padding: 8px;
 }
+.justify-content-between{
+  justify-content: space-between;
+}
+.pointer-cursor{cursor: pointer;}

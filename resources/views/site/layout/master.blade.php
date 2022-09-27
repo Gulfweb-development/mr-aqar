@@ -1,12 +1,34 @@
+@php
+	$desc = @app()->view->getSections()['meta_description'] ? strip_tags(app()->view->getSections()['meta_description']) : \App\Http\Controllers\site\MessageController::getSettingDetails('meta_description_' . app()->getLocale());
+	$keywords = @app()->view->getSections()['meta_keywords'] ? strip_tags(app()->view->getSections()['meta_keywords']) : \App\Http\Controllers\site\MessageController::getSettingDetails('keywords_' . app()->getLocale());
+@endphp
+
 <!DOCTYPE html>
-<html lang="en" {!! app()->getLocale() === 'ar' ? ' dir="rtl"' : '' !!}>
+<html lang="{{  app()->getLocale() }}" {!! app()->getLocale() === 'ar' ? ' dir="rtl"' : '' !!}>
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>{{ $title }} @hasSection('title') - @yield('title') @endif </title>
-	@yield('meta')
+	<title>@hasSection('title')@yield('title') | @endif{{ $title }}</title>
+	
+
+	@hasSection('meta')
+		@yield('meta_description')
+	@else
+		<meta name="description" content="{{$desc}}">
+		<meta name="keywords" content="{{$keywords}}">
+	@endif
+
+	<link rel="canonical" href=”https://mr-aqar.com” />
+
+	<meta property="og:site_name" content="{{ config('app.name') }}">
+	<meta property="og:locale" content="{{ app()->getLocale() }}_GB" />
+	<meta property="og:title" content="@hasSection('title')@yield('title') | @endif{{ $title }}" />
+	<meta property="og:description" content="{{$desc}}" />
+	<meta property="og:image" itemprop="image" content="{{ asset('images/main/logo_header_' . app()->getLocale() . '.jpg') }}">
+	<meta property="og:type" content="website" />
+
 	<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
@@ -15,6 +37,7 @@
 	<meta name="msapplication-TileColor" content="#da532c">
 	<meta name="msapplication-config" content="/favicon/browserconfig.xml">
 	<meta name="theme-color" content="#ffffff">
+	<meta name=”robots” content=”noindex, follow” />
 	<!-- CSRF Token -->
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<!-- Scripts -->

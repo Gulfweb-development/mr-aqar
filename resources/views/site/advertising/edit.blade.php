@@ -75,8 +75,8 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                 @endif
 
                                 @else
-                                    <form action="{{ route('site.advertising.updateAdvertising', app()->getLocale()) }}"
-                                    method="post" id="sp-basic-form" class="row"  enctype="multipart/form-data">
+                                <form action="{{ route('site.advertising.updateAdvertising', app()->getLocale()) }}"
+                                    method="post" id="sp-basic-form" class="row" enctype="multipart/form-data">
                                     @method('PUT')
 
                                     <input type="hidden" name="id" value="{{@$advertising->id}}">
@@ -84,74 +84,78 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         <h1 class="fw-500 text-center">{{__('edit_ad_title')}}</h1>
                                     </div>
 
-                                @endif
-
+                                    @endif
                                     @csrf
 
-
                                     @if (str_contains(request()->path(), 'required_for_rent'))
-                                        <input type="hidden" name="advertising_type" value="normal">
+                                    <input type="hidden" name="advertising_type" value="normal">
                                     @else
-                                        <div class="col-xs-12 mb-2 p-0  @if(!str_contains(request()->path(), 'create')) d-none @endif ">
-                                            <p class="uppercase m-2 fw-500">{{__('ADVERTISE_TYPE')}}</p>
-                                            <div class="mdc-form-field w-100">
-                                                <div class="mdc-radio">
-                                                    <input class="mdc-radio__native-control" type="radio" id="normal"
-                                                        name="advertising_type" value="normal" {{
-                                                        old('advertising_type',  @$advertising->advertising_type) =="normal" ? 'checked' : '' }} {{
-                                                        $credit['count_normal_advertising']> 0 ?: 'disabled' }}>
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
+                                    <div
+                                        class="col-xs-12 mb-2 p-0  @if(!str_contains(request()->path(), 'create')) d-none @endif ">
+                                        <p class="uppercase m-2 fw-500">{{__('ADVERTISE_TYPE')}}</p>
+                                        <div class="mdc-form-field w-100">
+                                            <div class="mdc-radio">
+                                                <input class="mdc-radio__native-control" type="radio" id="normal"
+                                                    name="advertising_type" value="normal" {{ old('advertising_type',
+                                                    @$advertising->advertising_type) =="normal" ? 'checked' : '' }} {{
+                                                $credit['count_normal_advertising']> 0 ?: 'disabled' }}>
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
                                                 </div>
-                                                <label for="normal">
-                                                    {{__('normal_title')}}
-                                                    @if($credit['count_normal_advertising'] > 0)
-                                                    <span
-                                                        class="text-success m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
-                                                        {{__('remaining_title')}}</span>
-                                                    @else
-                                                    <span
-                                                        class="text-danger m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
-                                                        {{__('remaining_title')}}</span>
-                                                    @endif
-                                                </label>
                                             </div>
-                                            <br>
-                                            
-                                            <div class="mdc-form-field">
-                                                <div class="mdc-radio">
-                                                    <input class="mdc-radio__native-control" type="radio" id="premium"
-                                                        name="advertising_type" value="premium" {{
-                                                        old('advertising_type',  @$advertising->advertising_type )=="premium" ? 'checked' : '' }} {{
-                                                        $credit['count_premium_advertising']> 0 ?: 'disabled' }}>
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                </div>
-                                                <label for="premium">{{__('premium_short')}}</label>
-                                                @if($credit['count_premium_advertising'] > 0)
+                                            <label for="normal">
+                                                {{__('normal_title')}}
+                                                @if($credit['count_normal_advertising'] > 0)
                                                 <span
-                                                    class="text-success m{{$unSide}}-5">{{$credit['count_premium_advertising']}}
+                                                    class="text-success m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
                                                     {{__('remaining_title')}}</span>
                                                 @else
                                                 <span
-                                                    class="text-danger m{{$unSide}}-5">{{$credit['count_premium_advertising']}}
+                                                    class="text-danger m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
                                                     {{__('remaining_title')}}</span>
                                                 @endif
-                                            </div>
-                                            <br>
-                                            @error('advertising_type')
-                                            <span class="invalid-feedback warn-color d-inline-block">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
+                                            </label>
                                         </div>
-                                    @endif
+                                        <br>
 
-                                    <div class="col-xs-12   p-2">
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-radio">
+                                                <input class="mdc-radio__native-control" type="radio" id="premium"
+                                                    name="advertising_type" value="premium" {{ old('advertising_type',
+                                                    @$advertising->advertising_type )=="premium" ? 'checked' : '' }} {{
+                                                $credit['count_premium_advertising']> 0 ?: 'disabled' }}>
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                            </div>
+                                            <label for="premium">{{__('premium_short')}}</label>
+                                            @if($credit['count_premium_advertising'] > 0)
+                                            <span
+                                                class="text-success m{{$unSide}}-5">{{$credit['count_premium_advertising']}}
+                                                {{__('remaining_title')}}</span>
+                                            @else
+                                            <span
+                                                class="text-danger m{{$unSide}}-5">{{$credit['count_premium_advertising']}}
+                                                {{__('remaining_title')}}</span>
+                                            @endif
+                                        </div>
+                                        <br>
+                                        @error('advertising_type')
+                                        <span class="invalid-feedback warn-color d-inline-block">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    @endif
+                                    @if (str_contains(request()->path(), 'required_for_rent'))
+                                    <div class="col-xs-12 w-100">
+                                        <h3 class="text-center">{{ __('request_a_property') }}</h3>
+                                        <br>
+                                    </div>
+                                    @endif
+                                    <div class="col-xs-12   p-2 d-none">
                                         <div class="mdc-text-field mdc-text-field--outlined">
                                             <input class="mdc-text-field__input" placeholder="{{__('full_name_title')}}"
                                                 value="{{auth()->user()->name}}" disabled required>
@@ -166,7 +170,6 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         </div>
                                     </div>
 
-                                    @if (!str_contains(request()->path(), 'required_for_rent')) 
                                     <div class="col-xs-12   p-2">
                                         <div class="mdc-text-field mdc-text-field--outlined">
                                             <input class="mdc-text-field__input" name="phone_number"
@@ -187,7 +190,6 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         </span>
                                         @enderror
                                     </div>
-                                    @endif
 
                                     <div class="col-xs-12   p-2">
                                         <div class="mdc-select mdc-select--outlined role-list mdc-select--required">
@@ -255,7 +257,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                     </div>
 
 
-                                    
+
                                     <script type="module">
                                         // after city select. update areas list with ajax.
                                         $(document).on('inputUpdated', function(e, event_data) {
@@ -292,6 +294,9 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                                         console.log($('#areasList').parent().parent().find('.mdc-select__selected-text'), selectedArea)
                                                         $('#areasList').parent().parent().find('.mdc-select__selected-text').text(selectedArea)
                                                         $('#area_id').val(oldId)
+                                                        $('#areasList').parent().parent().find('.mdc-select__selected-text').focus()
+                                                        $('#areasList').parent().parent().find('.mdc-select__selected-text').focus()
+                                                        $('#areasList').parent().find('.mdc-select--invalid').removeClass('mdc-select--invalid')
                                                     }
                                                 } else
                                                     console.error('error in get areas with ajax request')
@@ -335,43 +340,43 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         </span>
                                         @enderror
                                     </div>
-                                    
-                                    @if (str_contains(request()->path(), 'required_for_rent')) 
-                                        <input type="hidden" name="purpose" value="required_for_rent">
+
+                                    @if (str_contains(request()->path(), 'required_for_rent'))
+                                    <input type="hidden" name="purpose" value="required_for_rent">
                                     @else
-                                        <div class="col-xs-12   p-2">
-                                            <div class="mdc-select mdc-select--outlined mdc-select--required">
-                                                <input type="hidden" name="purpose" id="purpose"
-                                                    value="{{ old('purpose', @$advertising->purpose) }}">
-                                                <div class="mdc-select__anchor" aria-required="true">
-                                                    <i class="mdc-select__dropdown-icon"></i>
-                                                    <div class="mdc-select__selected-text"></div>
-                                                    <div class="mdc-notched-outline">
-                                                        <div class="mdc-notched-outline__leading"></div>
-                                                        <div class="mdc-notched-outline__notch">
-                                                            <label class="mdc-floating-label">{{__('purpose')}}</label>
-                                                        </div>
-                                                        <div class="mdc-notched-outline__trailing"></div>
+                                    <div class="col-xs-12   p-2">
+                                        <div class="mdc-select mdc-select--outlined mdc-select--required">
+                                            <input type="hidden" name="purpose" id="purpose"
+                                                value="{{ old('purpose', @$advertising->purpose) }}">
+                                            <div class="mdc-select__anchor" aria-required="true">
+                                                <i class="mdc-select__dropdown-icon"></i>
+                                                <div class="mdc-select__selected-text"></div>
+                                                <div class="mdc-notched-outline">
+                                                    <div class="mdc-notched-outline__leading"></div>
+                                                    <div class="mdc-notched-outline__notch">
+                                                        <label class="mdc-floating-label">{{__('purpose')}}</label>
                                                     </div>
-                                                </div>
-                                                <div class="mdc-select__menu mdc-menu mdc-menu-surface">
-                                                    <ul class="mdc-list">
-                                                        @foreach($purposes as $purpose)
-                                                        @php $isOld = old('purpose', @$advertising->purpose) == $purpose;
-                                                        @endphp
-                                                        <li class="mdc-list-item {{ $isOld ? 'mdc-list-item--selected' : '' }}"
-                                                            {{ $isOld ? 'aria-selected="true"' : '' }}
-                                                            data-value="{{@$purpose}}">{{ __($purpose) }}</li>
-                                                        @endforeach
-                                                    </ul>
+                                                    <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
                                             </div>
-                                            @error('purpose')
-                                            <span class="invalid-feedback warn-color d-inline-block">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
+                                            <div class="mdc-select__menu mdc-menu mdc-menu-surface">
+                                                <ul class="mdc-list">
+                                                    @foreach($purposes as $purpose)
+                                                    @php $isOld = old('purpose', @$advertising->purpose) == $purpose;
+                                                    @endphp
+                                                    <li class="mdc-list-item {{ $isOld ? 'mdc-list-item--selected' : '' }}"
+                                                        {{ $isOld ? 'aria-selected="true"' : '' }}
+                                                        data-value="{{@$purpose}}">{{ __($purpose) }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
                                         </div>
+                                        @error('purpose')
+                                        <span class="invalid-feedback warn-color d-inline-block">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
                                     @endif
 
                                     <div class="col-xs-12   p-2">
@@ -417,7 +422,8 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
 
                                     @if (!str_contains(request()->path(), 'required_for_rent'))
                                     <div class="col-xs-12 p-2">
-                                        <input type="file" name="other_image[]" class="my-pond" accept=".png,.jpg,.jpeg">
+                                        <input type="file" name="other_image[]" class="my-pond"
+                                            accept=".png,.jpg,.jpeg">
                                     </div>
                                     @endif
 
@@ -488,7 +494,6 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
             });
         @endif
 
-	
 </script>
 @endif
 

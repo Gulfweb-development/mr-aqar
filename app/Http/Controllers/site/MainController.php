@@ -9,6 +9,7 @@ use App\Models\PaymentResponse;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\Advertising;
+use App\Models\OrderTransaction;
 use App\Models\Package;
 use App\Models\PackageHistory;
 use App\Models\Payment;
@@ -67,20 +68,22 @@ class MainController extends Controller
 
         $aboutus_large_ar = Setting::where('setting_key', 'aboutus_large_ar')->value('setting_value');
         $aboutus_large_en = Setting::where('setting_key', 'aboutus_large_en')->value('setting_value');
-        
+
         return view('site.pages.aboutus', compact('aboutus_large_ar', 'aboutus_large_en'));
     }
 
-    public function termsAndConditions(){
+    public function termsAndConditions()
+    {
         $data_ar = Setting::where('setting_key', 'terms_and_conditions_ar')->value('setting_value');
         $data_en = Setting::where('setting_key', 'terms_and_conditions_en')->value('setting_value');
         return view('site.pages.simplePage', compact('data_ar', 'data_en'));
     }
 
-    public function privacyPolicy(){
+    public function privacyPolicy()
+    {
         $data_ar = Setting::where('setting_key', 'privacy_policy_ar')->value('setting_value');
         $data_en = Setting::where('setting_key', 'privacy_policy_en')->value('setting_value');
-        
+
         return view('site.pages.simplePage', compact('data_ar', 'data_en'));
     }
 
@@ -218,13 +221,15 @@ class MainController extends Controller
     {
         $record = $this->getBalance();
 
+        $credit = $this->getCreditUser(auth()->id());
         $user = auth()->user();
         $ads = Advertising::where('user_id', $user->id)
             ->orderBy('id', 'desc')->paginate(20);
 
         return view('site.pages.myAds', [
             'balance' => $record,
-            'ads' => $ads
+            'ads' => $ads,
+            'credit' => $credit
         ]);
     }
 
@@ -262,6 +267,8 @@ class MainController extends Controller
         if ($credit === [])
             $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
 
+            // dd(@$statics, @$credit, @$normals);
+
         return view('site.pages.buyPackage', [
             'balance' => $record,
             'normals' => $normals,
@@ -281,7 +288,7 @@ class MainController extends Controller
                 'package_id'   => 'required|numeric',
                 'type'         => 'required|in:static,normal',
                 'count'        => 'nullable|numeric',
-                'payment_type' => 'required|in:Cash,MyFatoorah',
+                'payment_type' => 'required|in:Cash,CBKPay',
             ]);
             if ($validate->fails()) {
                 return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'validation_failed']);
@@ -327,8 +334,8 @@ class MainController extends Controller
                 'user_id'      => $user->id,
                 'package_id'   => $request->package_id,
                 'payment_type' => $request->payment_type,
-                'price'        => $price,
-                'status'       => 'new'
+                'amount'        => $price,
+                'status'       => 'new',
             ]);
 
             //todo:: 'is_payed'=>1  change to 0 after implement logic payment
@@ -357,9 +364,9 @@ class MainController extends Controller
             $payment->save();
 
 
-            if ($request->get('payment_type') == "MyFatoorah" and $price > 0) {
+            if ($request->get('payment_type') == "CBKPay" and $price > 0) {
                 $cbkPay = new CBKPay();
-                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/en/payment-response/cbk');
+                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/'.app()->getLocale().'/payment-response/cbk');
                 return $form;
             } else {
                 // if payment type is cash
@@ -386,50 +393,84 @@ class MainController extends Controller
     public function paymentResponseCBK(Request $request)
     {
         try {
+            // !!for testing only
+            // $paymentStatus = (object)$request->all();
+
+            $payment= [];
+            $paymentStatus= [];
             $paymentResponse = new PaymentResponse();
             $paymentResponse->response = json_encode($request->all());
             if (empty($request->encrp)) {
-                throw new Exception('payment failed');
+                throw new \Exception('payment failed');
             }
             $cbkPay = new CBKPay();
-            $paymentStatus = $cbkPay->getPaymentStatus($request->encrp);
+            $paymentStatus = $cbkPay->getPaymentStatusDetails($request->encrp);
+            $paymentResponse->status_data = json_encode($paymentStatus);
+
             if (!@$paymentStatus || (!@$paymentStatus->Status && !@$paymentStatus->ErrorCode)) {
-                throw new Exception("Unable to get payment status");
+                throw new \Exception("Unable to get payment status");
             }
             if (@$paymentStatus->Status) {
-                $message = $cbkPay->getPaymentResultStatus($paymentStatus->Status);
+                $message = $cbkPay->getPaymentResultMsg($paymentStatus->Status);
             } elseif (@$paymentStatus->ErrorCode) {
                 $message = $cbkPay->getCBKError($paymentStatus->ErrorCode);
             }
-
-            if (@$paymentStatus->Status !== 1 || !@$paymentStatus->ref_id) {
-                $payment->status = "failed";
-                $payment->packageHistory->accept_by_admin = 0;
-                throw new Exception($message);
+            $payment = Payment::with(['package', 'packageHistory', 'user'])->where('ref_id', @$paymentStatus->PayId ?? @$paymentStatus->PayTrackID)->first();
+            if(@$paymentStatus->Status !== '1' || !@$payment){
+                $paymentResponse->status = $cbkPay->getPaymentStatus($paymentStatus);
+                if(@$payment){
+                    $payment->description = @$message;
+                    $payment->status = $cbkPay->getPaymentStatus($paymentStatus) === 'invalid' ? 'canceled' : $cbkPay->getPaymentStatus($paymentStatus);
+                    $payment->save();
+                    $payment->packageHistory->accept_by_admin = 0;
+                    $payment->packageHistory->update();
+                }
+                throw new \Exception($message);
             }
-            $paymentResponse->ref_id = $paymentStatus->ref_id;
-            $paymentResponse->status = 'success';
-
-            $payment = Payment::with(['package', 'packageHistory', 'user'])->where('ref_id', $paymentStatus->ref_id)->first();
-            if (!@$payment) {
-                throw new Exception('Sorry something went wrong!!');
-            }
-            $paymentResponse->user_id = $payment->user_id;
+           
+            $paymentResponse->user_id      = $payment->user_id;
             
-            $refId = $payment->PayId;
+            $refId                 = @$payment->ref_id;
             $payment->user->update(['package_id' => intval($payment->package_id)]);
-            $payment->status = "completed";
-            $payment->description = $getRecorById['Error'];
+            $payment->status       = "completed";
+            $payment->payment_type = @$paymentStatus->PayType;
+            $payment->track_id     = @$paymentStatus->TrackId;
+            $payment->payed_amount = @$paymentStatus->Amount;
+            $payment->description  = @$paymentStatus->Message;
             $payment->update();
             $payment->packageHistory->accept_by_admin = 1;
-            $payment->packageHistory->is_payed = 1;
+            $payment->packageHistory->is_payed        = 1;
             $payment->packageHistory->update();
-            $paymentResponse->payment_id = $payment->id;
+            $paymentResponse->payment_id   = $payment->id;
 
-            return view("site.pages.payment", compact('message', 'refId', 'paymentResponse', 'payment', 'order'));
+            $order             = new OrderTransaction();
+            $order->api_ref_id = @$refId;
+            $order->payment_id = @$payment->id;
+            $order->user_id    = @$payment->user_id;
+            $order->type       = @$payment->packageHistory->type;
+            $order->package_id = @$payment->package_id;
+            // $order->presult    = $paymentStatus;
+            // $order->postdate   = $paymentStatus;
+            $order->tranid     = @$paymentStatus->TransactionId;
+            $order->auth       = @$paymentStatus->AuthCode;
+            $order->ref        = @$paymentStatus->ReferenceId;
+            $order->trackid    = @$paymentStatus->TrackId;
+            $order->amt        = @$paymentStatus->Amount;
+            $order->udf1       = @$paymentStatus->MerchUdf1;
+            $order->udf2       = @$paymentStatus->MerchUdf2;
+            $order->udf3       = @$paymentStatus->MerchUdf3;
+            $order->udf4       = @$paymentStatus->MerchUdf4;
+            $order->udf5       = @$paymentStatus->MerchUdf5;
+            $order->pdate      = @$paymentStatus->PostDate;
+            $order->accept     = 1;
+            $order->save();
+            
+            return view("site.pages.payment", compact('message', 'refId', 'paymentResponse', 'payment', 'paymentStatus'));
         } catch (\Exception $e) {
             $message = $e->getMessage() ?? 'Payment Failed!';
-            return view("site.pages.payment", compact('message'));
+            $unsuccessful = true;
+            return $e;
+            return view("site.pages.payment", compact('unsuccessful','message','paymentStatus','payment', 'paymentStatus'));
         } finally {
             $paymentResponse->save();
         }
@@ -441,70 +482,70 @@ class MainController extends Controller
     }
 
 
-    private function MYFToken()
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/Token' : 'https://apidemo.myfatoorah.com/Token');
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(array('grant_type' => 'password', 'username' => env('MF_USERNAME'), 'password' => env('MF_PASSWORD'))));
-        $result = curl_exec($curl);
-        curl_close($curl);
-        $json = json_decode($result, true);
-        if (isset($json['access_token']) && !empty($json['access_token'])) {
-            return $json['access_token'];
-        } else
-            throw new \Exception(__('throttle', ['seconds' => 30]));
-    }
+    // private function MYFToken()
+    // {
+    //     $curl = curl_init();
+    //     curl_setopt($curl, CURLOPT_URL, env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/Token' : 'https://apidemo.myfatoorah.com/Token');
+    //     curl_setopt($curl, CURLOPT_POST, 1);
+    //     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    //     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    //     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+    //     curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query(array('grant_type' => 'password', 'username' => env('MF_USERNAME'), 'password' => env('MF_PASSWORD'))));
+    //     $result = curl_exec($curl);
+    //     curl_close($curl);
+    //     $json = json_decode($result, true);
+    //     if (isset($json['access_token']) && !empty($json['access_token'])) {
+    //         return $json['access_token'];
+    //     } else
+    //         throw new \Exception(__('throttle', ['seconds' => 30]));
+    // }
 
-    public function paymentResult(Request $request)
-    {
-        if (empty($request->paymentId)) {
-            return redirect('/' . app()->getLocale() . '/');
-        }
-        $url =  (env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/ApiInvoices/Transaction/' : 'https://apidemo.myfatoorah.com/ApiInvoices/Transaction/') . $request->paymentId;
-        $soap_do1 = curl_init();
-        curl_setopt($soap_do1, CURLOPT_URL, $url);
-        curl_setopt($soap_do1, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($soap_do1, CURLOPT_TIMEOUT, 10);
-        curl_setopt($soap_do1, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($soap_do1, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($soap_do1, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($soap_do1, CURLOPT_POST, false);
-        curl_setopt($soap_do1, CURLOPT_POST, 0);
-        curl_setopt($soap_do1, CURLOPT_HTTPGET, 1);
-        curl_setopt($soap_do1, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8', 'Accept: application/json', 'Authorization: Bearer ' . $this->MYFToken()));
-        $result_in = curl_exec($soap_do1);
-        $err_in = curl_error($soap_do1);
-        $file_contents = htmlspecialchars(curl_exec($soap_do1));
-        curl_close($soap_do1);
-        $getRecorById = json_decode($result_in, true);
-        $payment = Payment::with(['package', 'packageHistory', 'user'])->where('pay_id', $getRecorById['InvoiceId'])->first();
-        $order = DB::table('tbl_transaction_api')->where("trackid", $getRecorById['InvoiceId'])->first();
-        $refId = null;
-        $message = $getRecorById['Error'];
-        $trackid = $getRecorById['InvoiceId'];
-        if ($payment) {
-            $refId = $payment->ref_id;
-            if (!empty($getRecorById['TransactionStatus']) && $getRecorById['TransactionStatus'] == 2) {
-                $payment->status = "completed";
-                $payment->packageHistory->accept_by_admin = 1;
-                $payment->packageHistory->is_payed = 1;
-                \App\User::find($payment->user->id)->update(['package_id' => intval($payment->package_id)]);
-            } else {
-                $payment->status = "failed";
-                $payment->packageHistory->accept_by_admin = 0;
-            }
-            $payment->description = $getRecorById['Error'];
-            $payment->update();
-            $payment->packageHistory->update();
-            //event(new \App\Events\Payment($message, $payment, $refId, $trackid));
+    // public function paymentResult(Request $request)
+    // {
+    //     if (empty($request->paymentId)) {
+    //         return redirect('/' . app()->getLocale() . '/');
+    //     }
+    //     $url =  (env('ISLIVE', true) ? 'https://apikw.myfatoorah.com/ApiInvoices/Transaction/' : 'https://apidemo.myfatoorah.com/ApiInvoices/Transaction/') . $request->paymentId;
+    //     $soap_do1 = curl_init();
+    //     curl_setopt($soap_do1, CURLOPT_URL, $url);
+    //     curl_setopt($soap_do1, CURLOPT_CONNECTTIMEOUT, 10);
+    //     curl_setopt($soap_do1, CURLOPT_TIMEOUT, 10);
+    //     curl_setopt($soap_do1, CURLOPT_RETURNTRANSFER, true);
+    //     curl_setopt($soap_do1, CURLOPT_SSL_VERIFYPEER, false);
+    //     curl_setopt($soap_do1, CURLOPT_SSL_VERIFYHOST, false);
+    //     curl_setopt($soap_do1, CURLOPT_POST, false);
+    //     curl_setopt($soap_do1, CURLOPT_POST, 0);
+    //     curl_setopt($soap_do1, CURLOPT_HTTPGET, 1);
+    //     curl_setopt($soap_do1, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8', 'Accept: application/json', 'Authorization: Bearer ' . $this->MYFToken()));
+    //     $result_in = curl_exec($soap_do1);
+    //     $err_in = curl_error($soap_do1);
+    //     $file_contents = htmlspecialchars(curl_exec($soap_do1));
+    //     curl_close($soap_do1);
+    //     $getRecorById = json_decode($result_in, true);
+    //     $payment = Payment::with(['package', 'packageHistory', 'user'])->where('pay_id', $getRecorById['InvoiceId'])->first();
+    //     $order = DB::table('tbl_transaction_api')->where("trackid", $getRecorById['InvoiceId'])->first();
+    //     $refId = null;
+    //     $message = $getRecorById['Error'];
+    //     $trackid = $getRecorById['InvoiceId'];
+    //     if ($payment) {
+    //         $refId = $payment->ref_id;
+    //         if (!empty($getRecorById['TransactionStatus']) && $getRecorById['TransactionStatus'] == 2) {
+    //             $payment->status = "completed";
+    //             $payment->packageHistory->accept_by_admin = 1;
+    //             $payment->packageHistory->is_payed = 1;
+    //             \App\User::find($payment->user->id)->update(['package_id' => intval($payment->package_id)]);
+    //         } else {
+    //             $payment->status = "failed";
+    //             $payment->packageHistory->accept_by_admin = 0;
+    //         }
+    //         $payment->description = $getRecorById['Error'];
+    //         $payment->update();
+    //         $payment->packageHistory->update();
+    //         //event(new \App\Events\Payment($message, $payment, $refId, $trackid));
 
-        }
-        return view("site.pages.payment", compact('message', 'refId', 'trackid', 'payment', 'order'));
-    }
+    //     }
+    //     return view("site.pages.payment", compact('message', 'refId', 'trackid', 'payment', 'order'));
+    // }
 
     public function getAreas()
     {

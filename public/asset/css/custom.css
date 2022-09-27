@@ -3,3 +3,8 @@
     justify-content: center;
     align-items: center;
 }
+@media (max-width: 600px){
+    .fs-sm-20{
+        font-size: 20px;
+    }
+}

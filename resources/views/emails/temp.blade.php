@@ -209,7 +209,7 @@
                                                     @if($paymentMethod==2)
                                                         <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> Cash </td>
                                                     @else
-                                                        <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> {{$order->paid==1? "Myfatoorah(Paid)": "Myfatoorah(Not Paid)" }} </td>
+                                                        <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> {{$order->paid==1? "CBKPay(Paid)": "CBKPay(Not Paid)" }} </td>
 
                                                     @endif
                                                 </tr>

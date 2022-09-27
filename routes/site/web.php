@@ -26,7 +26,7 @@ Route::get('/terms_and_conditions','MainController@termsAndConditions');
 Route::get('/privacy_policy','MainController@privacyPolicy');
 Route::get('/contact','MessageController@create')->name('Message.create');
 Route::post('/contact', 'MessageController@store')->name('message.store');
-Route::get('required', function() {return view('site.pages.main', ['sell' => true]);})->name('required_for_rent');
+Route::get('required', function() {return view('site.pages.main', ['required_for_rent' => true]);})->name('required_for_rent');
 
 ////////////// companies
 Route::group(['prefix' => 'companies'] , function (){
@@ -63,12 +63,12 @@ Route::group(['middleware'=>['auth']],function (){
     Route::delete('/ad/delete/{advertising}', 'AdvertisingController@delete')->name('Advertising.delete');
     Route::get('/buypackage', 'MainController@buyPackage')->name('Main.buyPackage');
     Route::post('/buypackageorcredit', 'MainController@buyPackageOrCredit')->name('Main.buyPackageOrCredit');
-    Route::post('/payment-response/cbk', 'MainController@paymentResponseCBK')->name('Main.paymentResponseCBK');
 });
+Route::any('/payment-response/cbk', 'MainController@paymentResponseCBK')->name('Main.paymentResponseCBK');
 
 
 /////////////payment result
-Route::get("/payment-result",'MainController@paymentResult')->name('callback');
+// Route::get("/payment-result",'MainController@paymentResult')->name('callback');
 
 
 
