@@ -295,7 +295,7 @@ body {
 }
 
 .card-height {
-  max-height: 137px;
+  /* max-height: 137px; */
 }
 
 .overflow-hidden {
@@ -366,7 +366,7 @@ span.multiselect__placeholder {
     display: inline-flex !important;
   }
   .card-height {
-    height: 127px;
+    /* height: 127px; */
   }
   .card-image {
     width: 14vw;
@@ -679,13 +679,59 @@ span.multiselect__placeholder {
     flex-basis: 88% !important;
   }
 }
+
+/* Modal Start*/
+
+.mdc-card.main-content-header.mb-5.sec-min-h {
+  min-height: 51vh !important;
+}
+.modal {
+position: absolute;
+inset: 0;
+z-index: 9;
+background: #00000054;
+display: flex;
+align-items: center;
+justify-content: center;
+display: none;
+}
+.modal .modal-header{
+display: flex;
+justify-content: space-between;
+padding: .4rem 0 .8rem;
+}
+.modal-dialog.modal-lg {
+background: white;
+border: 1px solid gray;
+box-shadow: 1px 4px 10px #00000061;
+padding: 1rem;
+margin: 1rem;
+border-radius: 8px;
+width: -webkit-fill-available;
+}
+.modal-content{
+margin-top: unset !important;
+}
+.modal button.close{
+all: unset;
+font-size:2rem;
+float: right;
+line-height: 0;
+}
+.modal .modal-body{
+padding: .6rem 0 2rem;
+}
+/* Modal End */
+
 @media screen and (min-width: 500px) and (max-width: 700px) {
   .card-mobile-tablet {
     flex-basis: 33.33%;
     max-width: 33.33%;
   }
 }
-
-.mdc-card.main-content-header.mb-5.sec-min-h {
-    min-height: 51vh !important;
+/* pc */
+@media screen and (min-width: 1200px) {
+  .modal-dialog.modal-lg {
+    max-width: 1200px !important;
+  }
 }

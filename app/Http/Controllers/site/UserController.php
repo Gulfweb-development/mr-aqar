@@ -53,8 +53,6 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
-
-
     }
 
     public function verifyUserBySmsCode(verifySmsCodeRequest $request)
@@ -79,32 +77,32 @@ class UserController extends Controller
         try {
 
             DB::beginTransaction();
-            $user = User::makeUser(['name' => $request->name, 'email' => $request->email, 'password' => bcrypt($request->password),
+            $user = User::makeUser([
+                'name' => $request->name, 'email' => $request->email, 'password' => bcrypt($request->password),
                 'type_usage' => $request->type_usage, 'company_name' => $request->company_name, 'mobile' => $request->mobile,
-                'device_token' => $request->device_token, 'lang' => $request->language, 'api_token' => Str::random(60)]);
+                'device_token' => $request->device_token, 'lang' => $request->language, 'api_token' => Str::random(60)
+            ]);
 
             if ($request->verified_office == 1) {
                 $user->verified_office = 1;
                 $user->save();
             }
-            $package = Package::where("title_en", "gift credit")->where('is_enable' , 1)->where('user_type' , $request->type_usage)->first();
+            $package = Package::where("title_en", "gift credit")->where('is_enable', 1)->where('user_type', $request->type_usage)->first();
             if (isset($package)) {
                 $countDay = optional($package)->count_day;
                 $today = date("Y-m-d");
                 $date = strtotime("+$countDay day", strtotime($today));
                 $expireDate = date("Y-m-d", $date);
-                $countNormal= $package->count_advertising ;
-                $countPremium= $package->count_premium ;
+                $countNormal = $package->count_advertising;
+                $countPremium = $package->count_premium;
                 PackageHistory::create(['title_en' => $package->title_en, 'title_ar' => $package->title_ar, 'user_id' => $user->id, 'type' => "static", 'package_id' => $request->package_id, 'date' => date('Y-m-d'), 'is_payed' => 1, 'price' => $package->price, 'count_day' => $package->count_day, 'count_show_day' => $package->count_show_day, 'count_advertising' => $countNormal, 'count_premium' => $countPremium, 'count' => 1, 'accept_by_admin' => 1, 'expire_at' => $expireDate]);
             }
             DB::commit();
             return $this->success(trans('main.register_success'));
-
         } catch (\Exception $exception) {
             DB::rollback();
             return $this->fail("");
         }
-
     }
 
     // save uploaded licence image
@@ -112,8 +110,8 @@ class UserController extends Controller
     {
         $mainImageFile = $image;
         $fileName = $mainImageFile->getClientOriginalName();
-        $storeName = uniqid(time()).$fileName;
-        $path ='/resources/uploads/images/licences/'.$storeName;
+        $storeName = uniqid(time()) . $fileName;
+        $path = '/resources/uploads/images/licences/' . $storeName;
         $mainImageFile->move(public_path('resources/uploads/images/licences'), $storeName);
         return $path;
     }
@@ -123,8 +121,8 @@ class UserController extends Controller
     {
         $mainImageFile = $image;
         $fileName = $mainImageFile->getClientOriginalName();
-        $storeName = uniqid(time()).$fileName;
-        $path ='/resources/uploads/images/avatars/'.$storeName;
+        $storeName = uniqid(time()) . $fileName;
+        $path = '/resources/uploads/images/avatars/' . $storeName;
         $mainImageFile->move(public_path('resources/uploads/images/avatars'), $storeName);
         return $path;
     }
@@ -139,7 +137,7 @@ class UserController extends Controller
             'avatar' => 'mimes:jpeg,bmp,png|max:2048',
         ];
 
-        if ( $user->isCompany ) {
+        if ($user->isCompany) {
             $rules['image'] = 'nullable|image|mimes:jpg,png,jpeg|max:1024';
             $rules['company_name'] = 'required|max:250';
             $rules['email'] = 'nullable|email';
@@ -155,15 +153,15 @@ class UserController extends Controller
         $licenceFile = $request->licence;
         $avatarFile = $request->avatar;
 
-        if (isset($licenceFile)){
+        if (isset($licenceFile)) {
             $licence = $this->saveLicence($licenceFile);
-            $user->licence = $licence ;
+            $user->licence = $licence;
         }
-        if (isset($avatarFile)){
+        if (isset($avatarFile)) {
             $avatar = $this->saveAvatar($avatarFile);
-            $user->image_profile = $avatar ;
+            $user->image_profile = $avatar;
         }
-        if ( $user->isCompany ) {
+        if ($user->isCompany) {
             $user->company_name = $request->company_name;
             $user->company_phone = $request->company_phone;
 
@@ -171,11 +169,11 @@ class UserController extends Controller
             CompanyController::insertSocials($request, $user->id);
         }
 
-        if($user->save()) {
-            return redirect(app()->getLocale().'/profile#result')->with(['status' => 'success']);
+        if ($user->save()) {
+            return redirect(app()->getLocale() . '/profile#result')->with(['status' => 'success']);
             //return redirect()->route( 'Main.profile', app()->getLocale() )->with( [ 'status' => 'success' ] );
         } else {
-            return redirect(app()->getLocale().'/profile#result')->with(['status' => 'unsuccess']);
+            return redirect(app()->getLocale() . '/profile#result')->with(['status' => 'unsuccess']);
             //return redirect()->route( 'Main.profile', app()->getLocale() )->with( [ 'status' => 'unsuccess'] );
         }
     }
@@ -189,15 +187,15 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        if (Hash::check($request->current, $user->password)){
+        if (Hash::check($request->current, $user->password)) {
             $user->password = bcrypt($request->password);
-            if($user->save()) {
-                return redirect(app()->getLocale().'/changepassword#result')->with(['status' => 'success']);
+            if ($user->save()) {
+                return redirect(app()->getLocale() . '/changepassword#result')->with(['status' => 'success']);
             } else {
-                return redirect(app()->getLocale().'/changepassword#result')->with(['status' => 'unsuccess']);
+                return redirect(app()->getLocale() . '/changepassword#result')->with(['status' => 'unsuccess']);
             }
         } else {
-            return redirect(app()->getLocale().'/changepassword#result')->with(['status' => 'dontmatch']);
+            return redirect(app()->getLocale() . '/changepassword#result')->with(['status' => 'dontmatch']);
         }
     }
 
@@ -222,8 +220,6 @@ class UserController extends Controller
             return $this->success("");
         }
         return $this->fail(trans('main.not_exist_user'));
-
-
     }
 
     public function sendRequestSmsCode(Request $request)
@@ -279,8 +275,6 @@ class UserController extends Controller
             return $this->success("", $record);
         }
         return $this->fail("empty user balance");
-
-
     }
 
     public function payments(Request $request)
@@ -288,7 +282,6 @@ class UserController extends Controller
         $user = auth()->user();
         $list = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->paginate(10);
         return $this->success("", $list);
-
     }
 
 
@@ -302,11 +295,9 @@ class UserController extends Controller
                 return $this->success("", $credit);
             }
             return $this->fail("first subscribe");
-
         } catch (\Exception $exception) {
             return $this->fail("error server");
         }
-
     }
 
     public function updateLanguage(Request $request)
@@ -324,8 +315,6 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
-
-
     }
 
     public function login(Request $request)
@@ -371,25 +360,26 @@ class UserController extends Controller
 
     public function userProfile(Request $request)
     {
-        $user=User::whereMobile($request->mobile)->first();
-        $credit=$this->getCreditUser($user->id);
+        $user = User::whereMobile($request->mobile)->first();
+        $credit = $this->getCreditUser($user->id);
         $advertises = Advertising::where('user_id', $user->id)
             ->whereNotNull('expire_at')
-            ->where('expire_at' , '>' , date('Y-m-d'))
+            ->where('expire_at', '>', date('Y-m-d'))
             ->orderBy('created_at', 'desc')
             ->get();
-        return view('site.user.showUser',compact('user','credit','advertises'));
+        return view('site.user.showUser', compact('user', 'credit', 'advertises'));
     }
 
     public function getAdvertises(Request $request)
     {
-        return Advertising::where('user_id',$request['user_id'])->where('expire_at' , '>' , date('Y-m-d'))
+        return Advertising::where('user_id', $request['user_id'])->where('expire_at', '>', date('Y-m-d'))
             ->whereNotNull('expire_at')
-            ->orderBy('created_at', 'desc')->with(['city','area'])->get();
+            ->orderBy('created_at', 'desc')->with(['city', 'area'])->get();
     }
 
     ///////////////////////////////forgot password reset///////////////
-    public function showLinkRequestForm(){
+    public function showLinkRequestForm()
+    {
         return view('auth.passwords.email');
     }
 
@@ -406,23 +396,23 @@ class UserController extends Controller
                 ->withInput();
         }
 
-        if ( $request->has('resend') ){
+        if ($request->has('resend')) {
             $otp = rand(10000, 99999);
             RegisterController::sendOtp($otp, $request->mobile);
-            $request->merge(['code' => $otp ,'codeValidation' => Hash::make($otp . " : Erfan Ebrahimi : ".$request->mobile )]);
+            $request->merge(['code' => $otp, 'codeValidation' => Hash::make($otp . " : Erfan Ebrahimi : " . $request->mobile)]);
             return redirect()->back()->withInput()->with('success', __('validate_resend'));
         }
-        if ( ! $request->has('code') ){
+        if (!$request->has('code')) {
             $otp = rand(10000, 99999);
             RegisterController::sendOtp($otp, $request->mobile);
-            $request->merge(['code' => $otp ,'codeValidation' => Hash::make($otp . " : Erfan Ebrahimi : ".$request->mobile )]);
+            $request->merge(['code' => $otp, 'codeValidation' => Hash::make($otp . " : Erfan Ebrahimi : " . $request->mobile)]);
             return redirect()->back()->withInput()->with('success', __('validate_send'));
-        } elseif ( ! Hash::check($request->code ." : Erfan Ebrahimi : ".$request->mobile  , $request->codeValidation) )
+        } elseif (!Hash::check($request->code . " : Erfan Ebrahimi : " . $request->mobile, $request->codeValidation))
             return redirect()->back()->withInput()->withErrors(__('invalidOTP'));
 
 
         $validator = Validator::make($request->all(), [
-			'password'        => 'required|min:8|max:150|string|confirmed',
+            'password'        => 'required|min:8|max:150|string|confirmed',
         ]);
         if ($validator->fails()) {
             return redirect(app()->getLocale() . '/password/reset')
@@ -438,63 +428,84 @@ class UserController extends Controller
 
         return redirect(app()->getLocale() . '/login')
             ->with('status', trans('main.password_reset_done'));
-
     }
 
-	//show reset form
-	public function showResetForm(){
-      return view('auth.passwords.reset');
-	}
+    //show reset form
+    public function showResetForm()
+    {
+        return view('auth.passwords.reset');
+    }
 
-	public function resets(Request $request,$token){
-    $token = $request->token;
-	//field validation
-	  $validator = Validator::make($request->all(),[
-            'email'           => 'required|email',
-			'password'        => 'required|min:3|max:150|string',
-			'password-confirm'=> 'required|min:3|max:150|string|same:password',
-            ],[
-			'email.required'  => trans('main.email_required'),
-			'password.required'      => trans('main.newpassword_required'),
-			'password-confirm.required'  => trans('main.confirmpassword_required'),
-			'password-confirm.same'      => trans('main.confirmpassword_mismatched'),
-			]
-			);
-	    if ($validator->fails()) {
-            return redirect(app()->getLocale().'/password/reset/'.$token)
-                        ->withErrors($validator)
-                        ->withInput();
+    public function resets(Request $request, $token)
+    {
+        $token = $request->token;
+        //field validation
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'email'           => 'required|email',
+                'password'        => 'required|min:3|max:150|string',
+                'password-confirm' => 'required|min:3|max:150|string|same:password',
+            ],
+            [
+                'email.required'  => trans('main.email_required'),
+                'password.required'      => trans('main.newpassword_required'),
+                'password-confirm.required'  => trans('main.confirmpassword_required'),
+                'password-confirm.same'      => trans('main.confirmpassword_mismatched'),
+            ]
+        );
+        if ($validator->fails()) {
+            return redirect(app()->getLocale() . '/password/reset/' . $token)
+                ->withErrors($validator)
+                ->withInput();
         }
 
-	$clientInfo = User::where("email",$request->email)->where("password_token",$token)->first();
-	if(empty($clientInfo->id)){
+        $clientInfo = User::where("email", $request->email)->where("password_token", $token)->first();
+        if (empty($clientInfo->id)) {
 
-	return redirect(app()->getLocale().'/password/reset/'.$token)
-                        ->withErrors(['email'=>trans('main.email_not_register_or_token')])
-                        ->withInput();
-	}else{
+            return redirect(app()->getLocale() . '/password/reset/' . $token)
+                ->withErrors(['email' => trans('main.email_not_register_or_token')])
+                ->withInput();
+        } else {
 
-	 $token = (string)Str::uuid();
-	 $clientInfo->password_token=$token;
-	 $clientInfo->password   = bcrypt($request->password);
-	 $clientInfo->save();
-	 $appendMessage  ="";
-	 $appendMessage .= "<b>".trans('main.username')." : </b>".$clientInfo->mobile;
-	 $appendMessage .= "<br><b>".trans('main.password')." : </b>".$request->password;
-	 $data = [
-	 'dear'       => trans('main.dearuser'),
-	 'message'    => trans('main.password_reset_done_success')."<br><br>".$appendMessage,
-	 'subject'    =>'Password Successfully Reset',
-	 'email_from'      =>"noreply@googleme.com",
-	 'email_from_name' =>"googleme.com"
-	 ];
-     Mail::to($request->email)->send(new DefaultEmail($data));
+            $token = (string)Str::uuid();
+            $clientInfo->password_token = $token;
+            $clientInfo->password   = bcrypt($request->password);
+            $clientInfo->save();
+            $appendMessage  = "";
+            $appendMessage .= "<b>" . trans('main.username') . " : </b>" . $clientInfo->mobile;
+            $appendMessage .= "<br><b>" . trans('main.password') . " : </b>" . $request->password;
+            $data = [
+                'dear'       => trans('main.dearuser'),
+                'message'    => trans('main.password_reset_done_success') . "<br><br>" . $appendMessage,
+                'subject'    => 'Password Successfully Reset',
+                'email_from'      => "noreply@googleme.com",
+                'email_from_name' => "googleme.com"
+            ];
+            Mail::to($request->email)->send(new DefaultEmail($data));
 
-	return redirect(app()->getLocale().'/login')
-	                 ->with('status',trans('main.password_reset_done'));
-	}
+            return redirect(app()->getLocale() . '/login')
+                ->with('status', trans('main.password_reset_done'));
+        }
+    }
 
-	}
 
+    public function showDeleteForm()
+    {
+        return view('site.user.delete');
+    }
 
+    public function delete($locale, User $user, Request $request)
+    {
+        $this->validate(@$request, [
+            'password' => 'required'
+        ]);
+        // verify password
+        if (Hash::check($request->password, $user->password)) {
+            session()->flush();
+            $user->delete();
+            return redirect('/');
+        }
+        return back()->withErrors(['Wrong password!!']);
+    }
 }

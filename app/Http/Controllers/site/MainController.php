@@ -467,13 +467,18 @@ class MainController extends Controller
             
             return view("site.pages.payment", compact('message', 'refId', 'paymentResponse', 'payment', 'paymentStatus'));
         } catch (\Exception $e) {
+            // dd($e, @$paymentStatus, @$payment);
             $message = $e->getMessage() ?? 'Payment Failed!';
             $unsuccessful = true;
-            return $e;
             return view("site.pages.payment", compact('unsuccessful','message','paymentStatus','payment', 'paymentStatus'));
         } finally {
             $paymentResponse->save();
         }
+    }
+
+    public function getPaymentStatus($locale,$payId){
+        $cbkPay = new CBKPay();
+        return $cbkPay->getPaymentStatusDetailsAlt($payId);
     }
 
     public function makeRefId($userId)
@@ -550,5 +555,20 @@ class MainController extends Controller
     public function getAreas()
     {
         return app()->getLocale() == 'en' ?  Area::orderBy('name_en')->get() : Area::orderBy('name_ar')->get();
+    }
+    
+    public function confirmReport($locale, $type, $id)
+    {
+        if ($type == 'ad') {
+            $action = '/' . app()->getLocale() . '/advertising/' . $id . '/report';
+            $method = 'GET';
+            $confirmMsg = trans('why_report_title').' '.trans('advertising_title');
+        } else {
+            $action = '/' . app()->getLocale() . '/company/' . $id . '/report';
+            $method = 'GET';
+            $confirmMsg = trans('why_report_title').' '.trans('user');
+        }
+        session()->put('prev_url', url()->previous());
+        return view('site.pages.confirmReport', compact('action', 'type', 'id', 'confirmMsg','method'));
     }
 }

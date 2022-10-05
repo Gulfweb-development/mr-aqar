@@ -90,6 +90,7 @@ class RegisterController extends Controller
             $request->merge(['type_usage' => 'individual']);
             $package = Package::where("title_en", "gift credit")->where('is_enable', 1)->where('user_type', $request->type_usage)->first();
 
+            
             $user = User::makeUser([
                 'name' => $request->name,
                 'email' => $request->email,

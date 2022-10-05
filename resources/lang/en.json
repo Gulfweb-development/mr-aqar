@@ -59,6 +59,7 @@
     "normal_title": "Normal",
     "edit_title": "Edit",
     "delete_title": "Delete",
+    "confirm": "Confirm",
     "confirmation": "Confirmation",
     "Confirm Password": "Confirm password",
     "ask_delete_title": "Are you sure you want delete this advertising",
@@ -262,5 +263,19 @@
     "privacy_policy": "Privacy Policy",
     "sorry_something_went_wrong": "Sorry Somethingwent wrong",
     "transaction_id": "Transaction Id",
-    "payment_id": "Payment Id"
+    "payment_id": "Payment Id",
+    "are_you_sure_you_want_to_report_this_ad": "Are you sure you want to report this ad?",
+    "are_you_sure_you_want_to_report_this_user": "Are you sure you want to report this user?",
+    "why_report_title": "Help us understand the problem. Why are you reporting this",
+    "report": "Report",
+    "ad_has_been_reported_successfully": "Advertising has been reported successfully",
+    "are_your_sure_you_want_to_delete_this_account": "Are you sure you want to delete this account?",
+    "delete_account_permanently": "Delete Account Permanently",
+    "go_back": "Go Back",
+    "cancel": "Cancel",
+    "Offensive_content": "Offensive Content",
+    "fake":"Fake",
+    "suspicious_or_spam": "Suspicious or spam",
+    "other": "Other",
+    "what_is_wrong": "What is wrong?"
 }

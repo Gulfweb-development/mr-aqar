@@ -46,11 +46,14 @@ Route::prefix('')->group(function (){
     Route::get("/get-credit-user",$controller2.'isValidRegisterAdvertising')->middleware('auth');
     Route::post("/user/profile",$controller2.'userProfile')->name('site.show.user');
     Route::post("/user/advertises",$controller2.'getAdvertises');
+    Route::get('/user/delete', $controller2.'showDeleteForm');
+    Route::delete('/user/{user}', $controller2.'delete');
 });
 
 
 ///////////// profile
 Route::group(['middleware'=>['auth']],function (){
+    // Route::get('/getPaymentStatus/{payId}','MainController@getPaymentStatus');
     Route::get('/profile','MainController@profile')->name('Main.profile');
     Route::post('/edituser', 'UserController@editUser')->name('User.editUser');
     Route::get('/changepassword', 'MainController@changePassword')->name('Main.changePassword');
@@ -102,6 +105,7 @@ Route::prefix('advertising')->group(function (){
     $controller='AdvertisingController@';
     Route::get('{hashNumber}/details', $controller.'details')->name('site.ad.detail');
 
+    Route::get('/{advertising}/report', $controller.'report')->name('site.advertising.report');
     Route::get('/create', $controller.'create')->middleware('auth')->name('site.advertising.create');
     Route::get('/required_for_rent/create', $controller.'create')->middleware('auth')->name('site.advertising.createRFR');
     Route::POST('/ajax_file_upload_handler', $controller.'ajax_file_upload_handler')->middleware('auth')->name('site.advertising.ajax_file_upload_handler');
@@ -151,3 +155,5 @@ Route::get('/images/main/panel/noimage.png')->name('image.noimage');
 Route::get('/images/main/panel/noimagebig.png')->name('image.noimagebig');
 
 Route::get('/{phone?}/{name?}', 'CompanyController@show')->name('companies.info');
+Route::get('/company/{company}/report', 'CompanyController@report')->name('companies.report');
+Route::get('/confirm-report/{type}/{id}', 'MainController@confirmReport')->name('companies.report');

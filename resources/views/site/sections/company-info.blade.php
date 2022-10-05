@@ -20,6 +20,13 @@
                                 <span class="mdc-button__label">{{$company->company_phone}}</span>
                                 <i class="material-icons mdc-button__icon">phone</i>
                             </a>
+                            <br>
+                            
+                            <span class="flex flex-container" onclick="event.preventDefault(); location = '/{{ app()->getLocale() }}/confirm-report/company/{{ $company->id }}'">
+                                <i class="material-icons-outlined mat-icon-sm text-muted m{{$side}}-1 text-white"
+                                style="font-size: 22px">sms_failed</i>
+                                <span class="text-sm text-white">{{__('report') . ' ' . __('user')}}</span>
+                            </span>
 
                             <div class="d-flex justify-content-center">
                                 @if(count($company->socials))<span class="m{{$side}}-2">{{__('social_media')}}:</span>@endif
@@ -59,3 +66,4 @@
         </div>
     </div>
 </div>
+

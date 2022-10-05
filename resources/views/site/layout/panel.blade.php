@@ -8,7 +8,7 @@
                         <a href="#" class="h-0"></a>
                         <div class="mdc-card">
                             <div class="row start-xs middle-xs p-3">
-                                <img src="{{ is_file(public_path(auth()->user()->image_profile)) ? asset(auth()->user()->image_profile) : asset('asset/assets/images/others/user.jpg') }}" alt="user-image" class="avatar">
+                                <img src="{{ auth()->check() && is_file(public_path(auth()->user()->image_profile)) ? asset(auth()->user()->image_profile) : asset('asset/assets/images/others/user.jpg') }}" alt="user-image" class="avatar">
                                 <h2 class="text-muted fw-500 mx-3">@if(auth()->user()->name){{ auth()->user()->name }}@else<a href="{{ route('Main.profile',app()->getLocale()) }}">{{ __('update_name') }}</a>@endif</h2>
                             </div>
                             <hr class="mdc-list-divider m-0">

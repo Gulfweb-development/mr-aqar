@@ -48,7 +48,10 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
     </main>
 
     <script src="{{ mix('js/app.js') }}" defer></script>
-
+    @if (Session::has('reported'))
+    <script>alert(`{{ Session::get('reported') }}`)</script>
+    @endif
+    
     <style>
         .image-box::before {
             content: "";

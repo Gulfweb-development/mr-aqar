@@ -117,5 +117,8 @@ class User extends Authenticatable //implements Illuminate\Contracts\Auth\CanRes
     {
         return $this->type_usage === 'company';
     }
+
+
+
 }
 

@@ -224,7 +224,13 @@
 
     </div>
 
-    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded"
+    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded w-100"
         style="margin-top:30px;">{{__('save_title')}} &amp; {{__('upload_title')}}</button>
 </form>
+
+{{-- <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded bg-danger"
+style="margin-top:30px;">{{__('delete')}} {{__('account')}}</button> --}}
+<a href="user/delete" style="margin-top:30px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded bg-danger">
+    {{__('delete')}} {{__('account')}}
+</a>
 @endsection

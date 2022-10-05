@@ -574,4 +574,15 @@ class AdvertisingController extends Controller
         //        return $advertising;
         return view('site.advertising.direction', compact('advertising'));
     }
+
+    public function report($locale, Advertising $advertising){
+        $advertising->reported += 1;
+        $advertising->save();
+        $prevURL = session()->has('prev_url') ? session()->get('prev_url') : null;
+        session()->forget('prev_url');
+        if(@$prevURL != null){
+            return redirect($prevURL)->with('reported', 'Advertising has been reported successfully.');
+        }
+        return redirect('/'.app()->getLocale())->with('reported', 'Advertising has been reported successfully.');
+    }
 }

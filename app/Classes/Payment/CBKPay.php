@@ -148,10 +148,10 @@ class CBKPay
 				"encrypmerch" => $this->ENCRP_KEY,
 				"payid" => $trackid
 			);
-
+			
 			$url = $this->URL . "/ePay/api/cbk/online/pg/Verify";
 			$curl = curl_init();
-
+			
 			curl_setopt_array($curl, array(
 				CURLOPT_URL => $url,
 				CURLOPT_ENCODING => "",
@@ -177,7 +177,8 @@ class CBKPay
 
 
 			$paymentDetails = json_decode($response);
-			if ($paymentDetails->Status != "0" or $paymentDetails->Status != "-1") {
+			
+			if (@$paymentDetails->Status != "0" || @$paymentDetails->Status != "-1") {
 				return $paymentDetails;
 			} else {
 				return false;

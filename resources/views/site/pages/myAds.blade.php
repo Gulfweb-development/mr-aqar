@@ -41,8 +41,8 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
         <div class="row">
             <p class="w-100 center-xs text-md fw-600">{{__('balance')}}</p>
             <div class="d-flex justify-evenly w-100 px-3">
-                <p class="primary-color fw-600">{{ $credit['count_normal_advertising'] }} {{__('ads_title')}}</p>
-                <p class="primary-color fw-600">{{ $credit['count_premium_advertising'] }} {{__('premium_short')}}</p>
+                <p class="primary-color fw-600">{{ @$credit['count_normal_advertising'] ?? 0 }} {{__('ads_title')}}</p>
+                <p class="primary-color fw-600">{{ @$credit['count_premium_advertising'] ?? 0}} {{__('premium_short')}}</p>
 
             </div>
             <a class="fw-600 mx-auto text-center" style="color:#25a3d6" href="/{{ app()->getLocale() }}/buypackage">{{

@@ -141,5 +141,4 @@ class Advertising extends Model implements Feedable
 
     }
 
-
 }

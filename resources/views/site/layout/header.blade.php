@@ -199,6 +199,14 @@
                                     <span class="mdc-list-item__text px-3">{{__('change_password_title')}}</span>
                                 </a>
                             </li>
+                            <li>
+                                <a href="/{{ app()->getLocale() }}/user/delete" class="mdc-list-item"
+                                    role="menuitem" style="@if(collect(request()->segments())->last() == "
+                                    changepassword") background-color: var(--mdc-theme-primary); color: white; @endif">
+                                    <i class="material-icons mat-icon-sm text-muted">delete</i>
+                                    <span class="mdc-list-item__text px-3">{{  __('delete') .' '. __('account')}}</span>
+                                </a>
+                            </li>
                             <li role="separator" class="mdc-list-divider m-0"></li>
                             <li>
                                 <a href="#" class="mdc-list-item" role="menuitem" onclick="event.preventDefault();

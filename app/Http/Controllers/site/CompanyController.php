@@ -19,7 +19,6 @@ class CompanyController extends Controller
         $companies = User::where('type_usage', 'company')
             ->with('socials')
             ->get();
-
         return view('site.pages.companies', compact('companies'));
     }
 
@@ -121,5 +120,18 @@ class CompanyController extends Controller
         if (!empty($socials)) {
             Social::insert($socials);
         }
+    }
+    
+    public function report($locale, User $company)
+    {
+        $company->reported += 1;
+        $company->save();
+        
+        $prevURL = session()->has('prev_url') ? session()->get('prev_url') : null;
+        session()->forget('prev_url');
+        if(@$prevURL != null){
+            return redirect($prevURL)->with('reported', 'User/Company has been reported successfully!!');
+        }
+        return redirect('/'.app()->getLocale())->with('reported', 'User/Company has been reported successfully!!');
     }
 }

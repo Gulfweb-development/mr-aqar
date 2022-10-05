@@ -3,16 +3,19 @@
     <div class="col-xs-12 rounded-sm p-0 mb-3" :class="card.advertising_type === 'premium' ? 'primary-card rounded-sm' : 'b-gray'">
         <div class="border p-2 overflow-hidden card-height">
             <div class="row mb-2">
-                <div class="p-relative col-sm-2 w-sm1/5 p{{$side}}-image p-0 card-image-width-pc" :class="{'image-box':card.advertising_type === 'premium', 'd-none' : card.purpose === 'required_for_rent'}">
+                <div class="p-relative col-sm-2 w-sm1/5 p{{$side}}-image p-0 " :class="{'image-box':card.advertising_type === 'premium', 'd-none' : card.purpose === 'required_for_rent'}">
                     <div :style="`background-image: url('` + (card.main_image ? card.main_image : '{{route('image.noimage', '')}}') + `')`" class="card-image">
 
                     </div>
                 </div>
-                <div class="col-sm-10 w-sm4/5 p-0 card-desc-pc">
+                <div class="col-sm-10 w-sm4/5 p-0 ">
                     <h2 class="text-md mb-2 sm:width-110" v-text="`${purpose_lang[card.purpose]} ${card.venue.title_{{app()->getLocale()}} } {{__('in')}} ${card.area.name_{{app()->getLocale()}} }`"></h2>
 
-                    <div class="flex-container mb-2">
+                    <div class="d-block">
                         <span class="primary-color fw-600 d-inline-block m{{$side}}-2" v-if="card.price">@{{card.price | commaSeparate }} {{__('kd_title')}}</span>
+
+                    </div>
+                    <div class="flex-container mb-2">
                         <span class="flex flex-container m{{$side}}-2">
                             <i class="material-icons text-sm text-muted m{{$side}}-1 mb-1">calendar_month</i>
                             <span class="text-xs">@{{ card.created_at }}</span>
@@ -20,6 +23,13 @@
                         <span class="flex flex-container">
                             <i class="material-icons-outlined text-sm text-muted m{{$side}}-1">visibility</i>
                             <span class="text-xs">@{{card.view_count}}</span>
+                        </span>
+                        &nbsp;
+                        &nbsp;
+                        <span class="flex flex-container  m{{$side}}-2" :onclick="`event.preventDefault();  location = '/{{ app()->getLocale() }}/confirm-report/ad/`+card.id+`'`">
+                            <i class="material-icons-outlined text-sm text-muted m{{$side}}-1 mb-1"
+                                style="font-size: 22px">sms_failed</i>
+                            <span class="text-xs">{{__('report')}}</span>
                         </span>
                     </div>
 

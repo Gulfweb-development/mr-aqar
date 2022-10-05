@@ -174,7 +174,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         <div class="mdc-text-field mdc-text-field--outlined">
                                             <input class="mdc-text-field__input" name="phone_number"
                                                 placeholder="{{__('phone_number_title')}}"
-                                                value="{{ old('phone_number', @$advertising->phone_number)}}" required>
+                                                value="{{ old('phone_number', @$advertising->phone_number)}}" {{ @$advertising ? 'disabled' : '' }} required>
                                             <div class="mdc-notched-outline mdc-notched-outline--upgraded">
                                                 <div class="mdc-notched-outline__leading"></div>
                                                 <div class="mdc-notched-outline__notch">

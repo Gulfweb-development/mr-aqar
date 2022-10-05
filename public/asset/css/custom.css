@@ -3,6 +3,11 @@
     justify-content: center;
     align-items: center;
 }
+
+.bg-danger{
+	background-color: #dc3545 !important;
+}
+
 @media (max-width: 600px){
     .fs-sm-20{
         font-size: 20px;
