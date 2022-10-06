@@ -477,7 +477,8 @@
     "are_you_sure_you_want_to_report_this_user": "هل أنت متأكد من أنك تريد الإبلاغ عن هذا المستخدم؟",
     "why_report_title": "ساعدنا في فهم المشكلة.لماذا تقوم بالتبليغ عن هذا",
     "report": "الابلاغ",
-    "ad_has_been_reported_successfully": "تم الإبلاغ عن الإعلان بنجاح",
+    "has_been_reported_successfully": "تم الإبلاغ عنه بنجاح",
+    "has_been_blocked_successfully": "تم حظره بنجاح",
     "are_your_sure_you_want_to_delete_this_account": "هل أنت متأكد من أنك تريد حذف هذا الحساب؟",
     "delete_account_permanently": "حذف الحساب بشكل دائم",
     "go_back": "عُد",
@@ -486,5 +487,9 @@
     "fake":"مزيف",
     "suspicious_or_spam": "مشبوهة أو غير مرغوب فيها",
     "other": "آخر",
-    "what_is_wrong": "ما المشكله?"
+    "what_is_wrong": "ما المشكله?",
+    "sure_block": "Are you sure you want to block this",
+    "block": "حاجز",
+    "user": "المستعمل",
+    "ad_actions": "الإجراءات الإعلانية"
 }

@@ -118,7 +118,13 @@ class User extends Authenticatable //implements Illuminate\Contracts\Auth\CanRes
         return $this->type_usage === 'company';
     }
 
+    public function blockedUsers(){
+        return $this->belongsToMany(User::class, 'related_users', 'user_id','related_user_id')->where('relation_type', 'blocked');
+    }
 
+    public function blockedAdvertising(){
+        return $this->belongsToMany(Advertising::class, 'user_archive_advertising')->where('relation_type', 'blocked');
+    }
 
 }
 

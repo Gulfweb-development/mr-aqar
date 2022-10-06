@@ -57,7 +57,7 @@ new Vue({
 
 
             axios
-                .post(window.url + `search-advertising?page=${this.page}`, searchData )
+                .post(window.url + `search-advertising?user_id=`+ authUser.id+`&page=${this.page}`, searchData )
                 .then(response => {
                     this.maxPage = response.data.data.last_page;
                     this.nothingFound(response);
@@ -97,7 +97,7 @@ new Vue({
         getLatestAds() {
             this.isLoading = true ;
             axios
-                .post(window.url + `search-advertising?page=${this.page}`, {
+                .post(window.url + `search-advertising?user_id=`+ authUser.id+`&page=${this.page}`, {
                     area_id : [],
                     venue_type: [],
                     purpose: 'all'

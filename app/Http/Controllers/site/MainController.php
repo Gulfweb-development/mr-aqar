@@ -571,4 +571,23 @@ class MainController extends Controller
         session()->put('prev_url', url()->previous());
         return view('site.pages.confirmReport', compact('action', 'type', 'id', 'confirmMsg','method'));
     }
+    
+    public function confirmBlock($locale, $type, $id)
+    {
+        if ($type == 'ad') {
+            $action = '/' . app()->getLocale() . '/advertising/' . $id . '/block';
+            $method = 'GET';
+            $confirmMsg = trans('sure_block').' '.trans('advertising_title');
+        } else {
+            $action = '/' . app()->getLocale() . '/company/' . $id . '/block';
+            $method = 'GET';
+            $confirmMsg = trans('sure_block').' '.trans('user');
+        }
+        session()->put('prev_url', url()->previous());
+        return view('site.pages.confirm', compact('action', 'type', 'id', 'confirmMsg','method'));
+    }
+
+    public function cardAction($locale, Advertising $ad){
+        return view('site.pages.advertising.cardAction', compact('ad'));
+    }
 }

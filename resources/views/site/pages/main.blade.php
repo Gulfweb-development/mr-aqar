@@ -46,10 +46,16 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
             </div>
         </div>
     </main>
-
+    <script>
+        window.authUser = @json(auth()->check() ? auth()->user() : (object)[]);
+    </script>
     <script src="{{ mix('js/app.js') }}" defer></script>
     @if (Session::has('reported'))
     <script>alert(`{{ Session::get('reported') }}`)</script>
+    @endif
+    
+    @if (Session::has('blocked'))
+    <script>alert(`{{ Session::get('blocked') }}`)</script>
     @endif
     
     <style>

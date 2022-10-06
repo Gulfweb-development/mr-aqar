@@ -49,12 +49,18 @@ $tel = str_replace(' ', '', $tel);
                         </div>
                         @endif
                         <br>
-                        <span class="flex flex-container"
+                        {{-- <span class="flex flex-container"
                             onclick="event.preventDefault(); location = '/{{ app()->getLocale() }}/confirm-report/ad/{{ $advertising->id }}'">
                             <i class="material-icons-outlined mat-icon-sm text-muted m{{$side}}-1 text-white"
                                 style="font-size: 22px">sms_failed</i>
                             <span class="text-sm text-white">{{__('report').' '.__('advertising_title')}}</span>
                         </span>
+                        &ensp;
+                        <span class="flex flex-container  m{{$side}}-2" onclick="event.preventDefault();  location = '/{{ app()->getLocale() }}/confirm-block/ad/{{ $advertising->id }}'">
+                            <i class="material-icons-outlined mat-icon-sm text-muted m{{$side}}-1 text-white "
+                                style="font-size: 22px">block</i>
+                            <span class="text-xs">{{__('block')}}</span>
+                        </span> --}}
                         <div
                             class="flex-container mb-2 sm-justify-evenly md-float-{{$side == 'r' ? 'right' : 'left'}} w-100 justify-evenly mt-2">
                             <span class="flex flex-container">
@@ -424,9 +430,6 @@ $tel = str_replace(' ', '', $tel);
             });
         });
 
-        @if (Session::has('reported'))
-            alert(`{{ __("ad_has_been_reported_successfully") }}`)
-        @endif
 </script>
 @endsection
 

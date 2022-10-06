@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 /*/
 
 
+Route::get('/card-action/{ad}', 'MainController@cardAction')->name('card.action');
 ////////////// index page
 Route::get('/','MainController@index')->name('Main.index');
 Route::get('/advertising','MainController@index')->name('Main.index');
@@ -156,4 +157,10 @@ Route::get('/images/main/panel/noimagebig.png')->name('image.noimagebig');
 
 Route::get('/{phone?}/{name?}', 'CompanyController@show')->name('companies.info');
 Route::get('/company/{company}/report', 'CompanyController@report')->name('companies.report');
-Route::get('/confirm-report/{type}/{id}', 'MainController@confirmReport')->name('companies.report');
+Route::get('/confirm-report/{type}/{id}', 'MainController@confirmReport');
+
+Route::group(['middleware' => 'auth'] , function (){
+    Route::get('/confirm-block/{type}/{id}', 'MainController@confirmBlock')->name('confirm.block');
+    Route::get('/company/{company}/block', 'CompanyController@block')->name('companies.block');
+    Route::get('/advertising/{advertising}/block', 'AdvertisingController@block')->name('advertising.block');
+});

@@ -22,11 +22,17 @@
                             </a>
                             <br>
                             
-                            <span class="flex flex-container" onclick="event.preventDefault(); location = '/{{ app()->getLocale() }}/confirm-report/company/{{ $company->id }}'">
+                            {{-- <span class="flex flex-container" onclick="event.preventDefault(); location = '/{{ app()->getLocale() }}/confirm-report/company/{{ $company->id }}'">
                                 <i class="material-icons-outlined mat-icon-sm text-muted m{{$side}}-1 text-white"
                                 style="font-size: 22px">sms_failed</i>
                                 <span class="text-sm text-white">{{__('report') . ' ' . __('user')}}</span>
                             </span>
+                            &ensp;
+                            <span class="flex flex-container  m{{$side}}-2" onclick="event.preventDefault();  location = '/{{ app()->getLocale() }}/block/company/{{ $company->id }}'">
+                                <i class="material-icons-outlined mat-icon-sm text-muted m{{$side}}-1 text-white "
+                                    style="font-size: 22px">block</i>
+                                <span class="text-xs">{{__('block')}}</span>
+                            </span> --}}
 
                             <div class="d-flex justify-content-center">
                                 @if(count($company->socials))<span class="m{{$side}}-2">{{__('social_media')}}:</span>@endif

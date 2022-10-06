@@ -74,7 +74,7 @@ $keywords = @app()->view->getSections()['meta_keywords'] ? strip_tags(app()->vie
 
 	@include('site.layout.footer')
 
-	<div class="modal" id="confirm-modal">
+	{{-- <div class="modal" id="confirm-modal">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -102,25 +102,25 @@ $keywords = @app()->view->getSections()['meta_keywords'] ? strip_tags(app()->vie
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> --}}
 
 	@include('site.layout.js')
 
 
 	<script>
-		function confirmModal(event,title, callback){
-			event.stopPropagation();
-            $('#confirm-modal .modal-body').html(`<h2>${title}</h2>`)
-            $('#confirm-modal .yes').on('click', callback);
-            $('#confirm-modal').css('display', 'flex');
-        }
-		$('[data-dismiss="modal"]').on('click', function() {
-			$(this).closest('.modal').hide();
-		})
-		$('[data-bs-toggle="modal"]').on('click', function() {			
-			let id = $(this).data('target') || $(this).data('bs-target');
-			$(id).css('display', 'flex');
-		})
+		// function confirmModal(event,title, callback){
+		// 	event.stopPropagation();
+        //     $('#confirm-modal .modal-body').html(`<h2>${title}</h2>`)
+        //     $('#confirm-modal .yes').on('click', callback);
+        //     $('#confirm-modal').css('display', 'flex');
+        // }
+		// $('[data-dismiss="modal"]').on('click', function() {
+		// 	$(this).closest('.modal').hide();
+		// })
+		// $('[data-bs-toggle="modal"]').on('click', function() {			
+		// 	let id = $(this).data('target') || $(this).data('bs-target');
+		// 	$(id).css('display', 'flex');
+		// })
 	</script>
 
 	@yield('finalScripts')

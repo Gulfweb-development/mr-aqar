@@ -2761,7 +2761,7 @@ new vue__WEBPACK_IMPORTED_MODULE_4__["default"]({
       var searchData = this.searchVariables;
       searchData.company_id = this.companyId;
       searchData.isRequiredPage = this.isRequiredPage;
-      axios__WEBPACK_IMPORTED_MODULE_2___default().post(window.url + "search-advertising?page=".concat(this.page), searchData).then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_2___default().post(window.url + "search-advertising?user_id=" + authUser.id + "&page=".concat(this.page), searchData).then(function (response) {
         var _this$cards;
 
         _this.maxPage = response.data.data.last_page;
@@ -2799,7 +2799,7 @@ new vue__WEBPACK_IMPORTED_MODULE_4__["default"]({
       var _this2 = this;
 
       this.isLoading = true;
-      axios__WEBPACK_IMPORTED_MODULE_2___default().post(window.url + "search-advertising?page=".concat(this.page), {
+      axios__WEBPACK_IMPORTED_MODULE_2___default().post(window.url + "search-advertising?user_id=" + authUser.id + "&page=".concat(this.page), {
         area_id: [],
         venue_type: [],
         purpose: 'all'

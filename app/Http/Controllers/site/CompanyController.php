@@ -24,6 +24,9 @@ class CompanyController extends Controller
 
     public function show($locale, $phone, $name)
     {
+        // if(auth()->user()->blockedUsers->where('company_phone', $phone)->first()) {
+        //     return back()->withErrors(['You have blocked this user!']);
+        // }
         $company = User::where('type_usage', 'company')
             ->where('company_phone', $phone)
             ->with('socials')
@@ -130,8 +133,19 @@ class CompanyController extends Controller
         $prevURL = session()->has('prev_url') ? session()->get('prev_url') : null;
         session()->forget('prev_url');
         if(@$prevURL != null){
-            return redirect($prevURL)->with('reported', 'User/Company has been reported successfully!!');
+            return redirect($prevURL)->with('reported',  trans('user').trans('has_been_blocked_successfully'));
         }
-        return redirect('/'.app()->getLocale())->with('reported', 'User/Company has been reported successfully!!');
+        return redirect('/'.app()->getLocale())->with('reported',  trans('user').trans('has_been_blocked_successfully'));
+    }
+    
+    public function block($locale, User $company)
+    {
+        auth()->user()->blockedUsers()->attach($company->id, ['relation_type' => 'blocked']);
+        $prevURL = session()->has('prev_url') ? session()->get('prev_url') : null;
+        session()->forget('prev_url');
+        // if(@$prevURL != null){
+        //     return redirect($prevURL)->with('blocked',  trans('user').trans('has_been_blocked_successfully'));
+        // }
+        return redirect('/'.app()->getLocale())->with('blocked',  trans('user').trans('has_been_blocked_successfully'));
     }
 }

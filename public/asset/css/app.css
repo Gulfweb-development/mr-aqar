@@ -17,14 +17,6 @@ body {
   font-family: "kufi", Montserrat, sans-serif !important;
 }
 
-.card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 6px;
-    border: 1px solid #0000001f;
-    box-shadow: 1px 4px 10px #80808029;
-}
-
 .is-invalid {
   border-color: #dc3545 !important;
   padding-right: calc(1.5em + 0.75rem) !important;
@@ -295,7 +287,7 @@ body {
 }
 
 .card-height {
-  /* max-height: 137px; */
+  height: 140px;
 }
 
 .overflow-hidden {
@@ -340,7 +332,7 @@ span.multiselect__placeholder {
 }
 
 .card-description {
-  color: #7e7e7e;
+  color: #575757;
 }
 
 .center-xs-important {
@@ -366,7 +358,7 @@ span.multiselect__placeholder {
     display: inline-flex !important;
   }
   .card-height {
-    /* height: 127px; */
+    height: 152px;
   }
   .card-image {
     width: 14vw;
@@ -489,7 +481,6 @@ span.multiselect__placeholder {
   .main-content-header {
     z-index: unset !important;
   }
-
   #select_header {
     position: fixed;
     top: 0;
@@ -679,59 +670,12 @@ span.multiselect__placeholder {
     flex-basis: 88% !important;
   }
 }
-
-/* Modal Start*/
-
-.mdc-card.main-content-header.mb-5.sec-min-h {
-  min-height: 51vh !important;
-}
-.modal {
-position: absolute;
-inset: 0;
-z-index: 9;
-background: #00000054;
-display: flex;
-align-items: center;
-justify-content: center;
-display: none;
-}
-.modal .modal-header{
-display: flex;
-justify-content: space-between;
-padding: .4rem 0 .8rem;
-}
-.modal-dialog.modal-lg {
-background: white;
-border: 1px solid gray;
-box-shadow: 1px 4px 10px #00000061;
-padding: 1rem;
-margin: 1rem;
-border-radius: 8px;
-width: -webkit-fill-available;
-}
-.modal-content{
-margin-top: unset !important;
-}
-.modal button.close{
-all: unset;
-font-size:2rem;
-float: right;
-line-height: 0;
-}
-.modal .modal-body{
-padding: .6rem 0 2rem;
-}
-/* Modal End */
-
 @media screen and (min-width: 500px) and (max-width: 700px) {
   .card-mobile-tablet {
     flex-basis: 33.33%;
     max-width: 33.33%;
   }
 }
-/* pc */
-@media screen and (min-width: 1200px) {
-  .modal-dialog.modal-lg {
-    max-width: 1200px !important;
-  }
+.view-image{
+  z-index: 9999999999 !important;
 }

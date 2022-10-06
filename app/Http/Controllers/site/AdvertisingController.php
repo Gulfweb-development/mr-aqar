@@ -581,8 +581,20 @@ class AdvertisingController extends Controller
         $prevURL = session()->has('prev_url') ? session()->get('prev_url') : null;
         session()->forget('prev_url');
         if(@$prevURL != null){
-            return redirect($prevURL)->with('reported', 'Advertising has been reported successfully.');
+            return redirect($prevURL)->with('reported', trans('advertising_title').trans('has_been_reported_successfully'));
         }
-        return redirect('/'.app()->getLocale())->with('reported', 'Advertising has been reported successfully.');
+        return redirect('/'.app()->getLocale())->with('reported', trans('advertising_title').trans('has_been_reported_successfully'));
+    }
+
+    public function block($locale, Advertising $advertising){
+        $user = auth()->user();
+        $user->blockedAdvertising()->attach($advertising->id, ['relation_type' => 'blocked']);
+        
+        $prevURL = session()->has('prev_url') ? session()->get('prev_url') : null;
+        session()->forget('prev_url');
+        if(@$prevURL != null){
+            return redirect($prevURL)->with('blocked', trans('advertising_title').trans('has_been_blocked_successfully'));
+        }
+        return redirect('/'.app()->getLocale())->with('blocked', trans('advertising_title').trans('has_been_blocked_successfully'));
     }
 }

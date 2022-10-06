@@ -40,6 +40,9 @@
     $(document).ajaxComplete(function () {
         startPage();
     });
+    function toggleDropDown(el){
+        $(el).toggle()
+    }
 </script>
 
 @yield('js')
