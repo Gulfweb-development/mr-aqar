@@ -282,5 +282,8 @@
     "sure_block": "Are you sure you want to block this",
     "block": "Block",
     "user": "User",
-    "ad_actions": "Advertising Actions"
+    "ad_actions": "Advertising Actions",
+    "upload_your_ad": "Upload your advertising",
+    "add_photos":"Add Photos",
+    "optional": "Optional"
 }

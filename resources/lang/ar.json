@@ -272,6 +272,7 @@
     "ask_delete_title": "هل أنت متأكد أنك تريد حذف هذا الإعلان",
     "cancel_title": "إلغاء",
     "confirmation": "نعم",
+    "yes_title": "نعم",
     "advertising_title": "إعلان",
     "row_title": "ر.ت",
     "package_title": "الباقة",
@@ -491,5 +492,8 @@
     "sure_block": "Are you sure you want to block this",
     "block": "حاجز",
     "user": "المستعمل",
-    "ad_actions": "الإجراءات الإعلانية"
+    "ad_actions": "الإجراءات الإعلانية",
+    "upload_your_ad": "ارفع اعلانك",
+    "add_photos": "إضافة الصور",
+    "optional": "اختياري"
 }

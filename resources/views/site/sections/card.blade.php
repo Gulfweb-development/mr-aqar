@@ -15,15 +15,20 @@
                             <div class="d-block">
                                 <span class="primary-color fw-600 d-inline-block m{{$side}}-2" v-if="card.price">@{{card.price | commaSeparate }} {{__('kd_title')}}</span>
                             </div>
-                            <div class="flex-container mb-2">
-                                <span class="flex flex-container m{{$side}}-2">
-                                    <i class="material-icons text-sm text-muted m{{$side}}-1 mb-1">calendar_month</i>
-                                    <span class="text-xs">@{{ card.created_at }}</span>
-                                </span>
-                                <span class="flex flex-container">
-                                    <i class="material-icons-outlined text-sm text-muted m{{$side}}-1">visibility</i>
-                                    <span class="text-xs">@{{card.view_count}}</span>
-                                </span>
+                            <div class="flex-container mb-2 justify-content-between w-100" >
+                                <div>
+                                    <span class="flex flex-container m{{$side}}-2">
+                                        <i class="material-icons text-sm text-muted m{{$side}}-1 mb-1">calendar_month</i>
+                                        <span class="text-xs">@{{ card.created_at }}</span>
+                                    </span>
+                                    <span class="flex flex-container">
+                                        <i class="material-icons-outlined text-sm text-muted m{{$side}}-1">visibility</i>
+                                        <span class="text-xs">@{{card.view_count}}</span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span :onclick="`event.preventDefault();window.open('tel:${card.phone_number}')`" class="d-flex align-items-center"><strong v-text="card.phone_number"></strong>&nbsp;<img src="/images/main/whatsapp.webp" alt="whatsapp square icon" width="20px"></span>
+                                </div>
                             </div>
                             <div :dir="isArabic(card.description) ? 'rtl' : 'ltr'" :class="card.advertising_type === 'premium' ? 'fw-600' : ''" class="d-none d-sm-block d-md-block d-lg-more-block mb-2 text-sm card-description" v-snip:js="1">
                                 @{{card.description  | truncate(80, '...')}}

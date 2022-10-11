@@ -174,7 +174,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         <div class="mdc-text-field mdc-text-field--outlined">
                                             <input class="mdc-text-field__input" name="phone_number"
                                                 placeholder="{{__('phone_number_title')}}"
-                                                value="{{ old('phone_number', @$advertising->phone_number ?? auth()->user()->mobile)}}" disabled required>
+                                                value="{{ old('phone_number', @$advertising->phone_number ?? auth()->user()->mobile)}}" readonly required>
                                             <div class="mdc-notched-outline mdc-notched-outline--upgraded">
                                                 <div class="mdc-notched-outline__leading"></div>
                                                 <div class="mdc-notched-outline__notch">
@@ -424,6 +424,11 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                     <div class="col-xs-12 p-2">
                                         <input type="file" name="other_image[]" class="my-pond"
                                             accept=".png,.jpg,.jpeg">
+                                        @error('other_image.*')
+                                        <span class="invalid-feedback warn-color d-inline-block">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
                                     </div>
                                     @endif
 
@@ -432,7 +437,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                             <span class="mdc-button__ripple"></span>
                                             <span class="mdc-button__label">
                                                 @if (str_contains(request()->path(), 'create'))
-                                                {{ __('add') }}
+                                                {{ __('upload_your_ad') }}
                                                 @else
                                                 {{__('update')}}
                                                 @endif
@@ -466,10 +471,17 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
         $.fn.filepond.registerPlugin(FilePondPluginImagePreview);
 
         // Single image seletors
-        $('.my-pond').filepond();
+        $('.my-pond').filepond({
+            credits: {
+                label: '',
+                url: ''
+            },
+            
+            labelIdle: "{{ __('add_photos')  }} ({{ __('optional')  }})"
+        });
 	    // Set allowMultiple property to true
 	    $('.my-pond').filepond('allowMultiple', true);
-	    $('.my-pond').filepond('storeAsFile', true);    
+	    $('.my-pond').filepond('storeAsFile', true);   
 	    
         @php
             $other_images = (array)json_decode(@$advertising->other_image , true);
