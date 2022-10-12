@@ -2492,6 +2492,11 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     href: function href() {
       return "/".concat(this.lang, "/advertising/").concat(this.card.hash_number, "/details");
+    },
+    tel() {
+      let tel = this.card.phone_number.startsWith("+") ? this.card.phone_number : '+'+this.card.phone_number;
+      tel = tel.startsWith("+965") ? tel : tel.replace('+', '+965');
+      return tel.replace(' ', '');
     }
   }
 });

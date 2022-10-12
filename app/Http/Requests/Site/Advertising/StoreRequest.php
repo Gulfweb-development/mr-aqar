@@ -34,7 +34,7 @@ class StoreRequest extends FormRequest
                 'city_id' => 'required',
                 'area_id' => 'required',
                 'price' => 'nullable|numeric',
-                'other_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'other_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:20000',
                 //            'video' => 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000',
                 //            // 'other_image' => 'nullable|array',
                 //            //   'other_image.*' => 'mimes:jpeg,bmp,png|max:2048',
@@ -57,7 +57,7 @@ class StoreRequest extends FormRequest
                 'city_id' => 'required',
                 'area_id' => 'required',
                 'price' => 'nullable|numeric',
-                'other_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'other_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:20000',
             ];
         }
         return $rules;

@@ -1,11 +1,16 @@
+@php
+    $message = urlencode("السلام عليكم\nاذا ممكن ترسل تفاصيل هذا الإعلان في مستر عقار
+                                وشكرا\n" ). url()->current();
+@endphp
+
 <card lang="{{app()->getLocale()}}" :purpose_lang="{rent: '{{ __('rent') }}' ,sell: '{{ __('sell') }}' ,exchange: '{{ __('exchange') }}' ,required_for_rent: '{{ __('required_for_rent') }}' , }" :card="card" v-for="card in cards" inline-template>
     <a :href="href" style="text-decoration: none;" class="text-body">
+
     <div class="col-xs-12 rounded-sm p-0 mb-3" :class="card.advertising_type === 'premium' ? 'primary-card rounded-sm' : 'b-gray'">
         <div class="border p-2 overflow-hidden card-height">
             <div class="row mb-2">
                 <div class="p-relative col-sm-2 w-sm1/5 p{{$side}}-image p-0 " :class="{'image-box':card.advertising_type === 'premium', 'd-none' : card.purpose === 'required_for_rent'}">
                     <div :style="`background-image: url('` + (card.main_image ? card.main_image : '{{route('image.noimage', '')}}') + `')`" class="card-image">
-
                     </div>
                 </div>
                 <div class="col-sm-10 w-sm4/5 p-0 w-100">
@@ -27,7 +32,9 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <span :onclick="`event.preventDefault();window.open('tel:${card.phone_number}')`" class="d-flex align-items-center"><strong v-text="card.phone_number"></strong>&nbsp;<img src="/images/main/whatsapp.webp" alt="whatsapp square icon" width="20px"></span>
+                                    <span :onclick="`event.preventDefault();
+                                     location = 'https://api.whatsapp.com/send?phone=${tel}&text={{$message}}'`" 
+                                    class="d-flex align-items-center"><strong v-text="card.phone_number"></strong>&nbsp;<img src="/images/main/whatsapp.webp" alt="whatsapp square icon" width="20px"></span>
                                 </div>
                             </div>
                             <div :dir="isArabic(card.description) ? 'rtl' : 'ltr'" :class="card.advertising_type === 'premium' ? 'fw-600' : ''" class="d-none d-sm-block d-md-block d-lg-more-block mb-2 text-sm card-description" v-snip:js="1">

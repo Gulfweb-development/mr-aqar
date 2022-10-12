@@ -17,6 +17,11 @@ export default {
         href() {
             return `/${this.lang}/advertising/${this.card.hash_number}/details`
         }
+    },
+    tel() {
+      let tel = this.card.phone_number.startsWith("+") ? this.card.phone_number : '+'+this.card.phone_number;
+      tel = tel.startsWith("+965") ? tel : tel.replace('+', '+965');
+      return tel.replace(' ', '');
     }
 }
 </script>
