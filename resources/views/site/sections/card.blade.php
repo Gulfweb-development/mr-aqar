@@ -1,6 +1,6 @@
 @php
     $message = urlencode("السلام عليكم\nاذا ممكن ترسل تفاصيل هذا الإعلان في مستر عقار
-                                وشكرا\n" ). url()->current();
+                                وشكرا\n" ). request()->getSchemeAndHttpHost() . '/'.app()->getLocale().'/advertising/';
 @endphp
 
 <card lang="{{app()->getLocale()}}" :purpose_lang="{rent: '{{ __('rent') }}' ,sell: '{{ __('sell') }}' ,exchange: '{{ __('exchange') }}' ,required_for_rent: '{{ __('required_for_rent') }}' , }" :card="card" v-for="card in cards" inline-template>
@@ -33,7 +33,7 @@
                                 </div>
                                 <div>
                                     <span :onclick="`event.preventDefault();
-                                     location = 'https://api.whatsapp.com/send?phone=${tel}&text={{$message}}'`" 
+                                     location = 'https://api.whatsapp.com/send?phone=${tel}&text={{$message}}${card.hash_number}/details'`" 
                                     class="d-flex align-items-center"><strong v-text="card.phone_number"></strong>&nbsp;<img src="/images/main/whatsapp.webp" alt="whatsapp square icon" width="20px"></span>
                                 </div>
                             </div>

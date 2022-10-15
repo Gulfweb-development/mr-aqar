@@ -435,7 +435,7 @@ class AdvertisingController extends Controller
         if (is_array($request["other_image"]) and count($request["other_image"])  > 0) {
             foreach ($request["other_image"] as $i => $file) {
                 if ($request->hasFile("other_image." .  $i)) {
-                    $path = $this->saveImage($request->file("other_image." . $i), true);
+                    $path = $this->saveImage($request->file("other_image." . $i));
                 } elseif (is_string($file)) {
                     $path = $file;
                 } else {
