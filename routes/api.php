@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
@@ -26,6 +23,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
 
     Route::get('/settings','GeneralController@getSettings');
+    Route::get('/setting','GeneralController@getSetting');
     Route::get('/cities','GeneralController@getCities');
     Route::get('/areas','GeneralController@getAreas');
     Route::get('/packages','GeneralController@getPackages');
@@ -41,6 +39,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
     Route::post('/search-advertising','AdvertisingController@search');
     Route::get('/advertising/{id}','AdvertisingController@getAdvertising');
     Route::get('/similarAdvertising/{id}','AdvertisingController@similarAdvertising');
+    Route::get('/companies','AdvertisingController@companies');
+    Route::get('/company/{id}','AdvertisingController@company');
 
 
     Route::group(["prefix"=>"user"],function (){
@@ -52,6 +52,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
         Route::post("/logVisitAdvertising",'AdvertisingController@logVisitAdvertising');
 
         Route::group(['middleware' => 'auth:api'], function (){
+            Route::get('/user', function (Request $request) { return $request->user(); });
             Route::get("/getBalance",'UserController@getBalance');
             Route::get("/payments",'UserController@payments');
 
@@ -70,15 +71,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
             Route::post("/advertising/archive",'AdvertisingController@archiveAdvertising');
             Route::post("/advertising/detachArchive",'AdvertisingController@detachArchive');
 
-
-
-
-
-
             Route::post("/updateProfile",'UserController@updateProfile');
             Route::post("/updateDeviceToken",'UserController@updateDeviceToken');
             Route::post("/changePassword",'UserController@changePassword');
-
 
         });
     });

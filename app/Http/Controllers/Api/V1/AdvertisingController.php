@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Jobs\EmailNotify;
 use App\Lib\KnetPayment;
 use App\Models\Advertising;
+use App\Models\AdvertisingView;
 use App\Models\InvalidKey;
 use App\Models\LogVisitAdvertising;
 use App\Models\Package;
@@ -21,6 +22,20 @@ class AdvertisingController extends ApiBaseController
 {
     private $user;
 
+    public function companies(Request $request)
+    {
+        $companies = User::where('type_usage', 'company')
+            ->with('socials')
+            ->paginate(20);
+        return $this->success("", $companies);
+    }
+    public function company($id)
+    {
+        $company = User::where('type_usage', 'company')
+            ->with('socials')
+            ->findOrFail($id);
+        return $this->success("", $company);
+    }
     public function getListAdvertising(Request $request)
     {
         $advertising = $this->bindFilter($request);
@@ -45,13 +60,13 @@ class AdvertisingController extends ApiBaseController
     }
     public function similarAdvertising($id)
     {
-        $advertising = Advertising::with(["user", "area", "city"])->find($id);
+        $advertising = Advertising::findOrFail($id);
         $list = Advertising::getValidAdvertising()->where('type', $advertising->type)->where("venue_type", $advertising->venue_type)->where("purpose", $advertising->purpose)->paginate(10);
-        return $this->success("aaa", $list);
+        return $this->success("", $list);
     }
     public function getAdvertising($id)
     {
-        $advertising = Advertising::with(["user", "area", "city"])->find($id);
+        $advertising = Advertising::with(["user", "area", "city"])->findOrFail($id);
         $device_token = \request()->device_token;
         $user_id = \request()->user_id;
         $count = $this->visitAdvertising($id, $device_token);
@@ -416,7 +431,7 @@ class AdvertisingController extends ApiBaseController
     private function visitAdvertising($id, $token = null)
     {
         if (isset($token) && $token != null && !empty($token)) {
-            $res = DB::table("advertising_view")->where('advertising_id', $id)->where('device_token', $token)->first();
+            $res = AdvertisingView::where('advertising_id', $id)->where('device_token', $token)->first();
             if (!isset($res)) {
                 DB::table("advertising_view")->insert(['advertising_id' => $id, 'device_token' => $token, 'created_at' => date('Y-m-d h:i:s', time())]);
             } else {

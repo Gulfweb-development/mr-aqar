@@ -24,6 +24,18 @@ class GeneralController extends ApiBaseController
         return $this->success("",['settings'=>$settings,'venueTypes'=>$venueTypes,'paymentTypes'=>$paymentTypes]);
     }
 
+    public function getSetting()
+    {
+        $settings = [] ;
+        Setting::select(['setting_key','setting_value'])->get()
+            ->map(function ($item) use (&$settings){
+                $settings[$item->setting_key ] = $item->setting_value;
+            });
+        $venueTypes=VenueType::where('is_enable',1)->get();
+        $paymentTypes=PaymentType::where('is_enable',1)->get();
+        return $this->success("",['settings'=>$settings,'venueTypes'=>$venueTypes,'paymentTypes'=>$paymentTypes]);
+    }
+
     public function getCities()
     {
         $cities=City::withCount(['advertising' => function($query){
