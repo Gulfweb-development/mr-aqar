@@ -33,6 +33,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
     Route::post('/register','UserController@register');
     Route::post('/login','UserController@login');
+    Route::get("/formPayment",'AdvertisingController@formPayment')->name('api.formPayment');
+
 
 
     Route::get('/getListAdvertising','AdvertisingController@getListAdvertising');
@@ -53,6 +55,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
         Route::group(['middleware' => 'auth:api'], function (){
             Route::get('/user', function (Request $request) { return $request->user(); });
+            Route::get('/profile', 'UserController@profile');
             Route::get("/getBalance",'UserController@getBalance');
             Route::get("/payments",'UserController@payments');
 
@@ -72,6 +75,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
             Route::post("/advertising/detachArchive",'AdvertisingController@detachArchive');
 
             Route::post("/updateProfile",'UserController@updateProfile');
+            Route::post("/deleteAccount",'UserController@deleteAccount');
             Route::post("/updateDeviceToken",'UserController@updateDeviceToken');
             Route::post("/changePassword",'UserController@changePassword');
 

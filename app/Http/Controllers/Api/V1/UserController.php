@@ -20,10 +20,10 @@ class UserController extends ApiBaseController
     public function registerValidation(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required',
+            //'name' => 'required',
             'mobile' => 'required|digits:8|unique:users',
             'password' => 'required|min:8',
-            'email' => 'required|email|unique:users',
+            //'email' => 'required|email|unique:users',
             'type_usage'=>'required|in:company,individual',
             'language'=>'required|in:ar,en',
         ]);
@@ -78,6 +78,7 @@ class UserController extends ApiBaseController
 
                 $user->sms_verified=1;
                 $user->sms_code="";
+                $user->api_token = Str::random(60);
                 $user->save();
                 return $this->success("",$user);
             }
@@ -114,7 +115,7 @@ class UserController extends ApiBaseController
                 'mobile'=>$request->mobile,
                 'device_token'=>$request->device_token,
                 'lang'=>$request->language,
-                'package_id'=>$package->id,
+                'package_id'=> optional($package)->id,
                 'api_token'=>Str::random(60)
             ]);
 
@@ -134,8 +135,9 @@ class UserController extends ApiBaseController
             }
             DB::commit();
             event(new UserRegistered($user));
-            return $this->success(trans('main.register_success'));
 
+            $user = User::where('mobile',$user->mobile)->where("type","member")->with("package");
+            return $this->success(trans('main.register_success'),['user'=>$user->first()]);
         }catch (\Exception $exception) {
             DB::rollback();
             return $this->fail("");
@@ -168,8 +170,8 @@ class UserController extends ApiBaseController
             $user = auth()->user();
             $validation = Validator::make($request->all(), [
                 'name' => 'required',
-                'mobile' => 'required|digits:8|unique:users,mobile,'.$user->id,
-                'email' => 'required|email|unique:users,email,'.$user->id
+                //'mobile' => 'required|digits:8|unique:users,mobile,'.$user->id,
+                'email' => 'email'
             ]);
             if ($validation->fails()) {
                 return $this->fail($validation->errors()->first());
@@ -180,13 +182,13 @@ class UserController extends ApiBaseController
             if ($user) {
                 $user->name=$request->name;
                 $user->email=$request->email;
-                $user->mobile=$request->mobile;
+                //$user->mobile=$request->mobile;
 
                 $file=$request->profile_photo;
                 if($file==false||$file=="false"){
                     $user->image_profile="";
                 }elseif(isset($file)){
-                    $user->image_profile=$this->saveFile($file);
+                    $user->image_profile=$this->saveAvatar($file);
                 }
                 $user->save();
                 return $this->success(trans('main.success_profile_update'),['image_profile'=>$user->image_profile,'user'=>$user]);
@@ -196,6 +198,16 @@ class UserController extends ApiBaseController
         } catch (\Exception $exception) {
             return $this->fail(trans('main.server_not_stable'));
         }
+    }
+
+
+    private function saveAvatar($file){
+        $mainImageFile = $file;
+        $fileName = $mainImageFile->getClientOriginalName();
+        $storeName = uniqid(time()) . $fileName;
+        $path = '/resources/uploads/images/avatars/' . $storeName;
+        $mainImageFile->move(public_path('resources/uploads/images/avatars'), $storeName);
+        return $path;
     }
 
     public function changePassword(Request $request)
@@ -226,6 +238,25 @@ class UserController extends ApiBaseController
         }
     }
 
+    public function deleteAccount(Request $request)
+    {
+        try {
+            $user = $request->user();
+            if ($user) {
+                if (Hash::check($request->password, $user->password)) {
+                    $user->delete();
+                    return $this->success(trans('main.password_update_successfully'));
+                } else {
+                    return $this->fail(trans('main.old_password_is_incorrect'));
+                }
+            } else {
+                return $this->fail(trans('main.invalid_user'));
+            }
+        } catch (\Exception $exception) {
+            return $this->fail(trans('main.server_not_stable'));
+        }
+    }
+
     public function resetPassword(Request $request)
     {
         $password=$request->password;
@@ -233,18 +264,21 @@ class UserController extends ApiBaseController
 
         $validate= Validator::make($request->all(), [
             'password' => 'required|string|min:8',
+            'api_token' => 'required'
         ]);
 
         if ($validate->fails())
             return $this->fail($validate->errors()->first(),-1, $validate->errors());
 
 
-            $user=  User::where("type","member")->where("mobile",$mobile)->first();
+            $user=  User::where("type","member")->where("mobile",$mobile)->where("api_token",$request->api_token)->with("package")->first();
 
             if(isset($user)){
-                    $user->password = Hash::make($password);
-                    $user->save();
-                    return $this->success("");
+                $user->password = Hash::make($password);
+                $user->api_token = Str::random(60);
+                $user->device_token = $request->device_token;
+                $user->save();
+                return $this->success(trans('main.login_success'),['user'=>$user]);
             }
             return $this->fail(trans('main.not_exist_user'));
 
@@ -351,6 +385,12 @@ class UserController extends ApiBaseController
 
 
 
+    }
+
+    public function profile(){
+        $user=auth()->user();
+        $user = User::where('mobile',$user->mobile)->where("type","member")->with("package");
+        return $this->success("",['user'=>$user->first()]);
     }
 
     public function login(Request $request)

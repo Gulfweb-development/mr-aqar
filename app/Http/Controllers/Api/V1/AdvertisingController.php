@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Classes\Payment\CBKPay;
+use App\Http\Controllers\site\MainController;
 use App\Jobs\EmailNotify;
 use App\Lib\KnetPayment;
 use App\Models\Advertising;
@@ -311,32 +313,30 @@ class AdvertisingController extends ApiBaseController
     {
         try {
             $user = auth()->user();
-
             $validate = Validator::make($request->all(), [
-                'package_id' => 'required|numeric',
-                'type' => 'required|in:static,normal',
-                'count' => 'nullable|numeric',
-                'payment_type' => 'required|in:Cash,Knet',
+                'package_id'   => 'required|numeric',
+                'type'         => 'required|in:static,normal',
+                'count'        => 'nullable|numeric',
+                'payment_type' => 'required|in:Cash,CBKPay',
             ]);
-            if ($validate->fails())
+            if ($validate->fails()) {
                 return $this->fail($validate->errors()->first());
+            }
             $package = Package::find($request->package_id);
             // untill now request data is validated
             // now we check user doesn't choose a package that already bought
             if ($package->type == "normal") {
                 if ($user->package_id != null && $user->package_id != 0) {
-                    $balance = $this->getBalance(true);
-                    //                dd($this->getBalance()['available']);
-                    if ($balance !== 0 && isset($balance['available']) > 0 && isset($balance['available_premium']) > 0) {
-                        return $this->fail('You cant buy package because Your package has available item');
+                    $balance = MainController::getBalance(true);
+                    //                dd($this->getBalance());
+                    if ($balance !== 0 && $balance['available'] > 0 && $balance['available_premium'] > 0) {
+                        return $this->fail(trans('packageNotFinished'));
                     }
                 }
             }
-
-
             $countDay = optional($package)->count_day;
 
-            $today =   date("Y-m-d");
+            $today = date("Y-m-d");
             $date = strtotime("+$countDay day", strtotime($today));
             $expireDate = date("Y-m-d", $date);
 
@@ -348,52 +348,83 @@ class AdvertisingController extends ApiBaseController
             }
             $countP = intval($package->count_premium) * intval($count);
             $countN = intval($package->count_advertising) * intval($count);
-
+            $price = intval($package->price) * intval($count);
 
 
             if ($request->payment_type == "Cash" || $request->payment_type == "cash") {
                 $accept = 0;
-                $is_paid = 1;
             } else {
                 $accept = 1;
-                $is_paid = 0;
             }
 
 
-            $ref = $this->makeRefId($user->id);
-            $payment = Payment::create(['user_id' => $user->id, 'package_id' => $request->package_id, 'payment_type' => $request->payment_type, 'price' => $package->price, 'status' => 'new']);
+            $ref = substr(time(), 5, 4) . rand(1000, 9999) .$user->id;
+            $payment = Payment::create([
+                'user_id'      => $user->id,
+                'package_id'   => $request->package_id,
+                'payment_type' => $request->payment_type,
+                'amount'        => $price,
+                'status'       => 'new',
+            ]);
 
             //todo:: 'is_payed'=>1  change to 0 after implement logic payment
             $res = PackageHistory::create([
-                'title_en' => $package->title_en, 'title_ar' => $package->title_ar,
-                'user_id' => $user->id, 'type' => $request->type, 'package_id' => $request->package_id,
-                'date' => date('Y-m-d'), 'is_payed' => $is_paid, 'price' => $package->price,
-                'count_day' => $package->count_day, 'count_show_day' => $package->count_show_day,
-                'count_advertising' => $countN, 'count_premium' => $countP, 'count' => $count,
-                'expire_at' => $expireDate, 'payment_type' => $request->payment_type, 'accept_by_admin' => $accept
+                'title_en'          => $package->title_en,
+                'title_ar'          => $package->title_ar,
+                'user_id'           => $user->id,
+                'type'              => $request->type,
+                'package_id'        => $request->package_id,
+                'date'              => date('Y-m-d'),
+                'is_payed'          => 0,
+                'price'             => $package->price,
+                'count_day'         => $package->count_day,
+                'count_show_day'    => $package->count_show_day,
+                'count_advertising' => $countN,
+                'count_premium'     => $countP,
+                'count'             => $count,
+                'expire_at'         => $expireDate,
+                'payment_type'      => $request->payment_type,
+                'accept_by_admin'   => $accept
             ]);
             $payment->package_history_id = $res->id;
-            $payment->ref_id = $ref;
-            $res->payment_id = $payment->id;
+            $payment->ref_id             = $ref;
+            $res->payment_id             = $payment->id;
             $res->save();
             $payment->save();
 
 
-            if ($request->get('payment_type') == "Knet") {
-
-                $response = $this->sendRequestForPayment($package->price, $ref, $user->id, $request->type, $package->id);
-                //dd($response);
-                return $this->success("", ['payment_type' => $request->get('payment_type'), 'paymentDetails' => $response]);
+            if ($request->get('payment_type') == "CBKPay" and $price > 0) {
+                $cbkPay = new CBKPay();
+                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/'.app()->getLocale().'/payment-response/cbk' , true);
+                return $this->success("", ['url' => route('api.formPayment' , ['url' => $form['url'] , 'formData' => $form['formData']])]);
             } else {
-                //temp
-                if ($request->type == "normal" || $package->type == "normal") {
-                    User::whereId($user->id)->update(['package_id' => $package->id]);
-                }
+                // if payment type is cash
+                $res->accept_by_admin = 1;
+                $res->is_payed        = 1;
+
+                $package_id       = $res->package_id;
+                $user->package_id = $package_id;
+                $user->save();
+                $res->save();
+
+                if ($user->type_usage == 'company' && $user->companied_at === null)
+                    $user->update(['companied_at' => now()]);
+
+                return $this->success(trans('packageSuccess'));
             }
-            return $this->success("", ['payment_type' => $request->get('payment_type')]);
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
+    }
+    public function formPayment(Request $request){
+        $form = "<form id='pgForm' method='post' action='".$request->url."' enctype='application/x-www-form-urlencoded'>";
+        foreach ($request->formData as $k => $v) {
+            $form .= "<input type='hidden' name='$k' value='$v'>";
+        }
+        $form .= "</form><div style='position: fixed;top: 15%;left: 50%;transform: translate(-50%, -50%);text-align:center'>Redirecting... <br> <b> DO NOT REFRESH</b><br><img src='/fancybox/source/fancybox_loading@2x.gif'></div><script type='text/javascript'>
+                document.getElementById('pgForm').submit();
+            </script>";
+        return $form;
     }
     public function paymentResult(Request $request)
     {
