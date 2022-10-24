@@ -12,7 +12,13 @@ $side = app()->getLocale() === 'en' ? 'r' : 'l';
 $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
 @endphp
 @section('content')
-
+<style>
+    @media only screen and (max-width: 345px){
+        .infos{
+            font-size: 10px;
+        }
+    }
+</style>
     <main>
         @isset($company)
             @include('site.sections.company-info')
