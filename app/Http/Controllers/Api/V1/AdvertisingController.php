@@ -16,6 +16,7 @@ use App\Models\Payment;
 use App\Models\Setting;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -107,7 +108,11 @@ class AdvertisingController extends ApiBaseController
             } else {
                 $r->whereNotNull('expire_at')->where('expire_at', '>', date('Y-m-d'));
             }
-        })->where('user_id', auth()->user()->id)->paginate(10);
+        })->where('user_id', auth()->user()->id)->paginate(10)->map(function ($item){
+            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
+            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
+            return $item;
+        });
 
         return $this->success("", $advertising);
     }
@@ -124,12 +129,6 @@ class AdvertisingController extends ApiBaseController
             if (!$result[0]) {
                 return $this->fail("invalid Keyword (" . $result[1] . ")", -1, $request->all());
             }
-            $result2 = $this->filterKeywords($request->title_en);
-
-            if (!$result2[0]) {
-                return $this->fail("invalid Keyword (" . $result2[1] . ")", -1, $request->all());
-            }
-
 
 
             $user = auth()->user();
@@ -144,6 +143,9 @@ class AdvertisingController extends ApiBaseController
                 $expireDate = date("Y-m-d", $date);
                 $advertising->expire_at = $expireDate;
                 $advertising->save();
+                $advertising->title_en = __($advertising->purpose,[],'en') .' '. ( $advertising->venue ? $advertising->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $advertising->area ? $advertising->area->name_en : "");
+                $advertising->title_ar = __($advertising->purpose,[],'ar') .' '. ( $advertising->venue ? $advertising->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $advertising->area ? $advertising->area->name_ar : "");
+
                 DB::commit();
                 return $this->success("", ['advertising' => $advertising]);
             }
@@ -569,80 +571,53 @@ class AdvertisingController extends ApiBaseController
     }
     private function validateAdvertising(Request $request, $create = true): \Illuminate\Contracts\Validation\Validator
     {
-        if ($create) {
-            return Validator::make($request->all(), [
-                'title_en' => 'required|max:250',
-                'title_ar' => 'nullable|max:250',
-                'venue_type' => 'required',
-                'purpose' => 'required|in:rent,sell,exchange,required_for_rent',
-                'advertising_type' => 'required|in:normal,premium',
-                'city_id' => 'required',
-                'area_id' => 'required',
-                'price' => 'nullable|numeric',
-                'video' => 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000',
-                // 'other_image' => 'nullable|array',
-                //   'other_image.*' => 'mimes:jpeg,bmp,png|max:2048',
-                'main_image' => 'nullable|mimes:jpeg,bmp,png|max:2048',
-                'floor_plan' => 'nullable|mimes:jpeg,bmp,png|max:2048',
-                'number_of_rooms' => 'nullable',
-                'number_of_bathrooms' => 'nullable',
-                'number_of_master_rooms' => 'nullable',
-                'number_of_parking' => 'nullable',
-                'gym' => 'required|in:1,0',
-                'pool' => 'required|in:1,0',
-                'furnished' => 'required|in:1,0',
-            ]);
-        }
         return Validator::make($request->all(), [
-            'title_en' => 'required|max:250',
-            'title_ar' => 'nullable|max:250',
             'venue_type' => 'required',
             'purpose' => 'required|in:rent,sell,exchange,required_for_rent',
             'advertising_type' => 'required|in:normal,premium',
             'city_id' => 'required',
             'area_id' => 'required',
             'price' => 'nullable|numeric',
-            // 'other_image' => 'nullable|array',
-            //   'other_image.*' => 'mimes:jpeg,bmp,png|max:2048',
-            //  'main_image' => 'nullable|mimes:jpeg,bmp,png|max:2048',
-            // 'floor_plan' => 'nullable|mimes:jpeg,bmp,png|max:2048',
-            'number_of_rooms' => 'nullable',
-            'number_of_bathrooms' => 'nullable',
-            'number_of_master_rooms' => 'nullable',
-            'number_of_parking' => 'nullable',
-            'gym' => 'required|in:1,0',
-            'pool' => 'required|in:1,0',
-            'furnished' => 'required|in:1,0',
         ]);
     }
     private function saveAdvertising(Request $request, $user, Advertising $advertising): Advertising
     {
         $advertising->user_id = $user->id;
+        $advertising->phone_number = $request->phone_number;
         $advertising->city_id = $request->city_id;
         $advertising->area_id = $request->area_id;
-        $advertising->type = $request->type;
+        $advertising->type = 'residential';
         $advertising->venue_type = $request->venue_type;
         $advertising->purpose = $request->purpose;
-        $advertising->advertising_type = $request->advertising_type;
+        if ($request->route()->getName() == "api.createAdvertise")
+            $advertising->advertising_type = $request->advertising_type;
         $advertising->description = $request->description;
         $advertising->price = $request->price;
         $advertising->title_en = $request->title_en;
         $advertising->title_ar = $request->title_en;
-        $advertising->number_of_rooms = $request->number_of_rooms;
-        $advertising->number_of_bathrooms = $request->number_of_bathrooms;
-        $advertising->number_of_master_rooms = $request->number_of_master_rooms;
-        $advertising->number_of_parking = $request->number_of_parking;
-        $advertising->number_of_balcony = $request->number_of_balcony;
-        $advertising->number_of_floor = $request->number_of_floor;
-        $advertising->number_of_miad_rooms = $request->number_of_miad_rooms;
-        $advertising->surface = $request->surface;
-        $advertising->gym = $request->gym;
-        $advertising->pool = $request->pool;
-        $advertising->furnished = $request->furnished;
+        $advertising->number_of_rooms = $request->number_of_rooms ? $request->number_of_rooms : null;
+        $advertising->number_of_bathrooms = $request->number_of_bathrooms ? $request->number_of_bathrooms : null;
+        $advertising->number_of_master_rooms = $request->number_of_master_rooms ? $request->number_of_master_rooms : null;
+        $advertising->number_of_parking = $request->number_of_parking ? $request->number_of_parking : null;
+        $advertising->number_of_balcony = $request->number_of_balcony ? $request->number_of_balcony : null;
+        $advertising->number_of_floor = $request->number_of_floor ? $request->number_of_floor : null;
+        $advertising->number_of_miad_rooms = $request->number_of_miad_rooms ? $request->number_of_miad_rooms : null;
+        $advertising->surface = $request->surface ? $request->surface : null;
+        // $advertising->gym = $request->gym;
+        // $advertising->pool = $request->pool;
+        // $advertising->furnished = $request->furnished;
         $advertising->security = $request->security;
         $advertising->location_lat = $request->location_lat;
         $advertising->location_long = $request->location_long;
-        $advertising->hash_number = Advertising::makeHashNumber();
+        if ($request->route()->getName() == "api.createAdvertise")
+            $advertising->hash_number = Advertising::makeHashNumber();
+        $advertising->floor_plan = "";
+        $advertising->main_image = "";
+        $advertising->other_image = "";
+
+        foreach ((array) $request->deleted_images as $image) {
+            !file_exists(public_path(urldecode($image))) ?: unlink(public_path(urldecode($image)));
+        }
 
         if ($request->hasFile('floor_plan')) {
             $advertising->floor_plan = $this->saveImage($request->floor_plan);
@@ -650,34 +625,36 @@ class AdvertisingController extends ApiBaseController
             $advertising->floor_plan = "";
         }
 
-        if ($request->hasFile('main_image')) {
-            $advertising->main_image = $this->saveImage($request->main_image);
-        } elseif ($request->main_image == "false") {
-            $advertising->main_image = "/images/main/defaultbuildingimage.jpg";
-        }
-
         $otherImage = [];
-        for ($i = 1; $i <= 10; $i++) {
-            if (isset($request->{"other_image" . $i})) {
-                $file = $request->{"other_image" . $i};
-                if ($request->hasFile("other_image" . $i)) {
-                    $path = $this->saveImage($file);
-                } elseif ($file == false || $file == "false") {
-                    $path = "";
+        $old_otherImages = @$advertising->other_image
+        && json_decode(@$advertising->other_image)
+        && count(json_decode(@$advertising->other_image))
+        && json_decode(@$advertising->other_image, true)['other_image']
+            ? json_decode(@$advertising->other_image, true)['other_image']
+            : [];
+
+        if (is_array($request["other_image"]) and count($request["other_image"])  > 0) {
+            foreach ($request["other_image"] as $i => $file) {
+                if ($request->hasFile("other_image." .  $i)) {
+                    $path = $this->saveImage($request->file("other_image." . $i), true);
                 } elseif (is_string($file)) {
                     $path = $file;
                 } else {
                     $path = "";
                 }
-            } else {
-                $path = "";
+                $otherImage["other_image"][] = $path;
+                !(@$old_otherImages[$i] && file_exists(public_path(urldecode(@$old_otherImages[$i])))) ?: unlink(public_path(urldecode(@$old_otherImages[$i])));
             }
-            $otherImage["other_image" . $i] = $path;
+        }
+        if (($advertising->main_image == "" or  $advertising->main_image == null) and isset($otherImage["other_image"][0])) {
+            $advertising->main_image = $otherImage["other_image"][0];
+            unset($otherImage["other_image"][0]);
         }
         if (count($otherImage) >= 1) {
             $otherImage = json_encode($otherImage);
             $advertising->other_image = $otherImage;
         }
+        // dd($advertising);
 
         if (isset($request->video)) {
             if (!is_string($request->video)) {
@@ -688,10 +665,9 @@ class AdvertisingController extends ApiBaseController
             }
         }
 
-
         $advertising->save();
 
-
+        //        event(new NewAdvertising($advertising));
         return $advertising;
     }
     private function makeSearchHistory($request)
