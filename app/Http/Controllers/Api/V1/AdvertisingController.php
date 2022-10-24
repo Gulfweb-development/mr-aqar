@@ -43,7 +43,11 @@ class AdvertisingController extends ApiBaseController
         $advertising = $this->bindFilter($request);
         $advertising->orderByDesc('advertising_type');
         $advertising->orderByDesc('updated_at');
-        $advertising = $advertising->paginate(10);
+        $advertising = $advertising->paginate(10)->map(function ($item){
+            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
+            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
+            return $item;
+        });
 
         return $this->success("", $advertising);
     }
@@ -56,19 +60,29 @@ class AdvertisingController extends ApiBaseController
         // if (@$this->user) {
         //         $advertising = $advertising->whereNotIn('id', $this->user->blockedAdvertising->pluck('id')->merge(Advertising::whereIn('user_id',$this->user->blockedUsers->pluck('id') ?? [])->pluck('id') ?? []) ?? []);
         // }
-        $advertising = $advertising->paginate(10);
+        $advertising = $advertising->paginate(10)->map(function ($item){
+            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
+            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
+            return $item;
+        });
         // $this->makeSearchHistory($request);
         return $this->success("", $advertising);
     }
     public function similarAdvertising($id)
     {
         $advertising = Advertising::findOrFail($id);
-        $list = Advertising::getValidAdvertising()->where('type', $advertising->type)->where("venue_type", $advertising->venue_type)->where("purpose", $advertising->purpose)->paginate(10);
+        $list = Advertising::getValidAdvertising()->where('type', $advertising->type)->where("venue_type", $advertising->venue_type)->where("purpose", $advertising->purpose)->paginate(10)->map(function ($item){
+            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
+            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
+            return $item;
+        });
         return $this->success("", $list);
     }
     public function getAdvertising($id)
     {
         $advertising = Advertising::with(["user", "area", "city"])->findOrFail($id);
+        $advertising->title_en = __($advertising->purpose,[],'en') .' '. $advertising->venue->title_en .' '. __('in' , [] , 'en') .' '.$advertising->area->name_en;
+        $advertising->title_ar = __($advertising->purpose,[],'ar') .' '. $advertising->venue->title_ar .' '. __('in' , [] , 'ar') .' '.$advertising->area->name_ar;
         $device_token = \request()->device_token;
         $user_id = \request()->user_id;
         $count = $this->visitAdvertising($id, $device_token);
