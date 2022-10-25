@@ -1,4 +1,7 @@
-
+@font-face {
+	font-family: 'Ge-flow';
+	src: URL('/fonts/ge-flow.ttf') format('truetype');
+  }
 .mr-n2{
 	margin-right: -1.5rem!important;
 }
@@ -43,4 +46,10 @@
 }
 .cdropdown{
     position:relative;
+}
+.font-ge-flow{
+	font-family: ge-flow;
+}
+.font-1rem{
+	font-size: 1rem;
 }

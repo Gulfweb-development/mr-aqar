@@ -285,5 +285,7 @@
     "ad_actions": "Advertising Actions",
     "upload_your_ad": "Upload your advertising",
     "add_photos":"Add Photos",
-    "optional": "Optional"
+    "optional": "Optional",
+    "whatsapp": "Whatsapp",
+    "expired_ads": "Expired Ads"
 }

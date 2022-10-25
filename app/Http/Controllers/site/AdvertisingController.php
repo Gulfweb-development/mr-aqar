@@ -496,11 +496,11 @@ class AdvertisingController extends Controller
             $advertising = Advertising::findOrFail($request->id);
 
             $user = auth()->user();
-            $isValid = $this->isValidCreateAdvertising($user->id, $request->advertising_type);
+            // $isValid = $this->isValidCreateAdvertising($user->id, $request->advertising_type);
 
-            if (!@$isValid) {
-                return $this->fail(trans("main.insufficient_credit") . ' <a href="/' . app()->getLocale() . '/buypackage" >' . trans("main.buy_a_package") . '</a>');
-            }
+            // if (!@$isValid) {
+            //     return $this->fail(trans("main.insufficient_credit") . ' <a href="/' . app()->getLocale() . '/buypackage" >' . trans("main.buy_a_package") . '</a>');
+            // }
             if (isset($advertising)) {
                 $advertising = $this->saveAdvertising($request, $advertising);
                 return redirect()->route('Main.myAds', app()->getLocale())->with('controller-success', trans('edited'));

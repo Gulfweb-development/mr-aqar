@@ -86,7 +86,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
 
                                     @endif
                                     @csrf
-
+{{-- {{ dd($advertising) }} --}}
                                     @if (str_contains(request()->path(), 'required_for_rent'))
                                     <input type="hidden" name="advertising_type" value="normal">
                                     @else
@@ -96,9 +96,9 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         <div class="mdc-form-field w-100">
                                             <div class="mdc-radio">
                                                 <input class="mdc-radio__native-control" type="radio" id="normal"
-                                                    name="advertising_type" value="normal" {{ old('advertising_type',
-                                                    @$advertising->advertising_type) =="normal" ? 'checked' : '' }} {{
-                                                $credit['count_normal_advertising']> 0 ?: 'disabled' }}>
+                                                    name="advertising_type" value="normal" 
+                                                {{ old('advertising_type', @$advertising->advertising_type) =="normal" ? 'checked' : '' }} {{
+                                                (!@$advertising && $credit['count_normal_advertising'] <= 0) ? 'disabled' : '' }}>
                                                 <div class="mdc-radio__background">
                                                     <div class="mdc-radio__outer-circle"></div>
                                                     <div class="mdc-radio__inner-circle"></div>
@@ -122,9 +122,9 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         <div class="mdc-form-field">
                                             <div class="mdc-radio">
                                                 <input class="mdc-radio__native-control" type="radio" id="premium"
-                                                    name="advertising_type" value="premium" {{ old('advertising_type',
-                                                    @$advertising->advertising_type )=="premium" ? 'checked' : '' }} {{
-                                                $credit['count_premium_advertising']> 0 ?: 'disabled' }}>
+                                                    name="advertising_type" value="premium" 
+                                                    {{ old('advertising_type', @$advertising->advertising_type )=="premium" ? 'checked' : '' }} {{
+                                                    (!@$advertising && $credit['count_premium_advertising'] <= 0) ? 'disabled' : '' }}>
                                                 <div class="mdc-radio__background">
                                                     <div class="mdc-radio__outer-circle"></div>
                                                     <div class="mdc-radio__inner-circle"></div>
