@@ -142,7 +142,10 @@ body {
 }
 
 .company-socials-container {
-  height: 24px;
+  /* height: 24px; */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .justify-content-center {
@@ -299,8 +302,8 @@ body {
 }
 
 .card-image {
-  width: 20vw;
-  height: 20vw;
+  width: 17vw;
+  height: 17vw;
   background-repeat: no-repeat, repeat;
   background-size: cover;
   background-position: center;
@@ -612,7 +615,7 @@ span.multiselect__placeholder {
 }
 @media screen and (max-width: 960px) {
   .small-only-max-height {
-    max-height: 140px;
+    max-height: 110px;
   }
   .height-150 {
     height: 90px !important;
@@ -678,4 +681,14 @@ span.multiselect__placeholder {
 }
 .view-image{
   z-index: 9999999999 !important;
+}
+a.my-1.fw-600.text-body.links.company-name.d-flex.align-items-center.justify-content-center.line-height-sm {
+  /*font-family: ge-flow,"kufi", Montserrat, sans-serif !important;*/
+  font-size: 1rem;
+}
+.company-img{
+    height: 110px!important;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    display: block;
 }
