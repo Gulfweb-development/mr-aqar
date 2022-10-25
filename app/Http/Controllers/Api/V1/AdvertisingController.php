@@ -61,11 +61,13 @@ class AdvertisingController extends ApiBaseController
         // if (@$this->user) {
         //         $advertising = $advertising->whereNotIn('id', $this->user->blockedAdvertising->pluck('id')->merge(Advertising::whereIn('user_id',$this->user->blockedUsers->pluck('id') ?? [])->pluck('id') ?? []) ?? []);
         // }
-        $advertising = $advertising->paginate(10)->map(function ($item){
-            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
-            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
-            return $item;
-        });
+        $advertising = $advertising->paginate(10)
+        // ->map(function ($item){
+        //     $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
+        //     $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
+        //     return $item;
+        // })
+        ;
         // $this->makeSearchHistory($request);
         return $this->success("", $advertising);
     }
