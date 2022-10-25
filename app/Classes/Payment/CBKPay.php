@@ -58,12 +58,12 @@ class CBKPay
 	}
 
 	/*request payment url*/
-	public function initiatePayment($amount, $trackid, $reference, $udf1 = '', $udf2 = '', $udf3 = '', $udf4 = '', $udf5 = '',  $paymentType = '', $lang = 'en', $returnUrl = '')
+	public function initiatePayment($amount, $trackid, $reference, $udf1 = '', $udf2 = '', $udf3 = '', $udf4 = '', $udf5 = '',  $paymentType = '', $lang = 'en', $returnUrl = '' , $isApi = false)
 	{
 
-		//get access token 
+		//get access token
 		if ($AccessToken = $this->getAccessToken()) {
-			//generate pg page 
+			//generate pg page
 			$formData = array(
 				'tij_MerchantEncryptCode' => $this->ENCRP_KEY,
 				'tij_MerchAuthKeyApi' => $AccessToken,
@@ -80,6 +80,12 @@ class CBKPay
 				'tij_MerchReturnUrl' => $returnUrl
 			);
 			$url = $this->URL . "/ePay/pg/epay?_v=" . $AccessToken;
+            if ( $isApi ){
+                return [
+                    'url' =>$url,
+                    'formData' => $formData
+                ];
+            }
 			$form = "<form id='pgForm' method='post' action='$url' enctype='application/x-www-form-urlencoded'>";
 			foreach ($formData as $k => $v) {
 				$form .= "<input type='hidden' name='$k' value='$v'>";
@@ -99,7 +105,7 @@ class CBKPay
 	public function getPaymentStatusDetails($encrp)
 	{
 		//returns the unencrypted data
-		//get access token 
+		//get access token
 		if ($AccessToken = $this->getAccessToken()) {
 			$url = $this->URL . "/ePay/api/cbk/online/pg/GetTransactions/" . $encrp . "/" . $AccessToken;
 			$curl = curl_init();
@@ -148,10 +154,10 @@ class CBKPay
 				"encrypmerch" => $this->ENCRP_KEY,
 				"payid" => $trackid
 			);
-			
+
 			$url = $this->URL . "/ePay/api/cbk/online/pg/Verify";
 			$curl = curl_init();
-			
+
 			curl_setopt_array($curl, array(
 				CURLOPT_URL => $url,
 				CURLOPT_ENCODING => "",
@@ -177,7 +183,7 @@ class CBKPay
 
 
 			$paymentDetails = json_decode($response);
-			
+
 			if (@$paymentDetails->Status != "0" || @$paymentDetails->Status != "-1") {
 				return $paymentDetails;
 			} else {
@@ -208,7 +214,7 @@ class CBKPay
 		}else{
 			return 'failed';
 		}
-		
+
 	}
 
 

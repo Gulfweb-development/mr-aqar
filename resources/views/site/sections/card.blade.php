@@ -20,7 +20,7 @@
                             <div class="d-block">
                                 <span class="primary-color fw-600 d-inline-block m{{$side}}-2" v-if="card.price">@{{card.price | commaSeparate }} {{__('kd_title')}}</span>
                             </div>
-                            <div class="flex-container mb-2 justify-content-between w-100" >
+                            <div class="infos flex-container mb-2 justify-content-between w-100" >
                                 <div>
                                     <span class="flex flex-container m{{$side}}-2">
                                         <i class="material-icons text-sm text-muted m{{$side}}-1 mb-1">calendar_month</i>

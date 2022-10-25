@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
@@ -26,6 +23,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
 
     Route::get('/settings','GeneralController@getSettings');
+    Route::get('/setting','GeneralController@getSetting');
     Route::get('/cities','GeneralController@getCities');
     Route::get('/areas','GeneralController@getAreas');
     Route::get('/packages','GeneralController@getPackages');
@@ -35,12 +33,16 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
     Route::post('/register','UserController@register');
     Route::post('/login','UserController@login');
+    Route::get("/formPayment",'AdvertisingController@formPayment')->name('api.formPayment');
+
 
 
     Route::get('/getListAdvertising','AdvertisingController@getListAdvertising');
     Route::post('/search-advertising','AdvertisingController@search');
     Route::get('/advertising/{id}','AdvertisingController@getAdvertising');
     Route::get('/similarAdvertising/{id}','AdvertisingController@similarAdvertising');
+    Route::get('/companies','AdvertisingController@companies');
+    Route::get('/company/{id}','AdvertisingController@company');
 
 
     Route::group(["prefix"=>"user"],function (){
@@ -52,6 +54,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
         Route::post("/logVisitAdvertising",'AdvertisingController@logVisitAdvertising');
 
         Route::group(['middleware' => 'auth:api'], function (){
+            Route::get('/user', function (Request $request) { return $request->user(); });
+            Route::get('/profile', 'UserController@profile');
             Route::get("/getBalance",'UserController@getBalance');
             Route::get("/payments",'UserController@payments');
 
@@ -63,22 +67,17 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
             Route::get("/getSavedAdvertising",'AdvertisingController@getUserSaved');
             Route::get("/advertising",'AdvertisingController@getUserAdvertising');
             Route::post("/buyPackageOrCredit",'AdvertisingController@buyPackageOrCredit');
-            Route::post("/advertising/create",'AdvertisingController@createAdvertising');
+            Route::post("/advertising/create",'AdvertisingController@createAdvertising')->name('api.createAdvertise');
             Route::post("/advertising/attachFileToAdvertising",'AdvertisingController@attachFileToAdvertising');
             Route::post("/advertising/update",'AdvertisingController@updateAdvertising');
             Route::post("/advertising/delete",'AdvertisingController@deleteAdvertising');
             Route::post("/advertising/archive",'AdvertisingController@archiveAdvertising');
             Route::post("/advertising/detachArchive",'AdvertisingController@detachArchive');
 
-
-
-
-
-
             Route::post("/updateProfile",'UserController@updateProfile');
+            Route::post("/deleteAccount",'UserController@deleteAccount');
             Route::post("/updateDeviceToken",'UserController@updateDeviceToken');
             Route::post("/changePassword",'UserController@changePassword');
-
 
         });
     });
