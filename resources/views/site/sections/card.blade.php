@@ -68,7 +68,7 @@
                 </div>
             </div>
             <div class="row">
-                <div :dir="isArabic(card.description) ? 'rtl' : 'ltr'" :class="card.advertising_type === 'premium' ? 'fw-600' : ''" class="col-xs-12 p-0 d-sm-none d-md-none d-lg-more-none text-sm card-description" v-snip:css="3">
+                <div :dir="isArabic(card.description) ? 'rtl' : 'ltr'" class="col-xs-12 p-0 d-sm-none d-md-none d-lg-more-none text-sm card-description" v-snip:css="3">
                     @{{card.description  | truncate(80, '...')}}
                 </div>
             </div>

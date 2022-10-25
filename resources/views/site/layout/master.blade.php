@@ -54,16 +54,16 @@ $keywords = @app()->view->getSections()['meta_keywords'] ? strip_tags(app()->vie
 </head>
 
 <body class="mdc-theme--background" style="overflow-x: hidden">
-	<div class="spinner-wrapper" id="preloader">
-		<div class="spinner-container">
-			<div class="spinner-outer">
-				<div class="spinner">
-					<img src="{{asset('images/main/loading.gif')}}" alt="loading" style="width: 100%;">
+		<div class="spinner-wrapper" id="preloader">
+			<div class="spinner-container">
+				<div class="spinner-outer">
+					<div class="spinner">
+						<img src="{{asset('images/main/loading.gif')}}" alt="loading" style="width: 100%;">
+					</div>
+					{{-- <p class="spinner-text">{{ __('PageTitle') }}</p> --}}
 				</div>
-				<p class="spinner-text">{{ __('PageTitle') }}</p>
 			</div>
-		</div>
-	</div>
+		</div> 
 	{{-- can use: @extends('site.layout.master', ['header' => 'transparent']) for transparent(bg-image) header pages
 	--}}
 	@include('site.layout.header')
@@ -124,6 +124,16 @@ $keywords = @app()->view->getSections()['meta_keywords'] ? strip_tags(app()->vie
 	</script>
 
 	@yield('finalScripts')
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-WF5R2QK00B"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-WF5R2QK00B');
+	
+</script>
 </body>
 
 </html>

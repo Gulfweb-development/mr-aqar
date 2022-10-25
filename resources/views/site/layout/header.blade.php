@@ -118,7 +118,7 @@
             <div class="row d-lg-none start-xs middle-xs">
                 <button id="sidenav-toggle" class="mdc-button mdc-ripple-surface d-md-none d-lg-none d-xl-none">
                     <span class="mdc-button__ripple"></span>
-                    <i class="material-icons">menu</i>
+                    <i class="material-icons" style="font-size: 42px;">menu</i>
                 </button>
 
             </div>

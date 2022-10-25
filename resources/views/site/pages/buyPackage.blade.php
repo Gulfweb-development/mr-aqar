@@ -93,7 +93,7 @@
                                 <div class="col-xs-12 col-sm-6 col-md-3 p-2">
                                     <div class="mdc-card pricing-card text-center border-accent p-0 h-100">
                                         <div class="bg-accent pricing-header p-2">
-                                            <h1  class="fs-sm-20">{{__('kd_title')}} @if( $static->old_price >  $static->price ) <small> <span class="del opacity-70">{{ $static->old_price }} </span> </small> @endif {{$static->price }}<small> 
+                                            <h1  class="fs-sm-20">@if( $static->old_price >  $static->price ) <small> <span class="del opacity-70">{{ $static->old_price }} </span> </small> @endif {{$static->price }}<small> {{__('kd_title')}}
                                                 <br>
                                                 {{-- {{ app()->getLocale()=="en" ? $static->title_en : $static->title_ar }} --}}
                                                 {{-- /{{ $static->count_day }} {{__('days')}} --}}</small></h1>
@@ -136,7 +136,7 @@
                                 <div class="col-xs-12 col-sm-6 col-md-3 p-2">
                                     <div class="mdc-card pricing-card text-center border-accent p-0 h-100">
                                         <div class="bg-accent pricing-header p-2">
-                                            <h1 class="fs-sm-20">{{__('kd_title')}} @if( $normal->old_price >  $normal->price ) <small> <span class="del opacity-70">{{ $normal->old_price }} </span></small> @endif {{ $normal->price  }}<small>
+                                            <h1 class="fs-sm-20"> @if( $normal->old_price >  $normal->price ) <small> <span class="del opacity-70">{{ $normal->old_price }} </span></small> @endif {{ $normal->price  }}<small> {{__('kd_title')}}
                                                 <br>
                                                 {{-- {{ $normal->count_day }} {{__('days')}} --}}
                                             </small></h1>
