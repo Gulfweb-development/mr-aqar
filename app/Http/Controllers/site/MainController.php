@@ -224,9 +224,27 @@ class MainController extends Controller
         $credit = $this->getCreditUser(auth()->id());
         $user = auth()->user();
         $ads = Advertising::where('user_id', $user->id)
+            ->whereDate('expire_at', '>=', Carbon::now())
             ->orderBy('id', 'desc')->paginate(20);
 
         return view('site.pages.myAds', [
+            'balance' => $record,
+            'ads' => $ads,
+            'credit' => $credit
+        ]);
+    }
+    //my ads
+    public function myAdsArchived()
+    {
+        $record = $this->getBalance();
+
+        $credit = $this->getCreditUser(auth()->id());
+        $user = auth()->user();
+        $ads = Advertising::where('user_id', $user->id)
+            ->whereDate('expire_at', '<', Carbon::now())
+            ->orderBy('id', 'desc')->paginate(20);
+
+        return view('site.pages.myAdsArchived', [
             'balance' => $record,
             'ads' => $ads,
             'credit' => $credit
@@ -427,9 +445,9 @@ class MainController extends Controller
                 }
                 throw new \Exception($message);
             }
-           
+
             $paymentResponse->user_id      = $payment->user_id;
-            
+
             $refId                 = @$payment->ref_id;
             $payment->user->update(['package_id' => intval($payment->package_id)]);
             $payment->status       = "completed";
@@ -464,7 +482,7 @@ class MainController extends Controller
             $order->pdate      = @$paymentStatus->PostDate;
             $order->accept     = 1;
             $order->save();
-            
+
             return view("site.pages.payment", compact('message', 'refId', 'paymentResponse', 'payment', 'paymentStatus'));
         } catch (\Exception $e) {
             // dd($e, @$paymentStatus, @$payment);
@@ -556,7 +574,7 @@ class MainController extends Controller
     {
         return app()->getLocale() == 'en' ?  Area::orderBy('name_en')->get() : Area::orderBy('name_ar')->get();
     }
-    
+
     public function confirmReport($locale, $type, $id)
     {
         if ($type == 'ad') {
@@ -571,7 +589,7 @@ class MainController extends Controller
         session()->put('prev_url', url()->previous());
         return view('site.pages.confirmReport', compact('action', 'type', 'id', 'confirmMsg','method'));
     }
-    
+
     public function confirmBlock($locale, $type, $id)
     {
         if ($type == 'ad') {

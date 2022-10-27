@@ -64,6 +64,7 @@ Route::group(['middleware'=>['auth']],function (){
     Route::get('/paymenthistory', function () {return abort(404);})->name('Main.paymentHistory');
 	Route::get('/paymentdetails/{paymentid}', 'MainController@paymentDetails')->name('Main.paymentDetails');
     Route::get('/myads', 'MainController@myAds')->name('Main.myAds');
+    Route::get('/myads/archived', 'MainController@myAdsArchived')->name('Main.myAds.archived');
     Route::delete('/ad/delete/{advertising}', 'AdvertisingController@delete')->name('Advertising.delete');
     Route::get('/buypackage', 'MainController@buyPackage')->name('Main.buyPackage');
     Route::post('/buypackageorcredit', 'MainController@buyPackageOrCredit')->name('Main.buyPackageOrCredit');

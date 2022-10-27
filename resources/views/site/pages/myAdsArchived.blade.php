@@ -53,12 +53,12 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
 
 <div class="mt-3">
     <h3 class="d-inline-block fw-600 mb-2 uppercase">
-        {{ __('my_ads_title') }}
+        {{ __('expired_ads') }}
     </h3>
     <div class="description-box-icons flex-container mb-2 md-float-{{app()->getLocale() == 'en' ? 'right' : 'left'}} sm-justify-evenly">
-        <a href="{{ route('Main.myAds.archived' , [ app()->getLocale() ]) }}" class="mdc-button">
+        <a href="{{ route('Main.myAds' , [ app()->getLocale() ]) }}" class="mdc-button">
             <span class="mdc-button__ripple"></span>
-            <span class="mdc-button__label">({{ __('expired_ads') }})</span>
+            <span class="mdc-button__label">({{ __('my_ads_title') }})</span>
         </a>
     </div>
 </div>
