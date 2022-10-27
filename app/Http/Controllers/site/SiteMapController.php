@@ -35,79 +35,75 @@ class SiteMapController extends Controller
         '{locale}/companies/new',
         '{locale}/get-credit-user',
         '{locale}/user/delete',
+        '{locale}/cat',
+        '{locale}/payment-response',
+        '{locale}/search',
+        '{locale}/ad/{advertising}',
+        '{locale}/advertising/{advertising}/report',
+        '{locale}/advertising/{advertising}/location',
+        '{locale}/cities',
+        '{locale}/get-all-areas',
+        '{locale}/venuetypestest',
+        '{locale}/asset/',
+        '{locale}/confirm-report/',
+        '{locale}/company/{company}/report',
+        '{locale}/companies/{phone}/{name?}/advertise',
+        '{locale}/advertising/{hashNumber}/location',
+        '{locale}/advertising/{hashNumber}/direction',
+        '{locale}/images/',
+    ];
+    public static $hiddenMiddleware = [
+        'auth',
     ];
 
     public static $getByEloquent = [
-        'ad.search' => [
-            'query' => '\App\Models\Ad::query()->where(\'is_approved\', 1)->latest()->get()',
+        'site.ad.detail' => [
+            'query' => '\App\Models\Advertising::whereDate(\'expire_at\', \'>=\', Carbon\Carbon::now())->latest()->get()',
             'variable' => [
-                'toSlug($item->title)',
-                '$item->id',
+                '$item->hash_number',
             ],
-            'name' => '$item->title',
+            'name' => '$item->title_en',
             'lastmod' => '$item->updated_at',
         ],
-        'agency.ads' => [
-            'query' => '\App\Models\User::companies()->get()',
+        'companies.info' => [
+            'query' => '\App\User::where(\'type_usage\', \'company\')->latest()->get()',
             'variable' => [
-                'toSlug($item->name)',
-                '$item->id',
+                '$item->company_phone',
+                '$item->company_name',
             ],
-            'name' => 'trans(\'app.ads\') .\' \' . trans(\'app.created_by\') .\' \' . $item->name',
-            'lastmod' => '$item->updated_at',
-        ],
-        'agency' => [
-            'query' => '\App\Models\User::companies()->get()',
-            'variable' => [
-                'toSlug($item->name)',
-                '$item->id',
-            ],
-            'name' => '$item->name',
-            'lastmod' => '$item->updated_at',
-        ],
-        'blog' => [
-            'query' => '\App\Models\Blog::get()',
-            'variable' => [
-                'toSlug($item->translate(\'title\'))',
-                '$item->id',
-            ],
-            'name' => '$item->translate(\'title\')',
-            'lastmod' => '$item->updated_at',
-        ],
-        'school' => [
-            'query' => '\App\Models\School::query()->latest()->get()',
-            'variable' => [
-                'toSlug($item->translate(\'title\'))',
-                '$item->id',
-            ],
-            'name' => '$item->translate(\'title\')',
+            'name' => '$item->company_name',
             'lastmod' => '$item->updated_at',
         ],
     ];
     public function index(){
         $routeCollection = Route::getRoutes();
-        dd(collect($routeCollection->getRoutes())
-            ->map(function ($item) {
-                if ( ! Str::startsWith( trim( $item->uri() , '/'), self::$hiddenUri )
-                    and in_array('GET', $item->methods())
-                    and ! in_array($item->getName(), array_keys(self::$getByEloquent))
-                )
-                    return $item->middleware() ;
-            }));
         $staticRoute = [];
         $dynamicRoute = [];
         foreach (array_keys(self::$getByEloquent) as $name )
             $dynamicRoute[$name] = [];
         foreach ($routeCollection->getRoutes() as  $value) {
             if ( ! Str::startsWith( trim( $value->uri() , '/'), self::$hiddenUri )
+                and count( array_intersect($value->middleware(), self::$hiddenMiddleware ) ) == 0
                 and in_array('GET', $value->methods())
                 and ! in_array($value->getName(), array_keys(self::$getByEloquent))
-            )
-                $staticRoute[] = [
-                    'link' => route($value->getName()),
-                    'name' => trans('app.'.$value->getName()),
-                ];
-            elseif ( in_array('GET', $value->methods())
+                and $value->getName() != null
+            ) {
+                if(strpos($value->uri(), '{locale}'  ) === false)
+                    $staticRoute[] = [
+                        'link' => route($value->getName()),
+                        'name' => $value->getName(),
+                    ];
+                else {
+                    $staticRoute[] = [
+                        'link' => route($value->getName() , 'ar'),
+                        'name' => $value->getName(),
+                    ];
+                    $staticRoute[] = [
+                        'link' => route($value->getName() , 'en'),
+                        'name' => $value->getName(),
+                    ];
+                }
+            } elseif ( in_array('GET', $value->methods())
                 and in_array($value->getName(), array_keys(self::$getByEloquent))
             ) {
                 $Eloquent['query'] = [];
@@ -120,14 +116,32 @@ class SiteMapController extends Controller
                     }
                     eval('$Eloquent[\'name\'] = '.trim($object['name'] , ';') . ';');
                     eval('$Eloquent[\'lastmod\'] = '.trim($object['lastmod'] , ';') . ';');
-                    $dynamicRoute[$value->getName()][] = [
-                        'link' => route($value->getName(), $routesVariable),
-                        'name' => $Eloquent['name'],
-                        'lastmod' => $Eloquent['lastmod'],
-                    ];
+
+                    if(strpos($value->uri(), '{locale}'  ) === false)
+                        $dynamicRoute[$value->getName()][] = [
+                            'link' => route($value->getName(), $routesVariable),
+                            'name' => $Eloquent['name'],
+                            'lastmod' => $Eloquent['lastmod'],
+                        ];
+                    else {
+                        array_unshift($routesVariable, "en");
+                        $dynamicRoute[$value->getName()][] = [
+                            'link' => route($value->getName(), $routesVariable),
+                            'name' => $Eloquent['name'],
+                            'lastmod' => $Eloquent['lastmod'],
+                        ];
+                        $routesVariable[0] = 'ar';
+                        $dynamicRoute[$value->getName()][] = [
+                            'link' => route($value->getName(), $routesVariable),
+                            'name' => $Eloquent['name'],
+                            'lastmod' => $Eloquent['lastmod'],
+                        ];
+                    }
                 }
             }
         }
+        $temp = array_unique(array_column($staticRoute, 'link'));
+        $staticRoute = array_intersect_key($staticRoute, $temp);
         return response()->view('sitemap', compact('dynamicRoute' , 'staticRoute'))->header('Content-Type', 'text/xml');
 
     }
