@@ -67,6 +67,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
             Route::get("/getSavedAdvertising",'AdvertisingController@getUserSaved');
             Route::get("/advertising",'AdvertisingController@getUserAdvertising');
             Route::post("/buyPackageOrCredit",'AdvertisingController@buyPackageOrCredit');
+            Route::post("/advertising/upgrade",'AdvertisingController@upgrade_premium');
             Route::post("/advertising/create",'AdvertisingController@createAdvertising')->name('api.createAdvertise');
             Route::post("/advertising/attachFileToAdvertising",'AdvertisingController@attachFileToAdvertising');
             Route::post("/advertising/update",'AdvertisingController@updateAdvertising');

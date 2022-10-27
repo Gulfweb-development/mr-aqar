@@ -15,6 +15,7 @@ use App\Models\PackageHistory;
 use App\Models\Payment;
 use App\Models\Setting;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -104,9 +105,9 @@ class AdvertisingController extends ApiBaseController
     {
         $advertising = tap(Advertising::getValidAdvertising(0)->where(function ($r) use ($request) {
             if ($request->expire == 1) {
-                $r->where('expire_at', '<', date('Y-m-d'))->whereNotNull('expire_at');
-            } else {
-                $r->whereNotNull('expire_at')->where('expire_at', '>', date('Y-m-d'));
+                $r->whereDate('expire_at', '<', Carbon::now())->whereNotNull('expire_at');
+            } elseif ($request->expire == 0) {
+                $r->whereNotNull('expire_at')->whereDate('expire_at', '>=', Carbon::now());
             }
         })->where('user_id', auth()->user()->id)->paginate(10))->map(function ($item){
             $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
@@ -711,5 +712,29 @@ class AdvertisingController extends ApiBaseController
             }
         }
         return [true];
+    }
+
+
+    public function upgrade_premium(Request $request)
+    {
+        $isValid = $this->isValidCreateAdvertising(auth()->user()->id, 'premium');
+        if (!$isValid) {
+            return $this->fail(trans('dont_have_premium_package'));
+        }
+        if ($request->advertise_id) {
+            $advertising = Advertising::whereId($request->advertise_id)->where('user_id', Auth::user()->id)->firstOrFail();
+            // decrease one from user premium packages count
+            User::where('id', Auth::user()->id)->update(['last_activity' => date("Y-m-d")]);
+            $countShowDay = $this->affectCreditUser(Auth::user()->id, 'premium');
+            $today = date("Y-m-d");
+            $date = strtotime("+$countShowDay day", strtotime($today));
+            $expireDate = date("Y-m-d", $date);
+            $advertising->expire_at = $expireDate;
+            $advertising->advertising_type = 'premium';
+            $advertising->save();
+
+            return $this->success( trans('upgraded_premium'));
+        }
+        return $this->fail(trans('un_success_alert_title'));
     }
 }
