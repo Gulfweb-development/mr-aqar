@@ -230,7 +230,7 @@
 
 {{-- <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded bg-danger"
 style="margin-top:30px;">{{__('delete')}} {{__('account')}}</button> --}}
-<a href="user/delete" style="margin-top:30px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded bg-danger">
-    {{__('delete')}} {{__('account')}}
-</a>
+{{--<a href="user/delete" style="margin-top:30px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded bg-danger">--}}
+{{--    {{__('delete')}} {{__('account')}}--}}
+{{--</a>--}}
 @endsection
