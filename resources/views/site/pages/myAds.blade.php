@@ -99,7 +99,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
 
             </style>
             @foreach($ads as $ad)
-            <tr class="mdc-data-table__row">
+            <tr class="mdc-data-table__row" @if($ad->expire_at) style="background-color:rgba(0,0,0,0.1);" @endif>
                 <td class="mdc-data-table__cell sm:px-2 center-xs-important" style="padding-{{$edge}}: 0 !important;">
                     <a href="{{route('site.ad.detail', [app()->getLocale(), $ad->hash_number])}}">
 

@@ -410,18 +410,18 @@ class UserController extends ApiBaseController
             return $this->fail(trans('main.not_exist_user'));
         } else {
 
-                if($user->count() == 1 && $user->first()->is_enable) {
-                    if (Hash::check($request->password, $user->first()->password)) {
-                        $user->first()->update(['api_token' => Str::random(60),'device_token' => $request->device_token]);
+            //if($user->count() == 1 && $user->first()->is_enable) {
+                if (Hash::check($request->password, $user->first()->password)) {
+                    $user->first()->update(['api_token' => Str::random(60),'device_token' => $request->device_token]);
 
-                        return $this->success(trans('main.login_success'),['user'=>$user->first()]);
-                    }
-                    else
-                        return $this->fail(trans('main.not_exist_combination'));
-                } elseif ($user->count() == 1 && !($user->first()->is_active))
-                    return $this->fail(trans('main.not_active_user'));
+                    return $this->success(trans('main.login_success'),['user'=>$user->first()]);
+                }
                 else
-                    return $this->fail(trans('main.more_than_one_user'));
+                    return $this->fail(trans('main.not_exist_combination'));
+            //} elseif ($user->count() == 1 && !($user->first()->is_active))
+            //    return $this->fail(trans('main.not_active_user'));
+            //else
+            //    return $this->fail(trans('main.more_than_one_user'));
         }
     }
 

@@ -117,11 +117,16 @@ class AdvertisingController extends Controller
         ];
         $credit = $this->getCreditUser(auth()->id());
         if ($credit === [])
-        $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
+            $credit = ['count_premium_advertising' => 0, 'count_normal_advertising' => 0];
         if ($credit['count_premium_advertising'] === 0 && $credit['count_normal_advertising'] === 0)
-        return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'have_no_package']);
-        
+            return redirect()->route('Main.buyPackage', app()->getLocale())->with(['status' => 'have_no_package']);
+
         return view('site.advertising.edit', compact('cities', 'types', 'purposes', 'credit'));
+    }
+
+    public function repost()
+    {
+        return redirect()->route('site.advertising.create', app()->getLocale())->withInput();
     }
 
 
@@ -227,7 +232,11 @@ class AdvertisingController extends Controller
     public function details($locale, $hashNumber)
     {
         $this->addView($hashNumber);
-        $advertising = Advertising::where('hash_number', $hashNumber)->whereDate('expire_at', '>=', Carbon::now())->with(['user', 'city', 'area', 'advertisingView', 'area', 'city', 'venue'])->firstOrFail();
+        $advertising = Advertising::where('hash_number', $hashNumber)->where(function ($query) {
+            $query->whereDate('expire_at', '>=', Carbon::now());
+            if ( \auth()->user() != null )
+                $query->orWhere('user_id' , \auth()->user()->id );
+        })->with(['user', 'city', 'area', 'advertisingView', 'area', 'city', 'venue'])->firstOrFail();
         //          dd(collect(json_decode($advertising->other_image))->toArray());
         //        return $advertising->advertisingView;
         $relateds = Advertising::where('expire_at', '>=', Carbon::now())->orderBy('id', 'desc')->where('id', '!=', $advertising->id)->limit(6)->get();
@@ -426,9 +435,9 @@ class AdvertisingController extends Controller
 
         $otherImage = [];
         $old_otherImages = @$advertising->other_image
-            && json_decode(@$advertising->other_image)
-            && count(json_decode(@$advertising->other_image))
-            && json_decode(@$advertising->other_image, true)['other_image']
+        && json_decode(@$advertising->other_image)
+        && count(json_decode(@$advertising->other_image))
+        && json_decode(@$advertising->other_image, true)['other_image']
             ? json_decode(@$advertising->other_image, true)['other_image']
             : [];
 
@@ -589,7 +598,7 @@ class AdvertisingController extends Controller
     public function block($locale, Advertising $advertising){
         $user = auth()->user();
         $user->blockedAdvertising()->attach($advertising->id, ['relation_type' => 'blocked']);
-        
+
         $prevURL = session()->has('prev_url') ? session()->get('prev_url') : null;
         session()->forget('prev_url');
         if(@$prevURL != null){
