@@ -163,9 +163,13 @@ class AdvertisingController extends ApiBaseController
             if ($validate->fails())
                 return $this->fail($validate->errors()->first());
 
+            $result = $this->filterKeywords($request->description);
+            if (!$result[0]) {
+                return $this->fail("invalid Keyword (" . $result[1] . ")", -1, $request->all());
+            }
 
             $user = auth()->user();
-            $advertising = Advertising::find($request->id);
+            $advertising = Advertising::where('user_id',$user->id)->find($request->id);
             if (isset($advertising)) {
                 $advertising = $this->saveAdvertising($request, $user, $advertising);
                 return $this->success("");
@@ -572,10 +576,18 @@ class AdvertisingController extends ApiBaseController
     }
     private function validateAdvertising(Request $request, $create = true): \Illuminate\Contracts\Validation\Validator
     {
+        if ( $create )
+            return Validator::make($request->all(), [
+                'venue_type' => 'required',
+                'purpose' => 'required|in:rent,sell,exchange,required_for_rent',
+                'advertising_type' => 'required|in:normal,premium',
+                'city_id' => 'required',
+                'area_id' => 'required',
+                'price' => 'nullable|numeric',
+            ]);
         return Validator::make($request->all(), [
             'venue_type' => 'required',
             'purpose' => 'required|in:rent,sell,exchange,required_for_rent',
-            'advertising_type' => 'required|in:normal,premium',
             'city_id' => 'required',
             'area_id' => 'required',
             'price' => 'nullable|numeric',
@@ -610,11 +622,12 @@ class AdvertisingController extends ApiBaseController
         $advertising->security = $request->security;
         $advertising->location_lat = $request->location_lat;
         $advertising->location_long = $request->location_long;
-        if ($request->route()->getName() == "api.createAdvertise")
+        if ($request->route()->getName() == "api.createAdvertise") {
             $advertising->hash_number = Advertising::makeHashNumber();
-        $advertising->floor_plan = "";
-        $advertising->main_image = "";
-        $advertising->other_image = "";
+            $advertising->floor_plan = "";
+            $advertising->main_image = "";
+            $advertising->other_image = "";
+        }
 
         foreach ((array) $request->deleted_images as $image) {
             !file_exists(public_path(urldecode($image))) ?: unlink(public_path(urldecode($image)));
