@@ -30,8 +30,27 @@ class Advertising extends Model implements Feedable
         'Rest_house' => 'rest_house',
     ];
     protected $guarded = ['id'];
-    protected $appends = ['total', 'view_count'];
-
+    protected $appends = ['total', 'view_count','thumb_main_image'];
+    protected $hidden = [
+        "rss_image",
+        "number_of_rooms",
+        "number_of_bathrooms",
+        "number_of_master_rooms",
+        "number_of_miad_rooms",
+        "number_of_floor",
+        "gym",
+        "pool",
+        "furnished",
+        "number_of_parking",
+        "number_of_balcony",
+        "floor_plan",
+        "surface",
+        "security",
+        "location_lat",
+        "location_long",
+        "sort",
+        "reported",
+    ];
 
     /**
      * Get the user's first name.
@@ -126,7 +145,12 @@ class Advertising extends Model implements Feedable
 
     public function getViewCountAttribute($value)
     {
-        return count($this->advertisingView);
+        return $this->advertisingView()->count();
+    }
+
+    public function getThumbMainImageAttribute($value)
+    {
+        return str_replace('uploads/images', 'uploads/images/thumb' ,$this->main_image);
     }
 
     public static  function makeHashNumber()

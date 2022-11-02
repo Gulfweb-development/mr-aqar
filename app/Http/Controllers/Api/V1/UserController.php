@@ -345,7 +345,7 @@ class UserController extends ApiBaseController
     public function payments(Request $request)
     {
         $user=auth()->user();
-        $list=Payment::where('user_id',$user->id)->orderBy('id','desc')->paginate(10);
+        $list=Payment::where('user_id',$user->id)->orderBy('id','desc')->paginate(30);
         return $this->success("",$list);
 
     }

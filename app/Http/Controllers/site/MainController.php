@@ -17,10 +17,13 @@ use App\Models\Setting;
 use App\User;
 use Carbon\Carbon;
 use http\Url;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 use mysql_xdevapi\Exception;
 use PhpParser\Node\Stmt\Switch_;
 
@@ -608,4 +611,21 @@ class MainController extends Controller
     public function cardAction($locale, Advertising $ad){
         return view('site.pages.advertising.cardAction', compact('ad'));
     }
+
+
+    public function thumbanail($file){
+        $mainPatch = public_path('resources/uploads/images/'.$file);
+        $thumbPatch = public_path('resources/uploads/images/thumb/'.$file);
+        if ( file_exists($mainPatch) ){
+            $img = Image::make($mainPatch);
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($thumbPatch);
+            $response = Response::make($img, 200);
+            $response->header("Content-Type", $img->mime());
+            return $response;
+        }
+        abort(404);
+    }
+
 }

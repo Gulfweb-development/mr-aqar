@@ -155,5 +155,6 @@ Route::group(['middleware'=>['auth','Admin'],'prefix'=>"admin",'namespace'=>"Pan
 // In routes/web.php
 Route::feeds();
 Route::get('/sitemap.xml', 'site\SiteMapController@index')->name('sitemap');
+Route::get('resources/uploads/images/thumb/{file}', 'site\MainController@thumbanail')->name('thumbanail');
 
 

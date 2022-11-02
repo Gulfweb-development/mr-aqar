@@ -30,7 +30,7 @@ class AdvertisingController extends ApiBaseController
     {
         $companies = User::where('type_usage', 'company')
             ->with('socials')
-            ->paginate(20);
+            ->paginate(30);
         return $this->success("", $companies);
     }
     public function company($id)
@@ -45,7 +45,7 @@ class AdvertisingController extends ApiBaseController
         $advertising = $this->bindFilter($request);
         $advertising->orderByDesc('advertising_type');
         $advertising->orderByDesc('updated_at');
-        $advertising = tap($advertising->paginate(10))->map(function ($item){
+        $advertising = tap($advertising->paginate(30))->map(function ($item){
             $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
             $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
             return $item;
@@ -62,7 +62,7 @@ class AdvertisingController extends ApiBaseController
         // if (@$this->user) {
         //         $advertising = $advertising->whereNotIn('id', $this->user->blockedAdvertising->pluck('id')->merge(Advertising::whereIn('user_id',$this->user->blockedUsers->pluck('id') ?? [])->pluck('id') ?? []) ?? []);
         // }
-        $advertising = tap($advertising->paginate(10))->map(function ($item){
+        $advertising = tap($advertising->paginate(30))->map(function ($item){
             $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
             $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
             return $item;
@@ -73,7 +73,7 @@ class AdvertisingController extends ApiBaseController
     public function similarAdvertising($id)
     {
         $advertising = Advertising::findOrFail($id);
-        $list = tap(Advertising::getValidAdvertising()->where('type', $advertising->type)->where("venue_type", $advertising->venue_type)->where("purpose", $advertising->purpose)->paginate(10))->map(function ($item){
+        $list = tap(Advertising::getValidAdvertising()->where('type', $advertising->type)->where("venue_type", $advertising->venue_type)->where("purpose", $advertising->purpose)->paginate(30))->map(function ($item){
             $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
             $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
             return $item;
@@ -98,7 +98,7 @@ class AdvertisingController extends ApiBaseController
         $user = auth()->user();
         $userId = $user->id;
         $ids = DB::table("user_archive_advertising")->where('user_id', $userId)->pluck('advertising_id')->toArray();
-        $advertising = Advertising::getValidAdvertising()->whereIn('id', $ids)->paginate(10);
+        $advertising = Advertising::getValidAdvertising()->whereIn('id', $ids)->paginate(30);
         return $this->success("", $advertising);
     }
     public function getUserAdvertising(Request $request)
@@ -109,7 +109,7 @@ class AdvertisingController extends ApiBaseController
             } elseif ($request->expire == 0) {
                 $r->whereNotNull('expire_at')->whereDate('expire_at', '>=', Carbon::now());
             }
-        })->where('user_id', auth()->user()->id)->paginate(10))->map(function ($item){
+        })->where('user_id', auth()->user()->id)->paginate(30))->map(function ($item){
             $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
             $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
             return $item;
