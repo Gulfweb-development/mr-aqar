@@ -29,6 +29,7 @@ class SiteMapController extends Controller
         'optimize-clear',
         'test',
         'feed',
+        'resources/uploads/images/thumb',
         '{locale}/feed',
         '{locale}/test',
         '{locale}/card-action/{ad}',

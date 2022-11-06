@@ -75,6 +75,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
             Route::post("/advertising/archive",'AdvertisingController@archiveAdvertising');
             Route::post("/advertising/detachArchive",'AdvertisingController@detachArchive');
 
+            Route::post("/upgrade",'UserController@upgrade');
+            Route::get("/downgrade",'UserController@downgrade');
             Route::post("/updateProfile",'UserController@updateProfile');
             Route::post("/deleteAccount",'UserController@deleteAccount');
             Route::post("/updateDeviceToken",'UserController@updateDeviceToken');

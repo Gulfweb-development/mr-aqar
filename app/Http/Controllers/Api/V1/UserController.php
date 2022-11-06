@@ -3,10 +3,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 use App\Events\UserRegistered;
+use App\Http\Controllers\site\CompanyController;
 use App\Models\Package;
 use App\Models\PackageHistory;
 use App\Models\Payment;
 use App\Models\Setting;
+use App\Models\Social;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +56,7 @@ class UserController extends ApiBaseController
                 $user->sms_code=$code;
                 $user->save();
                 self::sendSms($message,$mobile);
-               return $this->success(trans("main.successfully_send_verify_code"));
+                return $this->success(trans("main.successfully_send_verify_code"));
             }
             return $this->fail(trans("main.user_not_found"));
         }catch (\Exception $e){
@@ -91,7 +93,7 @@ class UserController extends ApiBaseController
     {
         $user = auth()->user();
         if(isset($request->device_token) && $request->device_token!="null" && $request->device_token!="")
-         User::whereId($user->id)->update(['device_token'=>$request->device_token]);
+            User::whereId($user->id)->update(['device_token'=>$request->device_token]);
 
 
         return $this->success("");
@@ -148,19 +150,19 @@ class UserController extends ApiBaseController
     public function saveLicense(Request $request)
     {
         $user = auth()->user();
-       $validation=Validator::make($request->all(), [
+        $validation=Validator::make($request->all(), [
             'image' => 'required|mimes:jpeg,bmp,png|max:2048',
         ]);
         if ($validation->fails())
             return $this->fail($validation->errors()->first());
 
 
-       if($request->hasFile('image')){
-           $p = $this->saveImage($request->image);
+        if($request->hasFile('image')){
+            $p = $this->saveImage($request->image);
             User::whereId($user->id)->update(["licence"=>$p]);
-       }
+        }
 
-       return $this->success("",['user'=>User::find($user->id)]);
+        return $this->success("",['user'=>User::find($user->id)]);
 
     }
 
@@ -168,32 +170,47 @@ class UserController extends ApiBaseController
     {
         try {
             $user = auth()->user();
-            $validation = Validator::make($request->all(), [
-                'name' => 'required',
-                //'mobile' => 'required|digits:8|unique:users,mobile,'.$user->id,
-                'email' => 'email'
-            ]);
+            $rules = [
+                'email' => 'nullable|email|unique:users,email,' . $user->id,
+                'licence' => 'mimes:jpeg,bmp,png|max:2048',
+                'avatar' => 'mimes:jpeg,bmp,png|max:2048',
+            ];
+            if ($user->isCompany) {
+                $rules['company_name'] = 'required|max:250';
+                $rules['company_phone'] = 'required|digits:8|unique:users,company_phone,' . $user->id;
+            }
+            $validation = Validator::make($request->all(),$rules);
             if ($validation->fails()) {
                 return $this->fail($validation->errors()->first());
             }
 
+            $user->name = $request->name;
+            $user->email = $request->email;
 
 
-            if ($user) {
-                $user->name=$request->name;
-                $user->email=$request->email;
-                //$user->mobile=$request->mobile;
+            $licenceFile = $request->licence;
+            $avatarFile = $request->avatar;
 
-                $file=$request->profile_photo;
-                if($file==false||$file=="false"){
-                    $user->image_profile="";
-                }elseif(isset($file)){
-                    $user->image_profile=$this->saveAvatar($file);
-                }
-                $user->save();
-                return $this->success(trans('main.success_profile_update'),['image_profile'=>$user->image_profile,'user'=>$user]);
+            if (isset($licenceFile)) {
+                $licence = $this->saveLicence($licenceFile);
+                $user->licence = $licence;
+            }
+            if (isset($avatarFile)) {
+                $avatar = $this->saveAvatar($avatarFile);
+                $user->image_profile = $avatar;
+            }
+            if ($user->isCompany) {
+                $user->company_name = $request->company_name;
+                $user->company_phone = $request->company_phone;
+                CompanyController::insertSocials($request, $user->id);
+            }
+
+            if ($user->save()) {
+                return $this->success(trans('main.success_profile_update'),
+                    ['image_profile'=>$user->image_profile,'user'=>$user]);
             } else {
-                return $this->fail(trans('main.invalid_user'));
+                return $this->fail(trans('main.server_not_stable'));
+                //return redirect()->route( 'Main.profile', app()->getLocale() )->with( [ 'status' => 'unsuccess'] );
             }
         } catch (\Exception $exception) {
             return $this->fail(trans('main.server_not_stable'));
@@ -271,16 +288,16 @@ class UserController extends ApiBaseController
             return $this->fail($validate->errors()->first(),-1, $validate->errors());
 
 
-            $user=  User::where("type","member")->where("mobile",$mobile)->where("api_token",$request->api_token)->with("package")->first();
+        $user=  User::where("type","member")->where("mobile",$mobile)->where("api_token",$request->api_token)->with("package")->first();
 
-            if(isset($user)){
-                $user->password = Hash::make($password);
-                $user->api_token = Str::random(60);
-                $user->device_token = $request->device_token;
-                $user->save();
-                return $this->success(trans('main.login_success'),['user'=>$user]);
-            }
-            return $this->fail(trans('main.not_exist_user'));
+        if(isset($user)){
+            $user->password = Hash::make($password);
+            $user->api_token = Str::random(60);
+            $user->device_token = $request->device_token;
+            $user->save();
+            return $this->success(trans('main.login_success'),['user'=>$user]);
+        }
+        return $this->fail(trans('main.not_exist_user'));
 
 
     }
@@ -308,36 +325,36 @@ class UserController extends ApiBaseController
         $user = auth()->user();
         $date=date("Y-m-d");
         User::where('id',$user->id)->update(['last_activity'=>date("Y-m-d")]);
-       $listBalance= PackageHistory::where("user_id",$user->id)
+        $listBalance= PackageHistory::where("user_id",$user->id)
             ->where("expire_at",">",$date)
             ->where("is_payed",1)
-           ->where('accept_by_admin',1)
+            ->where('accept_by_admin',1)
             ->whereColumn('count_advertising','>=','count_usage')
             ->whereColumn('count_premium','>=','count_usage_premium')
             ->orderBy('id','desc')->get();
 
-           if($listBalance->count()>=1){
-               $expireAt=$listBalance[0]->expire_at;
-               $type=$listBalance[0]->type;
-               $titleAr=$listBalance[0]->itle_ar;
-               $titleEn=$listBalance[0]->title_en;
+        if($listBalance->count()>=1){
+            $expireAt=$listBalance[0]->expire_at;
+            $type=$listBalance[0]->type;
+            $titleAr=$listBalance[0]->itle_ar;
+            $titleEn=$listBalance[0]->title_en;
 
-               $count=0;
-               $countPremium=0;
-               $countUsage=0;
-               $countPremiumUsage=0;
-               foreach ($listBalance as $item) {
-                   $count+=$item->count_advertising;
-                   $countPremium+=$item->count_premium;
-                   $countUsage+=$item->count_usage;
-                   $countPremiumUsage+=$item->count_usage_premium;
-               }
-               $av=$count-$countUsage;
-               $avp=$countPremium-$countPremiumUsage;
-               $record=['type'=>$type,'title_en'=>$titleEn,'title_ar'=>$titleAr,'expire_at'=>$expireAt,'count_advertising'=>$count,'count_usage'=>$countUsage,'count_premium'=>$countPremium,'count_premium_usage'=>$countPremiumUsage,'available'=>$av,'available_premium'=>$avp];
-               return $this->success("",$record);
-           }
-           return $this->fail("empty user balance");
+            $count=0;
+            $countPremium=0;
+            $countUsage=0;
+            $countPremiumUsage=0;
+            foreach ($listBalance as $item) {
+                $count+=$item->count_advertising;
+                $countPremium+=$item->count_premium;
+                $countUsage+=$item->count_usage;
+                $countPremiumUsage+=$item->count_usage_premium;
+            }
+            $av=$count-$countUsage;
+            $avp=$countPremium-$countPremiumUsage;
+            $record=['type'=>$type,'title_en'=>$titleEn,'title_ar'=>$titleAr,'expire_at'=>$expireAt,'count_advertising'=>$count,'count_usage'=>$countUsage,'count_premium'=>$countPremium,'count_premium_usage'=>$countPremiumUsage,'available'=>$av,'available_premium'=>$avp];
+            return $this->success("",$record);
+        }
+        return $this->fail("empty user balance");
 
 
     }
@@ -357,12 +374,12 @@ class UserController extends ApiBaseController
         try {
             $credit=$this->getCreditUser($user->id);
             if(count($credit)>=1){
-               return $this->success("",$credit);
+                return $this->success("",$credit);
             }
             return $this->fail("first subscribe");
 
         }catch (\Exception $exception){
-              return $this->fail("error server");
+            return $this->fail("error server");
         }
 
     }
@@ -389,14 +406,14 @@ class UserController extends ApiBaseController
 
     public function profile(){
         $user=auth()->user();
-        $user = User::where('mobile',$user->mobile)->where("type","member")->with("package");
+        $user = User::where('id',$user->id)->where("type","member")->with("package","socials");
         return $this->success("",['user'=>$user->first()]);
     }
 
     public function login(Request $request)
     {
 
-       $validation= Validator::make($request->only(['mobile','password']), [
+        $validation= Validator::make($request->only(['mobile','password']), [
             'mobile' => 'required|size:8',
             'password' => 'required|min:8',
         ]);
@@ -404,20 +421,20 @@ class UserController extends ApiBaseController
             return $this->fail($validation->errors()->first());
 
 
-        $user = User::where('mobile',$request->mobile)->where("type","member")->with("package");
+        $user = User::where('mobile',$request->mobile)->where("type","member")->with("package","socials");
 
         if($user->count() == 0) {
             return $this->fail(trans('main.not_exist_user'));
         } else {
 
             //if($user->count() == 1 && $user->first()->is_enable) {
-                if (Hash::check($request->password, $user->first()->password)) {
-                    $user->first()->update(['api_token' => Str::random(60),'device_token' => $request->device_token]);
+            if (Hash::check($request->password, $user->first()->password)) {
+                $user->first()->update(['api_token' => Str::random(60),'device_token' => $request->device_token]);
 
-                    return $this->success(trans('main.login_success'),['user'=>$user->first()]);
-                }
-                else
-                    return $this->fail(trans('main.not_exist_combination'));
+                return $this->success(trans('main.login_success'),['user'=>$user->first()]);
+            }
+            else
+                return $this->fail(trans('main.not_exist_combination'));
             //} elseif ($user->count() == 1 && !($user->first()->is_active))
             //    return $this->fail(trans('main.not_active_user'));
             //else
@@ -433,6 +450,98 @@ class UserController extends ApiBaseController
     public function makeSmsCode()
     {
         return rand(1000,9999);
+    }
+
+    public function upgrade(Request $request){
+        $validation=Validator::make($request->all(),[
+            'image' => 'nullable|mimes:jpeg,bmp,png|max:2048',
+            'company_name'=>'required',
+            'company_phone'=>'required',
+        ]);
+        if ($validation->fails())
+            return $this->fail($validation->errors()->first());
+
+        $user = auth()->user();
+        $user_id = $user->id;
+
+        if ($request->file('image')) {
+            $file= $request->file('image');
+            $filename = uniqid(time()).$file->getClientOriginalName();
+            $path ='/resources/uploads/images/avatars/'.$filename;
+            $file->move(public_path('/resources/uploads/images/avatars'), $filename);
+            $filename = '/resources/uploads/images/avatars/' . $filename;
+
+            if ($user->image_profile && file_exists($path = public_path('resources/uploads/images/avatars'). '/' . $user->image_profile))
+                unlink($path);
+        }
+        // Company name always should be required!!!!
+        if ( $user->company_name == null or empty($user->company_name) ) {
+            $package = Package::where("title_en", "gift credit")->where('is_enable', 1)->where('user_type', 'company')->first();
+            if (isset($package)) {
+                $countDay = optional($package)->count_day;
+                $today = date("Y-m-d");
+                $date = strtotime("+$countDay day", strtotime($today));
+                $expireDate = date("Y-m-d", $date);
+                $countNormal = $package->count_advertising;
+                $countPremium = $package->count_premium;
+                PackageHistory::create(['title_en' => $package->title_en, 'title_ar' => $package->title_ar, 'user_id' => $user->id, 'type' => "static", 'package_id' => $request->package_id, 'date' => date('Y-m-d'), 'is_payed' => 1, 'price' => $package->price, 'count_day' => $package->count_day, 'count_show_day' => $package->count_show_day, 'count_advertising' => $countNormal, 'count_premium' => $countPremium, 'count' => 1, 'accept_by_admin' => 1, 'expire_at' => $expireDate]);
+            }
+        }
+
+        User::where('id', $user_id)->update([
+            'company_name' => $request->company_name,
+            'company_phone' => $request->company_phone,
+            'image_profile' => isset($filename) ? $filename : $user->image_profile,
+            'type_usage' => 'company',
+        ]);
+
+        $this->insertSocials($request, $user_id);
+        return $this->success(__('upgraded_to_company'));
+    }
+
+    public function downgrade()
+    {
+        $balance = \App\Http\Controllers\site\MainController::getBalance();
+        if ($balance !== 0)
+            return $this->fail(__('packageNotFinished'));
+        $user = auth()->user();
+        $user_id = $user->id;
+
+        User::where('id', $user_id)->update([
+            'company_phone' => null,
+            'type_usage' => 'individual',
+        ]);
+        return $this->success(__('account_downgraded_successfully'));
+    }
+
+    public static function insertSocials($request, $user_id)
+    {
+        Social::where('user_id' ,$user_id )->delete();
+        $socials = [];
+        if ($request->filled('email')) {
+            $socials [] = [
+                'user_id' => $user_id,
+                'address' => $request->email,
+                'type' => 'email',
+            ];
+        }
+        if ($request->filled('instagram')) {
+            $socials [] = [
+                'user_id' => $user_id,
+                'address' => $request->instagram,
+                'type' => 'instagram',
+            ];
+        }
+        if ($request->filled('twitter')) {
+            $socials [] = [
+                'user_id' => $user_id,
+                'address' => $request->twitter,
+                'type' => 'twitter',
+            ];
+        }
+        if (!empty($socials)) {
+            Social::insert($socials);
+        }
     }
 
 
