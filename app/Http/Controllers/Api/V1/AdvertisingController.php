@@ -40,15 +40,52 @@ class AdvertisingController extends ApiBaseController
             ->findOrFail($id);
         return $this->success("", $company);
     }
+    public static function clearAdsData($item){
+        $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
+        $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
+        $item->other_images = json_decode($item->other_image , true);
+        $item->other_images = isset($item->other_images['other_image']) ? array_values($item->other_images['other_image']) : [];
+        unset(
+            $item->user->email_verified_at,
+            $item->user->email,
+            $item->user->package_id,
+            $item->user->sms_verified,
+            $item->user->verified,
+            $item->user->verified_office,
+            $item->user->licence,
+            $item->user->type,
+            $item->user->is_enable,
+            $item->user->api_token,
+            $item->user->device_token,
+            $item->user->lang,
+            $item->user->sms_code,
+            $item->user->companied_at,
+            $item->user->reported,
+            $item->user->last_activity,
+            $item->user->password_token,
+            $item->user->package_expire_at,
+            $item->user->created_at,
+            $item->user->deleted_at,
+            $item->user->updated_at,
+            $item->area->created_at,
+            $item->area->deleted_at,
+            $item->area->updated_at,
+            $item->city->created_at,
+            $item->city->deleted_at,
+            $item->city->updated_at,
+            $item->venue->created_at,
+            $item->venue->deleted_at,
+            $item->venue->updated_at,
+        );
+        return $item;
+    }
     public function getListAdvertising(Request $request)
     {
         $advertising = $this->bindFilter($request);
         $advertising->orderByDesc('advertising_type');
         $advertising->orderByDesc('updated_at');
         $advertising = tap($advertising->paginate(30))->map(function ($item){
-            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
-            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
-            return $item;
+            return AdvertisingController::clearAdsData($item);
         });
 
         return $this->success("", $advertising);
@@ -63,9 +100,7 @@ class AdvertisingController extends ApiBaseController
         //         $advertising = $advertising->whereNotIn('id', $this->user->blockedAdvertising->pluck('id')->merge(Advertising::whereIn('user_id',$this->user->blockedUsers->pluck('id') ?? [])->pluck('id') ?? []) ?? []);
         // }
         $advertising = tap($advertising->paginate(30))->map(function ($item){
-            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
-            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
-            return $item;
+            return AdvertisingController::clearAdsData($item);
         });
 
         return $this->success("", $advertising);
@@ -74,9 +109,7 @@ class AdvertisingController extends ApiBaseController
     {
         $advertising = Advertising::findOrFail($id);
         $list = tap(Advertising::getValidAdvertising()->where('type', $advertising->type)->where("venue_type", $advertising->venue_type)->where("purpose", $advertising->purpose)->paginate(30))->map(function ($item){
-            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
-            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
-            return $item;
+            return AdvertisingController::clearAdsData($item);
         });
         return $this->success("", $list);
     }
@@ -110,9 +143,7 @@ class AdvertisingController extends ApiBaseController
                 $r->whereNotNull('expire_at')->whereDate('expire_at', '>=', Carbon::now());
             }
         })->where('user_id', auth()->user()->id)->paginate(30))->map(function ($item){
-            $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");
-            $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
-            return $item;
+            return AdvertisingController::clearAdsData($item);
         });
 
         return $this->success("", $advertising);
