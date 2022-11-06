@@ -545,4 +545,12 @@ class UserController extends ApiBaseController
     }
 
 
+
+    public function report($id){
+        $company = User::where('type_usage', 'company')->findOrFail($id);
+        $company->reported += 1;
+        $company->save();
+        return $this->success( trans('user').trans('has_been_reported_successfully'));
+    }
+
 }

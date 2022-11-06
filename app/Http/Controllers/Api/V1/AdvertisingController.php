@@ -781,4 +781,11 @@ class AdvertisingController extends ApiBaseController
         }
         return $this->fail(trans('un_success_alert_title'));
     }
+
+    public function report($id){
+        $advertising = Advertising::getValidAdvertising()->findOrFail($id);
+        $advertising->reported += 1;
+        $advertising->save();
+        return $this->success( trans('advertising_title').trans('has_been_reported_successfully'));
+    }
 }
