@@ -52,6 +52,7 @@ class SiteMapController extends Controller
         '{locale}/advertising/{hashNumber}/location',
         '{locale}/advertising/{hashNumber}/direction',
         '{locale}/images/',
+        '{locale}/companies/buy-premium',
     ];
     public static $hiddenMiddleware = [
         'auth',

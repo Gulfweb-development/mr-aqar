@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Classes\Payment\CBKPay;
 use App\Http\Controllers\site\MainController;
+use App\Http\Controllers\site\MessageController;
 use App\Jobs\EmailNotify;
 use App\Lib\KnetPayment;
 use App\Models\Advertising;
@@ -30,6 +31,8 @@ class AdvertisingController extends ApiBaseController
     {
         $companies = User::where('type_usage', 'company')
             ->with('socials')
+            ->orderByDesc('is_premium')
+            ->orderByDesc('created_at')
             ->paginate(30);
         return $this->success("", $companies);
     }
@@ -39,6 +42,29 @@ class AdvertisingController extends ApiBaseController
             ->with('socials')
             ->findOrFail($id);
         return $this->success("", $company);
+    }
+    public function buyCompanyPremium()
+    {
+        try {
+            //send user to buy
+            $price = MessageController::getSettingDetails('on_top_price');
+            if (!$price > 0 || auth()->user()->is_premium || auth()->user()->type_usage != 'company')
+                return $this->fail("can not upgrade now!");
+
+            $payment = Payment::create([
+                'user_id' => auth()->user()->id,
+                'price' => $price,
+                'payment_type' => 'MyFatoorah',
+                'status' => 'new',
+                'ref_id' => $ref = substr(time(), 5, 4) . rand(1000, 9999) . auth()->user()->id,
+            ]);
+
+            $cbkPay = new CBKPay();
+            $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/' . app()->getLocale() . '/companies/payment-response/premium',true);
+            return $this->success("", ['url' => route('api.formPayment' , ['url' => $form['url'] , 'formData' => $form['formData']])]);
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
     }
     public static function clearAdsData($item){
         $item->title_en = __($item->purpose,[],'en') .' '. ( $item->venue ? $item->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $item->area ? $item->area->name_en : "");

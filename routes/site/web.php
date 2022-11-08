@@ -37,6 +37,9 @@ Route::group(['prefix' => 'companies'] , function (){
     Route::post('/downgrade', 'CompanyController@downgrade')->middleware(['auth'])->name('companies.downgrade');
     Route::put('/', 'CompanyController@update')->middleware(['auth'])->name('companies.update');
     Route::get('/{phone}/{name?}/advertise', 'CompanyController@new')->name('companies.show');
+
+    Route::get('/buy-premium', 'CompanyController@buyPremium')->name('buyPremium');
+    Route::any('/payment-response/premium', 'CompanyController@paymentResponsePremium')->name('paymentResponsePremium');
 });
 
 ///////////// auth

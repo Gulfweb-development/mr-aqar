@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\site;
 
+use App\Classes\Payment\CBKPay;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Site\CompanyRequest;
 use App\Models\Package;
 use App\Models\PackageHistory;
+use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\Social;
 use App\User;
@@ -18,6 +20,8 @@ class CompanyController extends Controller
     {
         $companies = User::where('type_usage', 'company')
             ->with('socials')
+            ->orderByDesc('is_premium')
+            ->orderByDesc('created_at')
             ->get();
         return view('site.pages.companies', compact('companies'));
     }
@@ -124,12 +128,12 @@ class CompanyController extends Controller
             Social::insert($socials);
         }
     }
-    
+
     public function report($locale, User $company)
     {
         $company->reported += 1;
         $company->save();
-        
+
         $prevURL = session()->has('prev_url') ? session()->get('prev_url') : null;
         session()->forget('prev_url');
         if(@$prevURL != null){
@@ -137,7 +141,7 @@ class CompanyController extends Controller
         }
         return redirect('/'.app()->getLocale())->with('reported',  trans('user').trans('has_been_blocked_successfully'));
     }
-    
+
     public function block($locale, User $company)
     {
         auth()->user()->blockedUsers()->attach($company->id, ['relation_type' => 'blocked']);
@@ -147,5 +151,71 @@ class CompanyController extends Controller
         //     return redirect($prevURL)->with('blocked',  trans('user').trans('has_been_blocked_successfully'));
         // }
         return redirect('/'.app()->getLocale())->with('blocked',  trans('user').trans('has_been_blocked_successfully'));
+    }
+
+    public function buyPremium()
+    {
+        try {
+            //send user to buy
+            $price = MessageController::getSettingDetails('on_top_price');
+            if (!$price > 0 || auth()->user()->is_premium || auth()->user()->type_usage != 'company')
+                abort(403);
+
+            $payment = Payment::create([
+                'user_id' => auth()->user()->id,
+                'price' => $price,
+                'payment_type' => 'MyFatoorah',
+                'status' => 'new',
+                'ref_id' => $ref = substr(time(), 5, 4) . rand(1000, 9999) . auth()->user()->id,
+            ]);
+
+            $cbkPay = new CBKPay();
+            $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/' . app()->getLocale() . '/companies/payment-response/premium');
+            return $form;
+        } catch (\Exception $e) {
+            return $this->fail($e->getMessage());
+        }
+    }
+
+    public function paymentResponsePremium(Request $request)
+    {
+        try {
+            if (empty($request->encrp)) {
+                throw new \Exception('payment failed');
+            }
+            $cbkPay = new CBKPay();
+            $paymentStatus = $cbkPay->getPaymentStatusDetails($request->encrp);
+
+            if (!@$paymentStatus || (!@$paymentStatus->Status && !@$paymentStatus->ErrorCode)) {
+                throw new \Exception("Unable to get payment status");
+            }
+            if (@$paymentStatus->Status) {
+                $message = $cbkPay->getPaymentResultMsg($paymentStatus->Status);
+            } elseif (@$paymentStatus->ErrorCode) {
+                $message = $cbkPay->getCBKError($paymentStatus->ErrorCode);
+            }
+            $payment = Payment::with(['user'])->where('ref_id', @$paymentStatus->PayId ?? @$paymentStatus->PayTrackID)->first();
+            if (@$paymentStatus->Status !== '1' || !@$payment) {
+                if (@$payment) {
+                    $payment->description = @$message;
+                    $payment->status = $cbkPay->getPaymentStatus($paymentStatus) === 'invalid' ? 'canceled' : $cbkPay->getPaymentStatus($paymentStatus);
+                    $payment->save();
+                }
+                throw new \Exception($message);
+            }
+
+            $refId = @$payment->ref_id;
+            $payment->user->update(['is_premium' => 1]);
+            $payment->status = "completed";
+            $payment->payment_type = @$paymentStatus->PayType;
+            $payment->track_id = @$paymentStatus->TrackId;
+            $payment->payed_amount = @$paymentStatus->Amount;
+            $payment->description = @$paymentStatus->Message;
+            $payment->update();
+        } catch (\Exception $e) {
+            $message = $e->getMessage() ?? 'Payment Failed!';
+            $unsuccessful = true;
+            return view("site.pages.payment", compact('unsuccessful','message','paymentStatus','payment', 'paymentStatus'));
+        }
     }
 }
