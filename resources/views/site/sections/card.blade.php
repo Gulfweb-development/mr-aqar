@@ -17,12 +17,19 @@
                     <div class="d-flex">
                         <div class="w-100">
                             <h2 class="text-md mb-2 sm:width-110" v-text="`${purpose_lang[card.purpose]} ${card.venue.title_{{app()->getLocale()}} } {{__('in')}} ${card.area.name_{{app()->getLocale()}} }`"></h2>
-                            <div class="d-block">
-                                <span class="primary-color fw-600 d-inline-block m{{$side}}-2" v-if="card.price">@{{card.price | commaSeparate }} {{__('kd_title')}}</span>
-                            </div>
-                            <div class="infos flex-container mb-2 justify-content-between w-100" >
+                            <div class="infos flex-container justify-content-between w-100">
                                 <div>
-                                    <span class="flex flex-container m{{$side}}-2">
+                                    <span class="primary-color fw-600 d-inline-block m{{$side}}-2" v-if="card.price">@{{card.price | commaSeparate }} {{__('kd_title')}}</span>
+                                </div>
+                                <div>
+                                    <span :onclick="`event.preventDefault();
+                                     location = 'https://api.whatsapp.com/send?phone=${tel}&text={{$message}}${card.hash_number}/details'`"
+                                          class="d-flex align-items-center"><strong v-text="card.phone_number"></strong>&nbsp;<img src="/images/main/whatsapp.webp" alt="whatsapp square icon" width="20px"></span>
+                                </div>
+                            </div>
+                            <div class="infos flex-container justify-content-between w-100" >
+                                <div>
+                                    <span class="flex flex-container m{{$side}}-4">
                                         <i class="material-icons text-sm text-muted m{{$side}}-1 mb-1">calendar_month</i>
                                         <span class="text-xs">@{{ card.created_at }}</span>
                                     </span>
@@ -30,11 +37,6 @@
                                         <i class="material-icons-outlined text-sm text-muted m{{$side}}-1">visibility</i>
                                         <span class="text-xs">@{{card.view_count}}</span>
                                     </span>
-                                </div>
-                                <div>
-                                    <span :onclick="`event.preventDefault();
-                                     location = 'https://api.whatsapp.com/send?phone=${tel}&text={{$message}}${card.hash_number}/details'`" 
-                                    class="d-flex align-items-center"><strong v-text="card.phone_number"></strong>&nbsp;<img src="/images/main/whatsapp.webp" alt="whatsapp square icon" width="20px"></span>
                                 </div>
                             </div>
                             <div :dir="isArabic(card.description) ? 'rtl' : 'ltr'" :class="card.advertising_type === 'premium' ? 'fw-600' : ''" class="d-none d-sm-block d-md-block d-lg-more-block mb-2 text-sm card-description" v-snip:js="1">
@@ -62,7 +64,7 @@
                                         <span class="text-xs">{{__('block')}}</span>
                                     </span>
                                 </div>
-                            </div> 
+                            </div>
                         </div>--}}
                     </div>
                 </div>
