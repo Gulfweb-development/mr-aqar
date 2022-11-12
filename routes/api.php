@@ -32,6 +32,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
 
 
     Route::post('/register','UserController@register');
+    Route::post("/register/sendOTP",'UserController@registerSendOTP');
     Route::post('/login','UserController@login');
     Route::get("/formPayment",'AdvertisingController@formPayment')->name('api.formPayment');
 

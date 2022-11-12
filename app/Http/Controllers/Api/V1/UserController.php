@@ -12,6 +12,7 @@ use App\Models\Social;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -21,10 +22,13 @@ class UserController extends ApiBaseController
 {
     public function registerValidation(array $data)
     {
+        $len = strlen(self::makeSmsCode());
         return Validator::make($data, [
             //'name' => 'required',
             'mobile' => 'required|digits:8|unique:users',
             'password' => 'required|min:8',
+            'code' => 'required|digits:'.$len,
+            'token' => 'required',
             //'email' => 'required|email|unique:users',
             'type_usage'=>'required|in:company,individual',
             'language'=>'required|in:ar,en',
@@ -106,6 +110,11 @@ class UserController extends ApiBaseController
             if ($validate->fails())
                 return $this->fail($validate->errors()->first());
 
+            $decrypted = Crypt::decryptString($request->token);
+            $data = unserialize($decrypted);
+            if ( $data['code'] !== $request->code or $data['phone'] != $request->mobile )
+                return $this->fail(trans('invalidOTP'));
+
             DB::beginTransaction();
             $package = Package::where("title_en", "gift credit")->where('is_enable' , 1)->where('user_type' , $request->type_usage)->first();
             $user= User::makeUser([
@@ -142,9 +151,42 @@ class UserController extends ApiBaseController
             return $this->success(trans('main.register_success'),['user'=>$user->first()]);
         }catch (\Exception $exception) {
             DB::rollback();
-            return $this->fail("");
+            return $this->fail(trans('un_success_alert_title'));
         }
 
+    }
+
+    public function registerSendOTP(Request $request){
+        try {
+            if ( $request->has('mobile')) {
+                $validation = Validator::make($request->all(), [
+                    'mobile' => 'required|digits:8|unique:users',
+                ]);
+                if ($validation->fails())
+                    return $this->fail($validation->errors()->first());
+                $code=$this->makeSmsCode();
+                $message="Reset Password Code : ".$code;
+                $result= self::sendSms($message,$request->mobile);
+                $token = Crypt::encryptString(serialize(['code' => $code , 'phone' => $request->mobile]));
+                if($result==100){
+                    return $this->success(trans('validate_send'), ['token' => $token]);
+                }
+                return $this->fail("Server Could Not Send Sms");
+            } elseif ( $request->has('token')) {
+                $decrypted = Crypt::decryptString($request->token);
+                $data = unserialize($decrypted);
+                $message="Reset Password Code : ".$data['code'];
+                $result= self::sendSms($message,$data['phone']);
+                if($result==100){
+                    return $this->success(trans('validate_resend'), ['token' => $request->token]);
+                }
+                return $this->fail("Server Could Not Send Sms");
+            } else {
+                return $this->fail("Server Could Not Send Sms");
+            }
+        } catch (\Exception $exception){
+            return $this->fail(trans('un_success_alert_title'));
+        }
     }
 
     public function saveLicense(Request $request)
