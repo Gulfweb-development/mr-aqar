@@ -496,7 +496,8 @@ class UserController extends ApiBaseController
         ]);
 
         $this->insertSocials($request, $user_id);
-        return $this->success(__('upgraded_to_company'));
+        $user = User::where('id',$user_id)->with("package","socials")->first();
+        return $this->success(__('upgraded_to_company'),['user'=>$user]);
     }
 
     public function downgrade()
@@ -511,7 +512,8 @@ class UserController extends ApiBaseController
             'company_phone' => null,
             'type_usage' => 'individual',
         ]);
-        return $this->success(__('account_downgraded_successfully'));
+        $user = User::where('id',$user_id)->with("package","socials")->first();
+        return $this->success(__('account_downgraded_successfully'),['user'=>$user]);
     }
 
     public static function insertSocials($request, $user_id)
