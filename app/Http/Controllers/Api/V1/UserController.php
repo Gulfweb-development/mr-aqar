@@ -112,7 +112,7 @@ class UserController extends ApiBaseController
 
             $decrypted = Crypt::decryptString($request->token);
             $data = unserialize($decrypted);
-            if ( $data['code'] !== $request->code or $data['phone'] != $request->mobile )
+            if ( $data['code'] != $request->code or $data['phone'] != $request->mobile )
                 return $this->fail(trans('invalidOTP'));
 
             DB::beginTransaction();
@@ -165,7 +165,7 @@ class UserController extends ApiBaseController
                 if ($validation->fails())
                     return $this->fail($validation->errors()->first());
                 $code=$this->makeSmsCode();
-                $message="Reset Password Code : ".$code;
+                $message="Verification Code : ".$code;
                 $result= self::sendSms($message,$request->mobile);
                 $token = Crypt::encryptString(serialize(['code' => $code , 'phone' => $request->mobile]));
                 if($result==100){
@@ -175,7 +175,7 @@ class UserController extends ApiBaseController
             } elseif ( $request->has('token')) {
                 $decrypted = Crypt::decryptString($request->token);
                 $data = unserialize($decrypted);
-                $message="Reset Password Code : ".$data['code'];
+                $message="Verification Code : ".$data['code'];
                 $result= self::sendSms($message,$data['phone']);
                 if($result==100){
                     return $this->success(trans('validate_resend'), ['token' => $request->token]);
