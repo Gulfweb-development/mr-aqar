@@ -370,10 +370,10 @@ class AdvertisingController extends ApiBaseController
             return $this->fail($validate->errors()->first());
 
 
-        $result =  Advertising::where('id', 'advertising_id')->where("user_id", auth()->user()->id)->first();
+        $result =  Advertising::where('id', $request->advertising_id)->where("user_id", auth()->user()->id)->first();
         if (isset($result)) {
             $result->delete();
-            return $this->success("");
+            return $this->success(trans('ad_delete_success_title'));
         }
         return $this->fail("not found");
     }
