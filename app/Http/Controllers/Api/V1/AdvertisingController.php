@@ -71,6 +71,10 @@ class AdvertisingController extends ApiBaseController
         $item->title_ar = __($item->purpose,[],'ar') .' '. ( $item->venue ? $item->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $item->area ? $item->area->name_ar : "");
         $item->other_images = json_decode($item->other_image , true);
         $item->other_images = isset($item->other_images['other_image']) ? array_values($item->other_images['other_image']) : [];
+        $item->share_link = [
+            'en' => route('site.ad.detail' , ['en' , $item->hash_number]) ,
+            'ar' => route('site.ad.detail' , ['ar' , $item->hash_number])
+        ];
         unset(
             $item->user->email_verified_at,
             $item->user->email,
