@@ -217,6 +217,44 @@ class AdvertisingController extends ApiBaseController
             return $this->fail($exception->getMessage(), -1, $request->all());
         }
     }
+
+    public function repostAdvertising(Request $request)
+    {
+
+        try {
+            $user = auth()->user();
+            $advertise = Advertising::query()
+                ->where('user_id' , $user->id)
+                ->find($request->advertise_id);
+            if ( $advertise == null )
+                return $this->fail(trans("no_ad_found"));
+
+            $isValid = $this->isValidCreateAdvertising($user->id, $advertise->advertising_type);
+            if ($isValid) {
+                DB::beginTransaction();
+                $newAdvertise = $advertise->replicate();
+                $newAdvertise->hash_number = Advertising::makeHashNumber();
+                $newAdvertise->created_at = Carbon::now();
+                $newAdvertise->updated_at = Carbon::now();
+                $countShowDay = $this->affectCreditUser($user->id, $advertise->advertising_type);
+                $today =   date("Y-m-d");
+                $date = strtotime("+$countShowDay day", strtotime($today));
+                $expireDate = date("Y-m-d", $date);
+                $newAdvertise->expire_at = $expireDate;
+                $newAdvertise->save();
+                $newAdvertise->title_en = __($newAdvertise->purpose,[],'en') .' '. ( $newAdvertise->venue ? $newAdvertise->venue->title_en : "") .' '. __('in' , [] , 'en') .' '.( $newAdvertise->area ? $newAdvertise->area->name_en : "");
+                $newAdvertise->title_ar = __($newAdvertise->purpose,[],'ar') .' '. ( $newAdvertise->venue ? $newAdvertise->venue->title_ar : "") .' '. __('in' , [] , 'ar') .' '.( $newAdvertise->area ? $newAdvertise->area->name_ar : "");
+
+                DB::commit();
+                return $this->success("", ['advertising' => $newAdvertise]);
+            }
+            return $this->fail(trans("main.expire_your_credit"));
+        } catch (\Exception $exception) {
+            DB::rollback();
+            return $this->fail($exception->getMessage(), -1, $request->all());
+        }
+    }
+
     public function updateAdvertising(Request $request)
     {
         try {
