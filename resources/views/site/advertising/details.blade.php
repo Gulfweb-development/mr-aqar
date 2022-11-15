@@ -109,7 +109,7 @@
                                         $message = urlencode("السلام عليكم\nاذا ممكن ترسل تفاصيل هذا الإعلان في مستر عقار
                                         وشكرا\n" ). url()->current();
                             @endphp
-                            <div class="ad-description w-100 fw-600 mt-1"
+                            <div class="ad-description w-100 fw-601 text-sm mt-1"
                                  dir="{{$advertising->description && ! empty($advertising->description) ? (is_arabic($advertising->description) ? 'rtl' : 'ltr') : ''}}">
                                 {!! nl2br(e($advertising->description))!!}
                             </div>
@@ -260,7 +260,7 @@
                                 <span class="text-sm text-gray">{{$advertising->view_count}}</span>
                             </span>
                             </div>
-                            <div class="ad-description w-100 fw-600 mt-1"
+                            <div class="ad-description w-100 fw-601 text-sm mt-1"
                                  dir="{{$advertising->description && ! empty($advertising->description) ? (is_arabic($advertising->description) ? 'rtl' : 'ltr') : ''}}">
                                 {!! nl2br(e($advertising->description))!!}
                             </div>
