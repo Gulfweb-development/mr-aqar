@@ -336,6 +336,42 @@ class AdvertisingController extends ApiBaseController
 
         return $this->success("");
     }
+    public function deleteFileFromAdvertising(Request $request)
+    {
+        $validate =   Validator::make($request->all(), [
+            'advertising_id' => 'required',
+            //'video' => 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000',
+            'file_patch' => 'required',
+        ]);
+        if ($validate->fails())
+            return $this->fail($validate->errors()->first());
+
+        $advertising = Advertising::where('user_id' ,auth()->id())->find($request->advertising_id);
+        if ( $advertising == null )
+            return $this->fail("not found");
+
+        if ($advertising->other_image != "" && $advertising->other_image != null) {
+            $otherImage = (array)json_decode($advertising->other_image);
+            $otherImage = array_values(isset($otherImage['other_image']) ? ( isset($otherImage['other_image'][0]) ? $otherImage['other_image'][0] : [] ) : [] );
+        } else {
+            $otherImage = [];
+        }
+        if ( $advertising->main_image == $request->file_patch ) {
+            $advertising->main_image = isset($otherImage[0]) ? $otherImage[0] : null ;
+            if ( isset($otherImage[0])  )
+                unset($otherImage[0]);
+        }
+        foreach ($otherImage as $item => $value){
+            if( $value == $request->file_patch ){
+                unset($otherImage[$item]);
+                break;
+            }
+        }
+        $advertising->other_image = json_encode(['other_image' => array_values($otherImage)]);
+        $advertising->save();
+
+        return $this->success("");
+    }
     public function archiveAdvertising(Request $request)
     {
         $validate = Validator::make($request->all(), [
@@ -760,7 +796,7 @@ class AdvertisingController extends ApiBaseController
                 //!(@$old_otherImages[$i] && file_exists(public_path(urldecode(@$old_otherImages[$i])))) ?: unlink(public_path(urldecode(@$old_otherImages[$i])));
             }
         }
-        if (($advertising->main_image == "" or  $advertising->main_image == null) and isset($otherImage["other_image"][0])) {
+        if (($advertising->main_image == "" or  $advertising->main_image == null or true ) and isset($otherImage["other_image"][0])) {
             $advertising->main_image = $otherImage["other_image"][0];
             unset($otherImage["other_image"][0]);
         }

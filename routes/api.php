@@ -75,6 +75,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
             Route::post("/advertising/create",'AdvertisingController@createAdvertising')->name('api.createAdvertise');
             Route::post("/advertising/repost",'AdvertisingController@repostAdvertising')->name('api.repostAdvertise');
             Route::post("/advertising/attachFileToAdvertising",'AdvertisingController@attachFileToAdvertising');
+            Route::post("/advertising/deleteFileFromAdvertising",'AdvertisingController@deleteFileFromAdvertising');
             Route::post("/advertising/update",'AdvertisingController@updateAdvertising');
             Route::post("/advertising/delete",'AdvertisingController@deleteAdvertising');
             Route::post("/advertising/archive",'AdvertisingController@archiveAdvertising');
