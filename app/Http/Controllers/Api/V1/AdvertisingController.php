@@ -271,7 +271,7 @@ class AdvertisingController extends ApiBaseController
             $advertising = Advertising::where('user_id',$user->id)->find($request->id);
             if (isset($advertising)) {
                 $advertising = $this->saveAdvertising($request, $user, $advertising);
-                return $this->success("");
+                return $this->success(trans('edited'), ['advertising' => $advertising]);
             }
             return $this->fail("not_found_advertising");
         } catch (\Exception $exception) {
@@ -739,12 +739,12 @@ class AdvertisingController extends ApiBaseController
         }
 
         $otherImage = [];
-        $old_otherImages = @$advertising->other_image
-        && json_decode(@$advertising->other_image)
-        && count(json_decode(@$advertising->other_image))
-        && json_decode(@$advertising->other_image, true)['other_image']
-            ? json_decode(@$advertising->other_image, true)['other_image']
-            : [];
+//        $old_otherImages = @$advertising->other_image
+//        && json_decode(@$advertising->other_image)
+//        && count(json_decode(@$advertising->other_image))
+//        && json_decode(@$advertising->other_image, true)['other_image']
+//            ? json_decode(@$advertising->other_image, true)['other_image']
+//            : [];
 
         if (is_array($request["other_image"]) and count($request["other_image"])  > 0) {
             foreach ($request["other_image"] as $i => $file) {
@@ -754,9 +754,10 @@ class AdvertisingController extends ApiBaseController
                     $path = $file;
                 } else {
                     $path = "";
+                    continue;
                 }
                 $otherImage["other_image"][] = $path;
-                !(@$old_otherImages[$i] && file_exists(public_path(urldecode(@$old_otherImages[$i])))) ?: unlink(public_path(urldecode(@$old_otherImages[$i])));
+                //!(@$old_otherImages[$i] && file_exists(public_path(urldecode(@$old_otherImages[$i])))) ?: unlink(public_path(urldecode(@$old_otherImages[$i])));
             }
         }
         if (($advertising->main_image == "" or  $advertising->main_image == null) and isset($otherImage["other_image"][0])) {
