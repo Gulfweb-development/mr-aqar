@@ -46,8 +46,6 @@ class Advertising extends Model implements Feedable
         "floor_plan",
         "surface",
         "security",
-        "location_lat",
-        "location_long",
         "sort",
         "reported",
     ];

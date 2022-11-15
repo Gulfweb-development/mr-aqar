@@ -302,11 +302,13 @@
                                         ${card.area.name_{{app()->getLocale()}} }--}}
 
                                     <h2 class="fw-600 mb-3">{{$name}}</h2>
+                                    @if( ( $advertising->user->isCompany ? $advertising->user->company_name : $advertising->user->name ) )
                                     <p class="row middle-xs"><i class="material-icons primary-color"
                                                                 title="Organization">person</i><span
                                             class="mx-2 fw-500">{{$advertising->user->isCompany ?
                                             $advertising->user->company_name : $advertising->user->name}}</span>
                                     </p>
+                                    @endif
                                     <p class="row middle-xs"><i class="material-icons primary-color"
                                                                 title="Organization">business</i><span
                                             class="mx-2 fw-500">{{app()->getLocale() == 'en' ?
@@ -332,6 +334,13 @@
                                     {{-- <a href="tel:{{$tel}}" class="row middle-xs mb-3 decoration-none"><i
                                             class="material-icons primary-color">call</i><span
                                             class="mx-2 fw-500">{{$advertising->phone_number}}</span></a>--}}
+
+
+                                    @if ( $advertising->location_lat and $advertising->location_long)
+                                    <p class="">
+                                        <div id="map" style="width: 100%;height: 250px;border-radius: 5px;"></div>
+                                    </p>
+                                    @endif
                                     <div class="row">
                                         <a href="tel:{{$tel}}"
                                            class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-3 col-md-10 bg-whatsapp incrementClick">
@@ -362,6 +371,8 @@
                                                     <input type="hidden" name="area_id" value="{{$advertising->area_id}}">
                                                     <input type="hidden" name="venue_type" value="{{$advertising->venue_type}}">
                                                     <input type="hidden" name="purpose" value="{{$advertising->purpose}}">
+                                                    <input type="hidden" name="location_lat" value="{{$advertising->location_lat}}">
+                                                    <input type="hidden" name="location_long" value="{{$advertising->location_long}}">
                                                     <input type="hidden" name="price" value="{{$advertising->price}}">
                                                     <input type="hidden" name="description" value="{{$advertising->description}}">
                                                     <input type="hidden" name="replace_other_image" value="{{$advertising->other_image}}">
@@ -422,6 +433,25 @@
         </div>
     </main>
 
+
+    @if ( $advertising->location_lat and $advertising->location_long)
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?key={{ env('MAP_KEY') }}&sensor=false"></script>
+        <script>
+            window.onload = function() {
+                var latlng = new google.maps.LatLng({{ $advertising->location_lat }}, {{ $advertising->location_long }} );
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    center: latlng,
+                    zoom: 13,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+                var marker = new google.maps.Marker({
+                    position: latlng,
+                    map: map,
+                    draggable: false
+                });
+            };
+        </script>
+    @endif
     <script type="text/javascript">
         document.querySelector('#share').addEventListener('click', function () {
             if (navigator.share) {

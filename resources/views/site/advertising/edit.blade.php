@@ -432,6 +432,13 @@
                                                     </div>
                                                 @endif
 
+                                                <div class="col-xs-12 p-2">
+                                                <div id="map" style="width: 100%;height: 250px;border-radius: 5px;"></div>
+                                                    <input type="hidden" id="location_lat" name="location_lat">
+                                                    <input type="hidden" id="location_long" name="location_long">
+                                                </div>
+
+
                                                 <div class="col-xs-12 p-2 mt-3 center-xs">
                                                     <button class="mdc-button mdc-button--raised next-tab" type="submit">
                                                         <span class="mdc-button__ripple"></span>
@@ -456,6 +463,51 @@
 
 @endsection
 @section('scripts')
+
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key={{ env('MAP_KEY') }}&sensor=false"></script>
+    <script>
+        window.onload = function() {
+            var latlng = new google.maps.LatLng({{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }} );
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: latlng,
+                zoom: 14,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+            var marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                draggable: true
+            });
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            };
+            function success(pos) {
+                const crd = pos.coords;
+                console.log(`Latitude : ${crd.latitude}`);
+                console.log(`Longitude: ${crd.longitude}`);
+                $('#location_long').val(crd.longitude.toFixed(6));
+                $('#location_lat').val(crd.latitude.toFixed(6));
+                map.setCenter(new google.maps.LatLng( crd.latitude, crd.longitude ));
+                marker.setPosition(new google.maps.LatLng( crd.latitude, crd.longitude ));
+            }
+            function error(err) {
+                console.warn(`ERROR(${err.code}): ${err.message}`);
+            }
+            @if( old('location_lat', (isset($advertising) ? $advertising->location_lat : null )) == null  )
+                navigator.geolocation.getCurrentPosition(success, error, options);
+            @else
+                $('#location_long').val({{ old('location_long', @$advertising->location_long) }});
+                $('#location_lat').val({{ old('location_lat', @$advertising->location_lat) }});
+            @endif
+            google.maps.event.addListener(marker, 'dragend', function(a) {
+                $('#location_long').val(a.latLng.lng().toFixed(6));
+                $('#location_lat').val(a.latLng.lat().toFixed(6));
+            });
+        };
+    </script>
+
     @if (!str_contains(request()->path(), 'required_for_rent'))
         <!-- include FilePond library -->
         <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
