@@ -468,8 +468,10 @@ class AdvertisingController extends Controller
             if (!is_string($request->video)) {
                 $video = $request->video;
                 $advertising->video = $this->saveVideo($video);
+            } elseif (is_string($request->video)) {
+                $advertising->video = $request->video;
             } elseif ($request->video == "false") {
-                $advertising->video = "";
+                $advertising->video = null;
             }
         }
 

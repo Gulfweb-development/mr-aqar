@@ -421,6 +421,39 @@
                                                 </div>
 
                                                 @if (!str_contains(request()->path(), 'required_for_rent'))
+                                                    <div class="col-xs-12   p-2">
+                                                        <div class="mdc-text-field mdc-text-field--outlined">
+                                                            @if( old('video' , @$advertising->video) )
+                                                                <input style="visibility: hidden;position: absolute;" name="video"
+                                                                       type="text" value="{{ old('video' , @$advertising->video) }}" accept="video/mp4,video/x-m4v,video/*" id="input_video"
+                                                                       onchange="$('#name_video').val($(this).val().replace(/C:\\fakepath\\/i, ''))">
+                                                                <input class="mdc-text-field__input"
+                                                                       onclick="$('#input_video').attr('type' , 'file').trigger('click');"
+                                                                       value="{{ old('video' , @$advertising->video) }}"
+                                                                       placeholder="{{__('video')}}" id="name_video">
+                                                            @else
+                                                                <input style="visibility: hidden;position: absolute;" name="video"
+                                                                       type="file" accept="video/mp4,video/x-m4v,video/*" id="input_video"
+                                                                       onchange="$('#name_video').val($(this).val().replace(/C:\\fakepath\\/i, ''))">
+                                                                <input class="mdc-text-field__input"
+                                                                       onclick="$('#input_video').trigger('click');"
+                                                                       placeholder="{{__('video')}}" id="name_video">
+                                                            @endif
+                                                            <div class="mdc-notched-outline">
+                                                                <div class="mdc-notched-outline__leading"></div>
+                                                                <div class="mdc-notched-outline__notch">
+                                                                    <label class="mdc-floating-label">{{__('video')}}</label>
+                                                                </div>
+                                                                <div class="mdc-notched-outline__trailing"></div>
+                                                            </div>
+                                                        </div>
+                                                        @error('video')
+                                                        <span class="invalid-feedback warn-color d-inline-block">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                        @enderror
+                                                    </div>
+
                                                     <div class="col-xs-12 p-2">
                                                         <input type="file" name="other_image[]" class="my-pond"
                                                                accept=".png,.jpg,.jpeg">
@@ -446,7 +479,7 @@
                                                 @if (str_contains(request()->path(), 'create'))
                                                                 {{ __('upload_your_ad') }}
                                                             @else
-                                                                {{__('update')}}
+                                                                {{__('edit_title')}}
                                                             @endif
                                             </span>
                                                     </button>
@@ -466,6 +499,13 @@
 
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?key={{ env('MAP_KEY') }}&sensor=false"></script>
     <script>
+        $(document).ready(function () {
+            $('#choose-file').change(function () {
+                var i = $(this).prev('label').clone();
+                var file = $('#choose-file')[0].files[0].name;
+                $(this).prev('label').text(file);
+            });
+        });
         window.onload = function() {
             var latlng = new google.maps.LatLng({{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }} );
             var map = new google.maps.Map(document.getElementById('map'), {

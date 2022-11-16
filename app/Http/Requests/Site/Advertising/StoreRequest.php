@@ -35,7 +35,6 @@ class StoreRequest extends FormRequest
                 'area_id' => 'required',
                 'price' => 'nullable|numeric',
                 'other_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:50000',
-                //            'video' => 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000',
                 //            // 'other_image' => 'nullable|array',
                 //            //   'other_image.*' => 'mimes:jpeg,bmp,png|max:2048',
                 //            'main_image' => 'nullable|mimes:jpeg,bmp,png|max:2048',
@@ -60,6 +59,11 @@ class StoreRequest extends FormRequest
                 'other_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:50000',
             ];
         }
+        if ( request()->hasFile("video")  )
+            $rules['video'] = 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000';
+        elseif ( request()->has("video") and is_string(request()->has("video")) )
+            $rules['video'] = 'nullable|string';
+
         return $rules;
     }
 

@@ -350,6 +350,13 @@ class AdvertisingController extends ApiBaseController
         if ( $advertising == null )
             return $this->fail("not found");
 
+
+        if ( $advertising->video == $request->file_patch ) {
+            $advertising->video = null ;
+            $advertising->save();
+            return $this->success("");
+        }
+
         if ($advertising->other_image != "" && $advertising->other_image != null) {
             $otherImage = (array)json_decode($advertising->other_image);
             $otherImage = array_values(isset($otherImage['other_image']) ? ( isset($otherImage['other_image'][0]) ? $otherImage['other_image'][0] : [] ) : [] );
@@ -719,6 +726,7 @@ class AdvertisingController extends ApiBaseController
                 'city_id' => 'required',
                 'area_id' => 'required',
                 'price' => 'nullable|numeric',
+                'video' => request()->hasFile("video") ? 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000' : ( request()->has("video") and is_string(request()->has("video")) ?  'nullable|string' : '' ) ,
             ]);
         return Validator::make($request->all(), [
             'venue_type' => 'required',
@@ -726,7 +734,7 @@ class AdvertisingController extends ApiBaseController
             'city_id' => 'required',
             'area_id' => 'required',
             'price' => 'nullable|numeric',
-        ]);
+            'video' => request()->hasFile("video") ? 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000' : ( request()->has("video") and is_string(request()->has("video")) ?  'nullable|string' : '' ) ,        ]);
     }
     private function saveAdvertising(Request $request, $user, Advertising $advertising): Advertising
     {
@@ -810,8 +818,10 @@ class AdvertisingController extends ApiBaseController
             if (!is_string($request->video)) {
                 $video = $request->video;
                 $advertising->video = $this->saveVideo($video);
+            } elseif (is_string($request->video)) {
+                $advertising->video = $request->video;
             } elseif ($request->video == "false") {
-                $advertising->video = "";
+                $advertising->video = null;
             }
         }
 

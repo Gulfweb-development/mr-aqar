@@ -191,7 +191,7 @@ class Controller extends BaseController
         //        Storage::put(('public/resources/uploads/images/'),$mainImageFile  );
 
         // $mainImageFile->move(public_path($path), $storeName);
-        
+
         if ($watermark)
             $this->watermark($image, $storeName);
         else
@@ -220,7 +220,7 @@ class Controller extends BaseController
     {
         $extension = $video->getClientOriginalExtension();
         $storeName = time() . uniqid() . "." . $extension;
-        $path = 'resources/uploads/videos/' . $storeName;
+        $path = '/resources/uploads/videos/' . $storeName;
         $video->move(public_path('resources/uploads/videos/'), $storeName);
         return $path;
     }

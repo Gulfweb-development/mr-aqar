@@ -155,6 +155,15 @@
                                                      class="slide-item swiper-lazy max-hight-500 zoomable">
                                                 <div class="swiper-lazy-preloader"></div>
                                             </div>
+
+                                            @if($advertising->video)
+                                                <div class="swiper-slide center-xs">
+                                                    <video class="slide-item swiper-lazy max-hight-500" controls>
+                                                        <source src="{{asset($advertising->video)}}" type="video/mp4">
+                                                    </video>
+                                                    <div class="swiper-lazy-preloader"></div>
+                                                </div>
+                                            @endif
                                             @foreach((array) optional(json_decode($advertising->other_image))->other_image as
                                             $other_image)
                                                 <div class="swiper-slide center-xs">
@@ -185,6 +194,13 @@
                                                      class="slide-item swiper-lazy height-150 mx-auto">
                                                 <div class="swiper-lazy-preloader"></div>
                                             </div>
+                                            @if($advertising->video)
+                                                <div class="swiper-slide center-xs">
+                                                    <img src="/asset/images/play.jpg" alt="play video"
+                                                         class="slide-item swiper-lazy height-150 mx-auto">
+                                                    <div class="swiper-lazy-preloader"></div>
+                                                </div>
+                                            @endif
                                             @foreach((array) optional(json_decode($advertising->other_image))->other_image as
                                             $other_image)
                                                 <div class="swiper-slide center-xs">
@@ -375,6 +391,7 @@
                                                     <input type="hidden" name="location_long" value="{{$advertising->location_long}}">
                                                     <input type="hidden" name="price" value="{{$advertising->price}}">
                                                     <input type="hidden" name="description" value="{{$advertising->description}}">
+                                                    <input type="hidden" name="video" value="{{$advertising->video}}">
                                                     <input type="hidden" name="replace_other_image" value="{{$advertising->other_image}}">
                                                     <input type="hidden" name="replace_main_image" value="{{$advertising->main_image}}">
                                                     <button type="submit" class="mdc-button">
