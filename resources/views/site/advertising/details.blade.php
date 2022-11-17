@@ -452,20 +452,11 @@
 
 
     @if ( $advertising->location_lat and $advertising->location_long)
-        <script type="text/javascript" src="http://maps.google.com/maps/api/js?key={{ env('MAP_KEY') }}&sensor=false"></script>
         <script>
             window.onload = function() {
-                var latlng = new google.maps.LatLng({{ $advertising->location_lat }}, {{ $advertising->location_long }} );
-                var map = new google.maps.Map(document.getElementById('map'), {
-                    center: latlng,
-                    zoom: 13,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                });
-                var marker = new google.maps.Marker({
-                    position: latlng,
-                    map: map,
-                    draggable: false
-                });
+                var map = L.map('map').setView([{{ $advertising->location_lat }}, {{ $advertising->location_long }}], 12.5);
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+                var marker = L.marker([{{ $advertising->location_lat }}, {{ $advertising->location_long }}]).addTo(map);
             };
         </script>
     @endif
@@ -509,4 +500,8 @@
 @section('head')
     <link rel="stylesheet" href="{{ asset('asset/css/libs/dropzone.css') }}">
     <script src="{{asset('/asset/js/libs/view-image.js')}}"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
 @endsection

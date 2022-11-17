@@ -28,6 +28,9 @@
         }
 
     </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
 @endsection
 
 @php
@@ -497,7 +500,6 @@
 @endsection
 @section('scripts')
 
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key={{ env('MAP_KEY') }}&sensor=false"></script>
     <script>
         $(document).ready(function () {
             $('#choose-file').change(function () {
@@ -507,17 +509,13 @@
             });
         });
         window.onload = function() {
-            var latlng = new google.maps.LatLng({{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }} );
-            var map = new google.maps.Map(document.getElementById('map'), {
-                center: latlng,
-                zoom: 14,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            });
-            var marker = new google.maps.Marker({
-                position: latlng,
-                map: map,
-                draggable: true
-            });
+            var map = L.map('map').setView([{{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }}], 12.5);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+            var marker = L.marker([{{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }}],{
+                draggable: true,
+                autoPan: true
+            }).addTo(map);
+
             const options = {
                 enableHighAccuracy: true,
                 timeout: 5000,
@@ -525,12 +523,10 @@
             };
             function success(pos) {
                 const crd = pos.coords;
-                console.log(`Latitude : ${crd.latitude}`);
-                console.log(`Longitude: ${crd.longitude}`);
                 $('#location_long').val(crd.longitude.toFixed(6));
                 $('#location_lat').val(crd.latitude.toFixed(6));
-                map.setCenter(new google.maps.LatLng( crd.latitude, crd.longitude ));
-                marker.setPosition(new google.maps.LatLng( crd.latitude, crd.longitude ));
+                marker.setLatLng([ crd.latitude, crd.longitude ]);
+                map.setView(marker.getLatLng(),map.getZoom());
             }
             function error(err) {
                 console.warn(`ERROR(${err.code}): ${err.message}`);
@@ -541,9 +537,12 @@
                 $('#location_long').val({{ old('location_long', @$advertising->location_long) }});
                 $('#location_lat').val({{ old('location_lat', @$advertising->location_lat) }});
             @endif
-            google.maps.event.addListener(marker, 'dragend', function(a) {
-                $('#location_long').val(a.latLng.lng().toFixed(6));
-                $('#location_lat').val(a.latLng.lat().toFixed(6));
+            marker.on("drag", function(e) {
+                var marker = e.target;
+                var position = marker.getLatLng();
+                map.panTo(new L.LatLng(position.lat, position.lng));
+                $('#location_long').val(position.lng.toFixed(6));
+                $('#location_lat').val(position.lat.toFixed(6));
             });
         };
     </script>
