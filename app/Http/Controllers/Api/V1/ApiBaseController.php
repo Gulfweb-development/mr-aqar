@@ -117,7 +117,7 @@ class ApiBaseController extends Controller
     {
         $extension = $video->getClientOriginalExtension();
         $storeName = time().uniqid().".". $extension;
-        $path = 'resources/uploads/videos/'. $storeName;
+        $path = '/resources/uploads/videos/'. $storeName;
         $video->move(public_path('resources/uploads/videos/'), $storeName);
         return $path;
 
