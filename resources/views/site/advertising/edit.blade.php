@@ -424,38 +424,44 @@
                                                 </div>
 
                                                 @if (!str_contains(request()->path(), 'required_for_rent'))
-                                                    <div class="col-xs-12   p-2">
-                                                        <div class="mdc-text-field mdc-text-field--outlined">
-                                                            @if( old('video' , @$advertising->video) )
-                                                                <input style="visibility: hidden;position: absolute;" name="video"
-                                                                       type="text" value="{{ old('video' , @$advertising->video) }}" accept="video/mp4,video/x-m4v,video/*" id="input_video"
-                                                                       onchange="$('#name_video').val($(this).val().replace(/C:\\fakepath\\/i, ''))">
-                                                                <input class="mdc-text-field__input"
-                                                                       onclick="$('#input_video').attr('type' , 'file').trigger('click');"
-                                                                       value="{{ old('video' , @$advertising->video) }}"
-                                                                       placeholder="{{__('video')}}" id="name_video">
-                                                            @else
-                                                                <input style="visibility: hidden;position: absolute;" name="video"
-                                                                       type="file" accept="video/mp4,video/x-m4v,video/*" id="input_video"
-                                                                       onchange="$('#name_video').val($(this).val().replace(/C:\\fakepath\\/i, ''))">
-                                                                <input class="mdc-text-field__input"
-                                                                       onclick="$('#input_video').trigger('click');"
-                                                                       placeholder="{{__('video')}}" id="name_video">
-                                                            @endif
-                                                            <div class="mdc-notched-outline">
-                                                                <div class="mdc-notched-outline__leading"></div>
-                                                                <div class="mdc-notched-outline__notch">
-                                                                    <label class="mdc-floating-label">{{__('video')}}</label>
+                                                    @if(env('CAN_UPLOAD_VIDEO_IN_SITE' , true))
+                                                        <div class="col-xs-12   p-2">
+                                                            <div class="mdc-text-field mdc-text-field--outlined">
+                                                                @if( old('video' , @$advertising->video) )
+                                                                    <input style="visibility: hidden;position: absolute;" name="video"
+                                                                           type="text" value="{{ old('video' , @$advertising->video) }}" accept="video/mp4,video/x-m4v,video/*" id="input_video"
+                                                                           onchange="$('#name_video').val($(this).val().replace(/C:\\fakepath\\/i, ''))">
+                                                                    <input class="mdc-text-field__input"
+                                                                           onclick="$('#input_video').attr('type' , 'file').trigger('click');"
+                                                                           value="{{ old('video' , @$advertising->video) }}"
+                                                                           placeholder="{{__('video')}}" id="name_video">
+                                                                @else
+                                                                    <input style="visibility: hidden;position: absolute;" name="video"
+                                                                           type="file" accept="video/mp4,video/x-m4v,video/*" id="input_video"
+                                                                           onchange="$('#name_video').val($(this).val().replace(/C:\\fakepath\\/i, ''))">
+                                                                    <input class="mdc-text-field__input"
+                                                                           onclick="$('#input_video').trigger('click');"
+                                                                           placeholder="{{__('video')}}" id="name_video">
+                                                                @endif
+                                                                <div class="mdc-notched-outline">
+                                                                    <div class="mdc-notched-outline__leading"></div>
+                                                                    <div class="mdc-notched-outline__notch">
+                                                                        <label class="mdc-floating-label">{{__('video')}}</label>
+                                                                    </div>
+                                                                    <div class="mdc-notched-outline__trailing"></div>
                                                                 </div>
-                                                                <div class="mdc-notched-outline__trailing"></div>
                                                             </div>
+                                                            @error('video')
+                                                            <span class="invalid-feedback warn-color d-inline-block">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                            @enderror
                                                         </div>
-                                                        @error('video')
-                                                        <span class="invalid-feedback warn-color d-inline-block">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                        @enderror
-                                                    </div>
+                                                    @else
+                                                        @if( old('video' , @$advertising->video) )
+                                                            <input name="video" type="hidden" value="{{ old('video' , @$advertising->video) }}">
+                                                        @endif
+                                                    @endif
 
                                                     <div class="col-xs-12 p-2">
                                                         <input type="file" name="other_image[]" class="my-pond"
@@ -468,11 +474,19 @@
                                                     </div>
                                                 @endif
 
-                                                <div class="col-xs-12 p-2">
-                                                <div id="map" style="width: 100%;height: 250px;border-radius: 5px;"></div>
-                                                    <input type="hidden" id="location_lat" name="location_lat">
-                                                    <input type="hidden" id="location_long" name="location_long">
-                                                </div>
+
+                                                @if(env('CAN_CHOOSE_LOCATION_IN_SITE' , true))
+                                                    <div class="col-xs-12 p-2">
+                                                        <div id="map" style="width: 100%;height: 250px;border-radius: 5px;"></div>
+                                                        <input type="hidden" id="location_lat" name="location_lat">
+                                                        <input type="hidden" id="location_long" name="location_long">
+                                                    </div>
+                                                @else
+                                                    @if( old('location_lat', @$advertising->location_lat) )
+                                                        <input type="hidden" value="{{ old('location_lat', @$advertising->location_lat) }}" name="location_lat">
+                                                        <input type="hidden" value="{{ old('location_long', @$advertising->location_long) }}" name="location_long">
+                                                    @endif
+                                                @endif
 
 
                                                 <div class="col-xs-12 p-2 mt-3 center-xs">
@@ -500,52 +514,54 @@
 @endsection
 @section('scripts')
 
-    <script>
-        $(document).ready(function () {
-            $('#choose-file').change(function () {
-                var i = $(this).prev('label').clone();
-                var file = $('#choose-file')[0].files[0].name;
-                $(this).prev('label').text(file);
+    @if(env('CAN_CHOOSE_LOCATION_IN_SITE' , true))
+        <script>
+            $(document).ready(function () {
+                $('#choose-file').change(function () {
+                    var i = $(this).prev('label').clone();
+                    var file = $('#choose-file')[0].files[0].name;
+                    $(this).prev('label').text(file);
+                });
             });
-        });
-        window.onload = function() {
-            var map = L.map('map').setView([{{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }}], 12.5);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
-            var marker = L.marker([{{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }}],{
-                draggable: true,
-                autoPan: true
-            }).addTo(map);
+            window.onload = function() {
+                var map = L.map('map').setView([{{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }}], 12.5);
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+                var marker = L.marker([{{ old('location_lat', (isset($advertising) ? $advertising->location_lat : 29.303844 )) }}, {{ old('location_long', (isset($advertising) ? $advertising->location_long : 47.979262 )) }}],{
+                    draggable: true,
+                    autoPan: true
+                }).addTo(map);
 
-            const options = {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                };
+                function success(pos) {
+                    const crd = pos.coords;
+                    $('#location_long').val(crd.longitude.toFixed(6));
+                    $('#location_lat').val(crd.latitude.toFixed(6));
+                    marker.setLatLng([ crd.latitude, crd.longitude ]);
+                    map.setView(marker.getLatLng(),map.getZoom());
+                }
+                function error(err) {
+                    console.warn(`ERROR(${err.code}): ${err.message}`);
+                }
+                @if( old('location_lat', (isset($advertising) ? $advertising->location_lat : null )) == null  )
+                    navigator.geolocation.getCurrentPosition(success, error, options);
+                @else
+                    $('#location_long').val({{ old('location_long', @$advertising->location_long) }});
+                    $('#location_lat').val({{ old('location_lat', @$advertising->location_lat) }});
+                @endif
+                marker.on("drag", function(e) {
+                    var marker = e.target;
+                    var position = marker.getLatLng();
+                    map.panTo(new L.LatLng(position.lat, position.lng));
+                    $('#location_long').val(position.lng.toFixed(6));
+                    $('#location_lat').val(position.lat.toFixed(6));
+                });
             };
-            function success(pos) {
-                const crd = pos.coords;
-                $('#location_long').val(crd.longitude.toFixed(6));
-                $('#location_lat').val(crd.latitude.toFixed(6));
-                marker.setLatLng([ crd.latitude, crd.longitude ]);
-                map.setView(marker.getLatLng(),map.getZoom());
-            }
-            function error(err) {
-                console.warn(`ERROR(${err.code}): ${err.message}`);
-            }
-            @if( old('location_lat', (isset($advertising) ? $advertising->location_lat : null )) == null  )
-                navigator.geolocation.getCurrentPosition(success, error, options);
-            @else
-                $('#location_long').val({{ old('location_long', @$advertising->location_long) }});
-                $('#location_lat').val({{ old('location_lat', @$advertising->location_lat) }});
-            @endif
-            marker.on("drag", function(e) {
-                var marker = e.target;
-                var position = marker.getLatLng();
-                map.panTo(new L.LatLng(position.lat, position.lng));
-                $('#location_long').val(position.lng.toFixed(6));
-                $('#location_lat').val(position.lat.toFixed(6));
-            });
-        };
-    </script>
+        </script>
+    @endif
 
     @if (!str_contains(request()->path(), 'required_for_rent'))
         <!-- include FilePond library -->
