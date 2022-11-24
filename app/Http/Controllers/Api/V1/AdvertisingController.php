@@ -358,7 +358,7 @@ class AdvertisingController extends ApiBaseController
         }
 
         if ($advertising->other_image != "" && $advertising->other_image != null) {
-            $otherImage = (array)json_decode($advertising->other_image);
+            $otherImage = json_decode($advertising->other_image , true);
             $otherImage = array_values(isset($otherImage['other_image']) ? ( isset($otherImage['other_image'][0]) ? $otherImage['other_image'][0] : [] ) : [] );
         } else {
             $otherImage = [];
@@ -726,7 +726,7 @@ class AdvertisingController extends ApiBaseController
                 'city_id' => 'required',
                 'area_id' => 'required',
                 'price' => 'nullable|numeric',
-                'video' => request()->hasFile("video") ? 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000' : ( request()->has("video") and is_string(request()->has("video")) ?  'nullable|string' : '' ) ,
+                'video' => request()->hasFile("video") ? 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000' : ( (request()->has("video") and is_string(request()->get("video"))) ?  'nullable|string' : 'nullable' ) ,
             ]);
         return Validator::make($request->all(), [
             'venue_type' => 'required',
@@ -734,7 +734,8 @@ class AdvertisingController extends ApiBaseController
             'city_id' => 'required',
             'area_id' => 'required',
             'price' => 'nullable|numeric',
-            'video' => request()->hasFile("video") ? 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000' : ( request()->has("video") and is_string(request()->has("video")) ?  'nullable|string' : '' ) ,        ]);
+            'video' => request()->hasFile("video") ? 'nullable|mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|max:20000' : ( (request()->has("video") and is_string(request()->get("video")) )?  'nullable|string' : 'nullable' )
+            ]);
     }
     private function saveAdvertising(Request $request, $user, Advertising $advertising): Advertising
     {
