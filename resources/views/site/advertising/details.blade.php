@@ -111,7 +111,8 @@
                             @endphp
                             <div class="ad-description w-100 fw-601 text-sm mt-1"
                                  dir="{{$advertising->description && ! empty($advertising->description) ? (is_arabic($advertising->description) ? 'rtl' : 'ltr') : ''}}">
-                                {!! nl2br(e($advertising->description))!!}
+{{--                                {!! nl2br(e($advertising->description))!!}--}}
+                                {{ preg_replace('~[\r\n]+~', ' ', $advertising->description )}}
                             </div>
                             @if($advertising->price || $advertising->price == 0)
                                 <div
