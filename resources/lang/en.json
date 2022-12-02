@@ -291,5 +291,6 @@
     "expired_ads": "Expired Ads",
     "renewDescription": "This ad has expired. Repost this ad",
     "renew": "Repost this ad",
-    "buy_premium" : "Arranging to top"
+    "buy_premium" : "Arranging to top",
+    "send_email_to" : "Send code to :email"
 }

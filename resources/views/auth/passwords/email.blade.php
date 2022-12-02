@@ -40,10 +40,27 @@
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
                                 </div>
-                                <div id="resendcode"  onclick="submitForm();"   class="mdc-button mdc-ripple-surface mdc-ripple-surface--primary normal w-100 mt-3" style="cursor: pointer;display: none;">
-                                    <i class="material-icons mdc-text-field__icon text-muted">refresh</i>
-                                    {{__('resend_code')}}
-                                    <input type="checkbox" name="resend" id="resend" value="1" style="display: none;">
+                                <div id="resendcode" style="display: none;" >
+                                    @if ( old('emailMask'  , false ))
+                                        <div class="mdc-form-field mt-3 w-100">
+                                            <div class="mdc-checkbox">
+                                                <input type="checkbox" class="mdc-checkbox__native-control" name="resendEmail" id="resendEmail"  value="1" {{ old('resendEmail') ? 'checked' : '' }}/>
+                                                <div class="mdc-checkbox__background">
+                                                    <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                        <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                                    </svg>
+                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                </div>
+                                                <div class="mdc-checkbox__ripple"></div>
+                                            </div>
+                                            <label for="resendEmail" class="text-muted fw-500">{{ __('send_email_to', ['email' => old('emailMask')]) }}</label>
+                                        </div>
+                                    @endif
+                                    <div onclick="submitForm();"   class="mdc-button mdc-ripple-surface mdc-ripple-surface--primary normal w-100 mt-3" style="cursor: pointer;">
+                                        <i class="material-icons mdc-text-field__icon text-muted">refresh</i>
+                                        {{__('resend_code')}}
+                                        <input type="checkbox" name="resend" id="resend" value="1" style="display: none;">
+                                    </div>
                                 </div>
                                 <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon w-100 custom-field mt-4 custom-field">
                                     <i class="material-icons mdc-text-field__icon text-muted">lock</i>

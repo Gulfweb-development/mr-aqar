@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Site\RegisterRequest;
 use App\Http\Requests\Site\SendSmsCodeRequest;
 use App\Http\Requests\Site\verifySmsCodeRequest;
+use App\Mail\VerifiedMail;
 use App\Models\Advertising;
 use App\Models\Package;
 use App\Models\PackageHistory;
@@ -396,16 +397,23 @@ class UserController extends Controller
                 ->withInput();
         }
 
+
+        $clientInfo = User::where("mobile", $request->mobile)->first();
+        $email = $clientInfo->email;
+        $emailMask = $email ? preg_replace('/\B[^@.]/', '*', $email) : false;
         if ($request->has('resend')) {
             $otp = rand(10000, 99999);
-            RegisterController::sendOtp($otp, $request->mobile);
-            $request->merge(['code' => $otp, 'codeValidation' => Hash::make($otp . " : Erfan Ebrahimi : " . $request->mobile)]);
+            if($request->has('resendEmail'))
+                \Illuminate\Support\Facades\Mail::to($email)->send(new VerifiedMail($clientInfo,$otp));
+            else
+                RegisterController::sendOtp($otp, $request->mobile);
+            $request->merge(['emailMask' => $emailMask, 'code' => $otp, 'codeValidation' => Hash::make($otp . " : Erfan Ebrahimi : " . $request->mobile)]);
             return redirect()->back()->withInput()->with('success', __('validate_resend'));
         }
         if (!$request->has('code')) {
             $otp = rand(10000, 99999);
             RegisterController::sendOtp($otp, $request->mobile);
-            $request->merge(['code' => $otp, 'codeValidation' => Hash::make($otp . " : Erfan Ebrahimi : " . $request->mobile)]);
+            $request->merge(['emailMask' => $emailMask, 'code' => $otp, 'codeValidation' => Hash::make($otp . " : Erfan Ebrahimi : " . $request->mobile)]);
             return redirect()->back()->withInput()->with('success', __('validate_send'));
         } elseif (!Hash::check($request->code . " : Erfan Ebrahimi : " . $request->mobile, $request->codeValidation))
             return redirect()->back()->withInput()->withErrors(__('invalidOTP'));
@@ -420,7 +428,6 @@ class UserController extends Controller
                 ->withInput();
         }
 
-        $clientInfo = User::where("mobile", $request->mobile)->first();
 
         $clientInfo->password   = bcrypt($request->password);
         $clientInfo->save();
