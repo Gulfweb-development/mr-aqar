@@ -2,10 +2,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
     <link rel="stylesheet" href="{{ asset('asset/css/libs/swiper.min.css') }}">
     <link rel="stylesheet" href="{{ asset('asset/css/libs/material-components-web.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('asset/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('asset/style.css') }}?v1">
     <link rel="stylesheet" href="{{ asset('asset/css/skins/blue.css') }}">
     @if(app()->getLocale() === 'ar')
-        <link rel="stylesheet" href="{{ asset('asset/css/rtl.css') }}">
+        <link rel="stylesheet" href="{{ asset('asset/css/rtl.css') }}?v1">
     @endif
     <link rel="stylesheet" href="{{ asset('asset/css/responsive.css') }}">
 

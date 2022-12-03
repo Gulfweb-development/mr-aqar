@@ -450,7 +450,7 @@
             </div>
         </div>
     </main>
-
+    <div onclick="history.back()" id="back-to-previous-page" class="show"><i class="material-icons">arrow_left</i></div>
 
     @if ( $advertising->location_lat and $advertising->location_long)
         <script>
