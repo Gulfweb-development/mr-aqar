@@ -1,3 +1,11 @@
+@php
+$bannerFile =\App\Http\Controllers\site\MessageController::getSettingDetails('header_banner') ;
+@endphp
+@if($bannerFile and is_file(public_path($bannerFile)) and isset($_GET['banner']))
+    <aside class="d-mobile-none1" style="margin: 0;width: 100%;-webkit-box-pack: justify;-ms-flex-pack: justify;justify-content: space-between;">
+        <a href="{{ \App\Http\Controllers\site\MessageController::getSettingDetails('banner_link') ? \App\Http\Controllers\site\MessageController::getSettingDetails('banner_link') : "#" }}" style="background-image: url('{{ asset($bannerFile) }}');margin: 0;height: 60px;border-radius: 0;background-size: cover;background-repeat: no-repeat;background-position: 50%;width: 100%;display: block;-webkit-box-flex: 1;-ms-flex-positive: 1;flex-grow: 1;"></a>
+    </aside>
+@endif
 <aside class="mdc-drawer mdc-drawer--modal sidenav" {!! app()->getLocale() === 'ar' ? ' dir="rtl"' : '' !!}
 style="z-index: 99999">
     <div class="row end-xs middle-xs py-1 px-3 justify-content-between" style="background: #43414e">

@@ -49,6 +49,8 @@
                                 <td  style="width:50%">
                                     @if($setting->setting_type=="text")
                                         <input type="text" class="form-control " id="input_{{$setting->id}}" value="{{$setting->setting_value}}" name="{{$setting->id}}_value">
+                                    @elseif($setting->setting_type=="file")
+                                        <input type="file" class="form-control " id="input_{{$setting->id}}" name="{{$setting->id}}_value">
                                     @elseif($setting->setting_type=="textarea")
                                         <textarea rows="5" style="padding:15px"  class="form-control " id="input_{{$setting->id}}" name="{{$setting->id}}_value"  >{{$setting->setting_value}}</textarea>
                                     @elseif($setting->setting_type=="textarea_editor")
@@ -67,8 +69,11 @@
 
                                 {{--                            </td>--}}
                                 <td>
-                                    <button type="button" class="btn btn-secondary" name="{{$setting->id}}_submit"       @if($setting->setting_key=="free_normal_advertising"||$setting->setting_key=="free_premium_advertising") onclick="updateSetting('{{$setting->id}}',false)" @else  onclick="updateSetting('{{$setting->id}}',true)"@endif>Submit</button>
+                                    <button type="button" class="btn btn-secondary" name="{{$setting->id}}_submit"       @if($setting->setting_key=="free_normal_advertising"||$setting->setting_key=="free_premium_advertising") onclick="updateSetting('{{$setting->id}}',false, {{ $setting->setting_type=="file"? 'true' : 'false' }})" @else  onclick="updateSetting('{{$setting->id}}',true, {{ $setting->setting_type=="file"? 'true' : 'false' }})"@endif>Submit</button>
                                     {{--                                        <button type="button" class="btn btn-danger" name="{{$setting->id}}remove" onclick="removeSetting('{{$setting->id}}')">Remove</button>--}}
+                                    @if($setting->setting_type=="file" and $setting->setting_value)
+                                        <button type="button" class="btn btn-danger" name="{{$setting->id}}_submit"  onclick="removeFile('{{$setting->id}}')">Delete file</button>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -112,12 +117,16 @@
             });
         }
 
-        function updateSetting(key,state) {
+        function updateSetting(key,state,isFile) {
             let form = new FormData();
             form.append("_token", "{{csrf_token()}}");
             form.append("key",key);
             // form.append("value", $("input[name="+key+"_value]").val());
-            form.append("value", $("#input_"+key+"").val());
+            if ( isFile ){
+                form.append("value",  document.querySelector("#input_"+key+"").files[0]);
+            } else {
+                form.append("value", $("#input_"+key+"").val());
+            }
             if(state){
                 form.append("placeholder", $("input[name="+key+"_placeholder]").val());
             }
@@ -136,6 +145,25 @@
                 "data": form
             };
 
+            $.ajax(settings).done(function (response) {
+                swal(JSON.parse(response).message, "", "success");
+            });
+        }
+
+        function removeFile(key) {
+            let form = new FormData();
+            form.append("_token", "{{csrf_token()}}");
+            form.append("key",key);
+            form.append("value", 'remove');
+            let settings = {
+                "url": "/admin/settings/updateAjax",
+                "method": "POST",
+                "timeout": 0,
+                "processData": false,
+                "mimeType": "multipart/form-data",
+                "contentType": false,
+                "data": form
+            };
             $.ajax(settings).done(function (response) {
                 swal(JSON.parse(response).message, "", "success");
             });

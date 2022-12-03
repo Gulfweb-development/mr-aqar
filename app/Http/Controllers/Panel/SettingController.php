@@ -61,7 +61,18 @@ class SettingController extends Controller
     {
         try {
             $setting = Setting::find($request->key);
-            $setting->setting_value=$request->value;
+            if ( $setting->setting_type == 'file') {
+                if( $request->value == "remove") {
+                    unlink(public_path($setting->setting_value));
+                    $setting->setting_value = null;
+                } else {
+                    if ( $setting->setting_value and is_file(public_path($setting->setting_value)) )
+                        unlink(public_path($setting->setting_value));
+                    $path = $this->saveImage($request->value);
+                    $setting->setting_value = $path;
+                }
+            } else
+                $setting->setting_value=$request->value;
             // if(isset($request->placeholder)){
             //     $setting->setting_placeholder=$request->placeholder;
             // }
@@ -69,7 +80,7 @@ class SettingController extends Controller
                 $setting->is_enable=$request->is_enable=="true"??0;
             }
             $setting->save();
-            return response()->json(["success" => true, "message" => "$setting->setting_key updated successfully!"]);
+            return response()->json(["success" => true, "message" => "$setting->setting_placeholder updated successfully!"]);
         } catch (\Exception $exception) {
             return response()->json(["success" => false, "message" => $exception->getMessage()]);
         }
