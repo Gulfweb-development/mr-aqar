@@ -3,12 +3,24 @@
             <div class="theme-container">
                 <div class="py-4 content">
                     <div class="row between-xs">
-                        <div class="col-xs-12 col-sm-6 sm:mx-auto d-flex align-items-end">
+                        <div class="col-xs-12 col-sm-4 sm:mx-auto d-flex align-items-end">
                             <a href="{{ route('Main.index', ['locale' => app()->getLocale()]) }}" class="logo sm:mx-auto">
                                 <img src="{{ asset('images/main/logo_footer_' . app()->getLocale() . '.png') }}" style="max-width: 275px;" id="logo_footer" alt="image">
                             </a>
                         </div>
-                        <div class="col-xs-12 col-sm-6 sm:mx-auto">
+                        <div class="col-sm-4 d-mobile-none text-center">
+                            @if(\App\Http\Controllers\site\MessageController::getSettingDetails('ios_link') )
+                                <a href="{{ \App\Http\Controllers\site\MessageController::getSettingDetails('ios_link')  }}" target="_blank" style="display: inline-block;    color: inherit;">
+                                    <img src="{{ asset('asset/images/App-Store-Button-300x98.png') }}" style="width: 185px;height: 62px;">
+                                </a>
+                            @endif
+                            @if(\App\Http\Controllers\site\MessageController::getSettingDetails('android_link') )
+                                <a href="{{ \App\Http\Controllers\site\MessageController::getSettingDetails('android_link')  }}" target="_blank" style="display: inline-block;    color: inherit;">
+                                    <img src="{{ asset('asset/images/Google-Play-Store-Button-300x98.png') }}" style="width: 185px;height: 62px;">
+                                </a>
+                            @endif
+                        </div>
+                        <div class="col-xs-12 col-sm-4 sm:mx-auto">
                             @include('site.sections.socials', [
                                 'classes' => 'start-xs middle-xs desc sm:justify-content-center end-sm',
                                 'icon_classes' => 'mat-icon-md'

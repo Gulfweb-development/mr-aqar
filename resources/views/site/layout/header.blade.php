@@ -149,10 +149,21 @@ style="z-index: 99999">
             </div>
         </div>
     </div>
-    <hr class="mdc-list-divider m-0">
     <div class="row center-xs middle-xs py-3">
         @include('site.sections.socials', ['icon_classes' => 'mat-icon-md primary-color', 'sidebar' => true])
-
+        <hr class="m-2 mdc-list-divider w-100">
+        <div class="w-100 text-center">
+            @if(\App\Http\Controllers\site\MessageController::getSettingDetails('ios_link') )
+                <a href="{{ \App\Http\Controllers\site\MessageController::getSettingDetails('ios_link')  }}" target="_blank" style="display: inline-block;    color: inherit;width: 40%;">
+                    <img src="{{ asset('asset/images/App-Store-Button-300x98.png') }}" style="width: 100%;">
+                </a>
+            @endif
+            @if(\App\Http\Controllers\site\MessageController::getSettingDetails('android_link') )
+                <a href="{{ \App\Http\Controllers\site\MessageController::getSettingDetails('android_link')  }}" target="_blank" style="display: inline-block;    color: inherit;width: 40%;">
+                    <img src="{{ asset('asset/images/Google-Play-Store-Button-300x98.png') }}" style="width: 100%;">
+                </a>
+            @endif
+        </div>
     </div>
 </aside>
 <div class="mdc-drawer-scrim sidenav-scrim"></div>
