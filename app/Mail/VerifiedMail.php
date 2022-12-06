@@ -31,11 +31,12 @@ class VerifiedMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Forgot password code')
-                    ->markdown('emails.forget')
-                    ->with([
-                        'user'=>$this->user,
-                        'code'=>$this->code
-                    ]);
+        return $this->view('emails.forget')
+            ->from('info@mr-aqar.com','Mr Aqar')
+            ->subject('Forgot password code')
+            ->with([
+                'user'=>$this->user,
+                'code'=>$this->code
+            ]);
     }
 }
