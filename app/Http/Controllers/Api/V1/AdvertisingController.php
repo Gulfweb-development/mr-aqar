@@ -60,7 +60,7 @@ class AdvertisingController extends ApiBaseController
             ]);
 
             $cbkPay = new CBKPay();
-            $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/' . app()->getLocale() . '/companies/payment-response/premium',true);
+            $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/' . app()->getLocale() . '/companies/payment-response/1/premium',true);
             return $this->success("", ['url' => route('api.formPayment' , ['url' => $form['url'] , 'formData' => $form['formData']])]);
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
@@ -558,7 +558,7 @@ class AdvertisingController extends ApiBaseController
 
             if ($request->get('payment_type') == "CBKPay" and $price > 0) {
                 $cbkPay = new CBKPay();
-                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/'.app()->getLocale().'/payment-response/cbk' , true);
+                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/'.app()->getLocale().'/payment-response/1/cbk' , true);
                 return $this->success("", ['url' => route('api.formPayment' , ['url' => $form['url'] , 'formData' => $form['formData']])]);
             } else {
                 // if payment type is cash

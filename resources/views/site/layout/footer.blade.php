@@ -1,3 +1,4 @@
+@if( ! isset($hideHeaderAndFooter) or  ( isset($hideHeaderAndFooter) and !$hideHeaderAndFooter) )
     <footer class="mt-4">
         <div class="px-3">
             <div class="theme-container">
@@ -60,4 +61,4 @@
         </div>
     </div>
     <div id="back-to-top"><i class="material-icons">arrow_upward</i></div>
-
+@endif

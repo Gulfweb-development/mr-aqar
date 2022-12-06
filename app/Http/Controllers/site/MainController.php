@@ -387,7 +387,7 @@ class MainController extends Controller
 
             if ($request->get('payment_type') == "CBKPay" and $price > 0) {
                 $cbkPay = new CBKPay();
-                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/'.app()->getLocale().'/payment-response/cbk');
+                $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/'.app()->getLocale().'/payment-response/0/cbk');
                 return $form;
             } else {
                 // if payment type is cash
@@ -411,8 +411,9 @@ class MainController extends Controller
         }
     }
 
-    public function paymentResponseCBK(Request $request)
+    public function paymentResponseCBK(Request $request , $locale ="en" , $hide = 0)
     {
+        $hideHeaderAndFooter = $hide == "1";
         try {
             // !!for testing only
             // $paymentStatus = (object)$request->all();
@@ -486,12 +487,12 @@ class MainController extends Controller
             $order->accept     = 1;
             $order->save();
 
-            return view("site.pages.payment", compact('message', 'refId', 'paymentResponse', 'payment', 'paymentStatus'));
+            return view("site.pages.payment", compact('hideHeaderAndFooter','message', 'refId', 'paymentResponse', 'payment', 'paymentStatus'));
         } catch (\Exception $e) {
             // dd($e, @$paymentStatus, @$payment);
             $message = $e->getMessage() ?? 'Payment Failed!';
             $unsuccessful = true;
-            return view("site.pages.payment", compact('unsuccessful','message','paymentStatus','payment', 'paymentStatus'));
+            return view("site.pages.payment", compact('hideHeaderAndFooter','unsuccessful','message','paymentStatus','payment', 'paymentStatus'));
         } finally {
             $paymentResponse->save();
         }

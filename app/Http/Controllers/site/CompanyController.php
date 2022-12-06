@@ -170,15 +170,16 @@ class CompanyController extends Controller
             ]);
 
             $cbkPay = new CBKPay();
-            $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/' . app()->getLocale() . '/companies/payment-response/premium');
+            $form = $cbkPay->initiatePayment($price, $ref, '', 'mraqar007', '', '', '', '', '', 'en', request()->getSchemeAndHttpHost() . '/' . app()->getLocale() . '/companies/payment-response/0/premium');
             return $form;
         } catch (\Exception $e) {
             return $this->fail($e->getMessage());
         }
     }
 
-    public function paymentResponsePremium(Request $request)
+    public function paymentResponsePremium(Request $request, $locale ="en" , $hide = 0)
     {
+        $hideHeaderAndFooter = $hide == "1";
         try {
             if (empty($request->encrp)) {
                 throw new \Exception('payment failed');
@@ -212,10 +213,11 @@ class CompanyController extends Controller
             $payment->payed_amount = @$paymentStatus->Amount;
             $payment->description = @$paymentStatus->Message;
             $payment->update();
+            return view("site.pages.payment", compact('hideHeaderAndFooter','message', 'refId', 'payment', 'paymentStatus'));
         } catch (\Exception $e) {
             $message = $e->getMessage() ?? 'Payment Failed!';
             $unsuccessful = true;
-            return view("site.pages.payment", compact('unsuccessful','message','paymentStatus','payment', 'paymentStatus'));
+            return view("site.pages.payment", compact('hideHeaderAndFooter','unsuccessful','message','paymentStatus','payment', 'paymentStatus'));
         }
     }
 }

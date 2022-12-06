@@ -39,7 +39,7 @@ Route::group(['prefix' => 'companies'] , function (){
     Route::get('/{phone}/{name?}/advertise', 'CompanyController@new')->name('companies.show');
 
     Route::get('/buy-premium', 'CompanyController@buyPremium')->name('buyPremium');
-    Route::any('/payment-response/premium', 'CompanyController@paymentResponsePremium')->name('paymentResponsePremium');
+    Route::any('/payment-response/{hide}/premium', 'CompanyController@paymentResponsePremium')->name('paymentResponsePremium');
 });
 
 ///////////// auth
@@ -72,7 +72,7 @@ Route::group(['middleware'=>['auth']],function (){
     Route::get('/buypackage', 'MainController@buyPackage')->name('Main.buyPackage');
     Route::post('/buypackageorcredit', 'MainController@buyPackageOrCredit')->name('Main.buyPackageOrCredit');
 });
-Route::any('/payment-response/cbk', 'MainController@paymentResponseCBK')->name('Main.paymentResponseCBK');
+Route::any('/payment-response/{hide}/cbk', 'MainController@paymentResponseCBK')->name('Main.paymentResponseCBK');
 
 
 /////////////payment result
