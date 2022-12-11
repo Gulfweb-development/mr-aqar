@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Api\V1;
 use App\Events\UserRegistered;
 use App\Http\Controllers\site\CompanyController;
+use App\Mail\VerifiedMail;
 use App\Models\Package;
 use App\Models\PackageHistory;
 use App\Models\Payment;
@@ -72,14 +73,17 @@ class UserController extends ApiBaseController
 
     public function verifyUserBySmsCode(Request $request)
     {
-        $validation=Validator::make($request->all(),['mobile' => 'required|digits:8','code'=>'required']);
+        $validation=Validator::make($request->all(),['mobile' => 'required','code'=>'required']);
         if ($validation->fails())
             return $this->fail($validation->errors()->first());
 
         $code=$request->code;
-        $mobile=$request->mobile;
-        $user= User::where("mobile",$mobile)->first();
-        if(isset($user)){
+        $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
+        $user=  User::where("type","member")->where(function ($query) use ($mobile) {
+            $query->where("mobile",$mobile)
+                ->orWhere("email",$mobile);
+        })->first();
+        if($user){
             if($user->sms_code==$code){
 
                 $user->sms_verified=1;
@@ -319,7 +323,7 @@ class UserController extends ApiBaseController
     public function resetPassword(Request $request)
     {
         $password=$request->password;
-        $mobile=$request->mobile;
+        $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
 
         $validate= Validator::make($request->all(), [
             'password' => 'required|string|min:8',
@@ -330,9 +334,11 @@ class UserController extends ApiBaseController
             return $this->fail($validate->errors()->first(),-1, $validate->errors());
 
 
-        $user=  User::where("type","member")->where("mobile",$mobile)->where("api_token",$request->api_token)->with("package")->first();
-
-        if(isset($user)){
+        $user=  User::where("type","member")->where(function ($query) use ($mobile) {
+            $query->where("mobile",$mobile)
+                ->orWhere("email",$mobile);
+        })->where("api_token",$request->api_token)->with("package")->first();
+        if($user){
             $user->password = Hash::make($password);
             $user->api_token = Str::random(60);
             $user->device_token = $request->device_token;
@@ -346,18 +352,31 @@ class UserController extends ApiBaseController
 
     public function sendRequestSmsCode(Request $request)
     {
-        $mobile=$request->mobile;
-        $user=  User::where("type","member")->where("mobile",$mobile)->first();
-        if(isset($user)){
+        $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
+        $user=  User::where("type","member")->where(function ($query) use ($mobile) {
+            $query->where("mobile",$mobile)
+                ->orWhere("email",$mobile);
+        })->first();
+        if($user){
+            $email = $user->email;
+            $emailMask = $email ? preg_replace('/\B[^@.]/', '*', $email) : false;
             $code=$this->makeSmsCode();
             $message="Reset Password Code : ".$code;
             $user->sms_code= $code;
             $user->save();
-            $result= self::sendSms($message,$mobile);
-            if($result==100){
-                return $this->success("send verify code your device ");
+            if($request->get('resendEmail' , false) and $email != null ) {
+                \Illuminate\Support\Facades\Mail::to($email)->send(new VerifiedMail($user, $code));
+                return $this->success("send verify code to your email: ".$emailMask , compact('emailMask'));
+            } else {
+                $result = self::sendSms($message, $user->mobile);
+                if ($result == 100) {
+                    return $this->success("send verify code your device " , compact('emailMask'));
+                } elseif( $email != null ) {
+                    \Illuminate\Support\Facades\Mail::to($email)->send(new VerifiedMail($user, $code));
+                    return $this->success("send verify code to your email: " . $emailMask, compact('emailMask'));
+                }
             }
-            return $this->fail("Server Could Not Send Sms");
+            return $this->fail("Server Could Not Send Sms Or Email");
         }
         return $this->fail(trans('main.not_exist_user'));
     }
