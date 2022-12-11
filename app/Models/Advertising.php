@@ -148,7 +148,7 @@ class Advertising extends Model implements Feedable
 
     public function getThumbMainImageAttribute($value)
     {
-        return str_replace('uploads/images', 'uploads/images/thumb' ,$this->main_image);
+        return str_replace('uploads/images', 'thumb/200xx/resources/uploads/images' ,$this->main_image);
     }
 
     public static  function makeHashNumber()

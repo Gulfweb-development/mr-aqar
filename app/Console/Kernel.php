@@ -37,6 +37,16 @@ class Kernel extends ConsoleKernel
                 if ( time() - $file->getCTime() > 5 * 60 * 60 )
                     unlink($file->getRealPath());
             }
+            $files = File::allFiles(public_path('resources/uploads/images/thumb/'));
+            foreach ($files as $file){
+                if ( time() - $file->getCTime() > 5 * 60 * 60 )
+                    unlink($file->getRealPath());
+            }
+            $files = File::allFiles(public_path('resources/thumb/'));
+            foreach ($files as $file){
+                if ( time() - $file->getCTime() > 5 * 60 * 60 )
+                    unlink($file->getRealPath());
+            }
         })->daily()->at('3:30');
 
         $schedule->call(function () {

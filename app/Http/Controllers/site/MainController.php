@@ -616,12 +616,31 @@ class MainController extends Controller
 
     public function thumbanail($file){
         $mainPatch = public_path('resources/uploads/images/'.$file);
-        $thumbPatch = public_path('resources/uploads/images/thumb/'.$file);
+        $thumbPatch = public_path('resources/uploads/images/thumb/');
         if ( file_exists($mainPatch) ){
+            \Illuminate\Support\Facades\File::ensureDirectoryExists($thumbPatch);
             $img = Image::make($mainPatch);
             $img->resize(200, null, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($thumbPatch);
+            })->save($thumbPatch.$file);
+            $response = Response::make($img, 200);
+            $response->header("Content-Type", $img->mime());
+            return $response;
+        }
+        abort(404);
+    }
+
+    public function resizeAbleThumbnail($width = null , $height = null , $file = 'xx.pdf'){
+        $mainPatch = public_path('resources/uploads/images/'.$file);
+        $thumbPatch = public_path('resources/thumb/'.$width.'x'.$height.'/resources/uploads/images/');
+        if ( file_exists($mainPatch) ){
+            $width = (int) $width > 0 ? (int) $width : null;
+            $height = (int) $height > 0 ? (int) $height : null;
+            \Illuminate\Support\Facades\File::ensureDirectoryExists($thumbPatch);
+            $img = Image::make($mainPatch);
+            $img->resize($width, $height, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($thumbPatch.$file);
             $response = Response::make($img, 200);
             $response->header("Content-Type", $img->mime());
             return $response;

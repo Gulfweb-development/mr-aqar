@@ -30,6 +30,8 @@ class SiteMapController extends Controller
         'test',
         'feed',
         'resources/uploads/images/thumb',
+        'resources/thumb',
+        '{locale}/companies/payment-response/{hide}/premium',
         '{locale}/feed',
         '{locale}/test',
         '{locale}/card-action/{ad}',
