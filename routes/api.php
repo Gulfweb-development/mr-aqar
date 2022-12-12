@@ -41,6 +41,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function (){
     Route::get('/getListAdvertising','AdvertisingController@getListAdvertising');
     Route::post('/search-advertising','AdvertisingController@search');
     Route::get('/advertising/{id}','AdvertisingController@getAdvertising');
+    Route::get('/advertising/{id}/addView','AdvertisingController@addView');
     Route::get('/advertising/{id}/report','AdvertisingController@report');
     Route::get('/similarAdvertising/{id}','AdvertisingController@similarAdvertising');
     Route::get('/companies','AdvertisingController@companies');

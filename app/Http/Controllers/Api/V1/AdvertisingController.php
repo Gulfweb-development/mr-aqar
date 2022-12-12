@@ -156,6 +156,14 @@ class AdvertisingController extends ApiBaseController
         $advertising->has_archive = $hasArchive;
         return $this->success("", $advertising);
     }
+    public function addView($id)
+    {
+        $advertising = Advertising::findOrFail($id);
+        $device_token = \request()->device_token;
+        $count = $this->visitAdvertising($advertising->id, $device_token);
+        return $this->success("", $count);
+    }
+
     public function getUserSaved(Request $request)
     {
         $user = auth()->user();
