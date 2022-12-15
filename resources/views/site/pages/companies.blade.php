@@ -86,8 +86,8 @@
                 @foreach($companies as $company)
                     <div class="card-mobile-tablet col-md-2 col-sm-12 col-xs-12 px-1">
                         <div class="card card-subscribe card-buy shadow companies-card rounded  p-0 sm:m{{$side}}-2 mb-3"
-                             style="height: max-content;position: relative;">
-                            @if($company->is_premium)
+                             style="height: max-content;position: relative; @if($company->is_premium ) background-color: wheat; @endif ">
+                            @if($company->is_premium and false)
                                 <img alt="First Place" src="{{ asset('asset/images/First-Place.png') }}" style="width: 85px;display: flex;justify-content: space-around;align-items: center;top: -8px;position: absolute;left: 0;">
                             @endif
                             <div class="card-body p-3 sm:p-1.5">
