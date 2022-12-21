@@ -55,7 +55,7 @@ class LoginController extends Controller
     {
         $this->validate($request, [
             $this->username() => 'required|numeric|digits:8',
-            'password' => 'required|min:8',
+            'password' => 'required',
             // new rules here
         ]);
     }
@@ -102,8 +102,8 @@ class LoginController extends Controller
      */
     protected function sendLoginResponse(Request $request)
     {
-      
-	 
+
+
 	    $request->session()->regenerate();
 
         $this->clearLoginAttempts($request);

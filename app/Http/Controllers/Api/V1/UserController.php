@@ -27,7 +27,7 @@ class UserController extends ApiBaseController
         return Validator::make($data, [
             //'name' => 'required',
             'mobile' => 'required|digits:8|unique:users',
-            'password' => 'required|min:8',
+            'password' => 'required',
             'code' => 'required|digits:'.$len,
             'token' => 'required',
             //'email' => 'required|email|unique:users',
@@ -39,7 +39,7 @@ class UserController extends ApiBaseController
     public function passwordValidation(array $data)
     {
         return Validator::make($data, [
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|confirmed',
         ]);
     }
 
@@ -326,7 +326,7 @@ class UserController extends ApiBaseController
         $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
 
         $validate= Validator::make($request->all(), [
-            'password' => 'required|string|min:8',
+            'password' => 'required|string',
             'api_token' => 'required'
         ]);
 
@@ -476,7 +476,7 @@ class UserController extends ApiBaseController
 
         $validation= Validator::make($request->only(['mobile','password']), [
             'mobile' => 'required|size:8',
-            'password' => 'required|min:8',
+            'password' => 'required',
         ]);
         if ($validation->fails())
             return $this->fail($validation->errors()->first());

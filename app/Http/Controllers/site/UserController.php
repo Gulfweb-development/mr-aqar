@@ -32,7 +32,7 @@ class UserController extends Controller
     public function passwordValidation(array $data)
     {
         return Validator::make($data, [
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|confirmed',
         ]);
     }
 
@@ -184,8 +184,8 @@ class UserController extends Controller
         $user = auth()->user();
 
         $validatedData = $request->validate([
-            'current' => 'required|string|min:8',
-            'password' => 'required|string|min:8|confirmed',
+            'current' => 'required|string',
+            'password' => 'required|string|confirmed',
         ]);
 
         if (Hash::check($request->current, $user->password)) {
@@ -206,7 +206,7 @@ class UserController extends Controller
         $mobile = $request->mobile;
 
         $validate = Validator::make($request->all(), [
-            'password' => 'required|string|min:8',
+            'password' => 'required|string',
         ]);
 
         if ($validate->fails())
@@ -323,7 +323,7 @@ class UserController extends Controller
 
         $validation = Validator::make($request->only(['mobile', 'password']), [
             'mobile' => 'required|size:8',
-            'password' => 'required|min:8',
+            'password' => 'required',
         ]);
         if ($validation->fails())
             return $this->fail($validation->errors()->first());
@@ -420,7 +420,7 @@ class UserController extends Controller
 
 
         $validator = Validator::make($request->all(), [
-            'password'        => 'required|min:8|max:150|string|confirmed',
+            'password'        => 'required|max:150|string|confirmed',
         ]);
         if ($validator->fails()) {
             return redirect(app()->getLocale() . '/password/reset')
