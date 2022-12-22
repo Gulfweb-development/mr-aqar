@@ -28,8 +28,8 @@ class UserController extends ApiBaseController
             //'name' => 'required',
             'mobile' => 'required|digits:8|unique:users',
             'password' => 'required',
-            'code' => 'required|digits:'.$len,
-            'token' => 'required',
+            //'code' => 'required|digits:'.$len,
+            //'token' => 'required',
             //'email' => 'required|email|unique:users',
             'type_usage'=>'required|in:company,individual',
             'language'=>'required|in:ar,en',
@@ -114,10 +114,10 @@ class UserController extends ApiBaseController
             if ($validate->fails())
                 return $this->fail($validate->errors()->first());
 
-            $decrypted = Crypt::decryptString($request->token);
-            $data = unserialize($decrypted);
-            if ( $data['code'] != $request->code or $data['phone'] != $request->mobile )
-                return $this->fail(trans('invalidOTP'));
+            //$decrypted = Crypt::decryptString($request->token);
+            //$data = unserialize($decrypted);
+            //if ( $data['code'] != $request->code or $data['phone'] != $request->mobile )
+            //    return $this->fail(trans('invalidOTP'));
 
             DB::beginTransaction();
             $package = Package::where("title_en", "gift credit")->where('is_enable' , 1)->where('user_type' , $request->type_usage)->first();
