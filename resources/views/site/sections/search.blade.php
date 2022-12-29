@@ -5,9 +5,9 @@
     :areas_count="{{env('SEARCH_AREAS', 2)}}" inline-template>
     <div>
 
-        @if (request()->is(app()->getLocale().'/required')) 
+        @if (request()->is(app()->getLocale().'/required'))
             <a href="{{route('site.advertising.createRFR', app()->getLocale())}}" class="mdc-button mdc-button--raised mt-4  w-100 d-sm-block d-md-none " style="color: white; background: #ff7e22">
-                <span class="mdc-button__ripple"></span>    
+                <span class="mdc-button__ripple"></span>
                 <span class="mdc-button__label">{{ __('request_a_property') }}</span>
                 <i class="material-icons mdc-button__icon">add</i>
             </a>
@@ -64,10 +64,10 @@
                         </multiselect>
                     </div>
                     @endif
-                    <div class="col-xs-12 col-md-3 p-2 d-flex align-items-center">
+                    <div class="col-xs-12 col-md-3 p-2 d-flex align-items-center erfheight">
                         <multiselect v-model="venue_type" :options="venue_types" placeholder="{{__('venue_filter')}}"
-                            selected-label="{{__('selected')}}" select-label="" deselect-label="{{__('deselect')}}"
-                            track-by="id" label="title_{{ app()->getLocale() }}" :searchable="false"><span
+                                     selected-label="{{__('selected')}}" select-label="" deselect-label="{{__('deselect')}}"
+                                     track-by="id" label="title_{{ app()->getLocale() }}" :searchable="false"><span
                                 slot="noResult">{{__('no_result')}}</span></multiselect>
                     </div>
                     @if( ! isset($required_for_rent) )

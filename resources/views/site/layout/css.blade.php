@@ -43,4 +43,5 @@
         footer::before {
             background-image: url("/images/main/footer.jpg") !important;
         }
+        .erfheight .multiselect__content-wrapper { max-height: 100vh !important; }
     </style>
