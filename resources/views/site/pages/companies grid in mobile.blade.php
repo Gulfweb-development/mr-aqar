@@ -142,9 +142,9 @@ $side = app()->getLocale() === 'en' ? 'r' : 'l';
                                     @endif
                                     @endforeach
                                     @endif
-                                    
+
                                     <a class="decoration-none whatsapp-icon"
-                                        href="https://api.whatsapp.com/send?phone={{str_replace('+', '', $tel)}}&text={{ @$company->company_name }}">
+                                       href="https://api.whatsapp.com/send?phone={{str_replace('+', '', $tel)}}&text={{ __('whatsapp_company_text') }}{{ @route('companies.info', [app()->getLocale(),$company->company_phone,$company->company_name]) }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                             fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
                                             <path

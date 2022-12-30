@@ -292,5 +292,6 @@
     "renewDescription": "This ad has expired. Repost this ad",
     "renew": "Repost this ad",
     "buy_premium" : "Arranging to top",
-    "send_email_to" : "Send code to :email"
+    "send_email_to" : "Send code to :email",
+    "whatsapp_company_text": "Hello, I would like to know more details regarding following ad in MR-AQAR App %0a"
 }
