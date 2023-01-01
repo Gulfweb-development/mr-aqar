@@ -111,6 +111,9 @@ class Controller extends BaseController
     }
     public static function isValidCreateAdvertising($userId, $type)
     {
+        if ($type == "normal" and env('NORMAL_ADS_FREE' , false) ) {
+            return  true;
+        }
         $result = self::getCreditUser($userId);
         if (count($result) >= 1) {
             if ($type == "normal") {
@@ -164,21 +167,25 @@ class Controller extends BaseController
             ->where("accept_by_admin", 1)
             ->where('is_payed', 1)
             ->orderBy('id', 'desc');
-        if ($type == "normal") {
+        if ($type == "normal" and ! env('NORMAL_ADS_FREE' , false) ) {
             $listBalance = $listBalance->whereColumn('count_advertising', '>', 'count_usage');
+        } elseif ($type == "normal" and env('NORMAL_ADS_FREE' , false) ) {
+            $listBalance = $listBalance->where('count_advertising', '>', -10000);
         } else {
             $listBalance = $listBalance->whereColumn('count_premium', '>', 'count_usage_premium');
         }
         $listBalance = $listBalance->first();
         if (isset($listBalance)) {
-            if ($type == "normal") {
+            if ($type == "normal" and ! env('NORMAL_ADS_FREE' , false) ) {
                 $listBalance->count_usage = intval($listBalance->count_usage) + 1;
+            } elseif ($type == "normal" and env('NORMAL_ADS_FREE' , false) ) {
+                $listBalance->count_usage = intval($listBalance->count_usage);
             } else {
                 $listBalance->count_usage_premium = intval($listBalance->count_usage_premium) + 1;
             }
             $listBalance->save();
-            return $listBalance->count_show_day;
         }
+        return isset($listBalance)  ? $listBalance->count_show_day : env('NORMAL_DAYS' , 30 );
     }
     public function saveImage($image, $watermark = false)
     {

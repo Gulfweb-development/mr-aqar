@@ -36,6 +36,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
     <strong>{{ __('success_title') }}!</strong> {{ __('packageSuccess') }} !
 </div>
 @endif
+@if ( ! env('NORMAL_ADS_FREE' , false) )
 <div class="card card-subscribe card-buy companies-card rounded">
     <div class="card-body p-3">
         <div class="row">
@@ -50,6 +51,7 @@ $edge = app()->getLocale() == 'en' ? 'left' : 'right';
         </div>
     </div>
 </div>
+@endif
 
 <div class="mt-3">
     <h3 class="d-inline-block fw-600 mb-2 uppercase">

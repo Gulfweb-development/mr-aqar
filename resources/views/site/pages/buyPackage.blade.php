@@ -41,19 +41,21 @@
         <div class="theme-container">
             <div class="my-5">
 
-                <div class="col-xs-11 col-sm-7 col-md-4 my-1 mx-auto mb-2">
-                    <div class="card card-subscribe card-buy companies-card rounded">
-                        <div class="card-body p-3">
-                            <div class="row">
-                                <p class="w-100 center-xs text-md fw-600">{{__('balance')}}</p>
-                                <div class="d-flex justify-evenly w-100 px-3">
-                                    <p class="primary-color fw-600">{{ $credit['count_normal_advertising'] }} {{__('ads_title')}}</p>
-                                    <p class="primary-color fw-600">{{ $credit['count_premium_advertising'] }} {{__('premium_short')}}</p>
+                @if ( ! env('NORMAL_ADS_FREE' , false) )
+                    <div class="col-xs-11 col-sm-7 col-md-4 my-1 mx-auto mb-2">
+                        <div class="card card-subscribe card-buy companies-card rounded">
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <p class="w-100 center-xs text-md fw-600">{{__('balance')}}</p>
+                                    <div class="d-flex justify-evenly w-100 px-3">
+                                        <p class="primary-color fw-600">{{ $credit['count_normal_advertising'] }} {{__('ads_title')}}</p>
+                                        <p class="primary-color fw-600">{{ $credit['count_premium_advertising'] }} {{__('premium_short')}}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
                 <div class="column center-xs middle-xs text-center">
                     <h1 class="uppercase">{{__('buy_package_title')}}</h1>
@@ -61,32 +63,34 @@
                 </div>
 
                 <div class="mdc-tab-bar-wrapper centered pricing-tabs">
-                    <div class="mdc-tab-bar mb-3">
-                        <div class="mdc-tab-scroller">
-                            <div class="mdc-tab-scroller__scroll-area">
-                                <div class="mdc-tab-scroller__scroll-content">
-                                    <button class="mdc-tab mdc-tab--active" tabindex="0">
-                                        <span class="mdc-tab__content">
-                                        <span class="mdc-tab__text-label text-xs fw-600">{{__('payasyougo')}}</span>
-                                        </span>
-                                        <span class="mdc-tab-indicator mdc-tab-indicator--active">
-                                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-                                        </span>
-                                        <span class="mdc-tab__ripple"></span>
-                                    </button>
-                                    <button class="mdc-tab mdc-tab" tabindex="0">
-                                        <span class="mdc-tab__content">
-                                        <span class="mdc-tab__text-label text-xs fw-600">{{__('longtermsubscribe')}}</span>
-                                        </span>
-                                        <span class="mdc-tab-indicator mdc-tab-indicator">
-                                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-                                        </span>
-                                        <span class="mdc-tab__ripple"></span>
-                                    </button>
+                    @if ( ! env('NORMAL_ADS_FREE' , false) )
+                        <div class="mdc-tab-bar mb-3">
+                            <div class="mdc-tab-scroller">
+                                <div class="mdc-tab-scroller__scroll-area">
+                                    <div class="mdc-tab-scroller__scroll-content">
+                                        <button class="mdc-tab mdc-tab--active" tabindex="0">
+                                            <span class="mdc-tab__content">
+                                            <span class="mdc-tab__text-label text-xs fw-600">{{__('payasyougo')}}</span>
+                                            </span>
+                                            <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                                            </span>
+                                            <span class="mdc-tab__ripple"></span>
+                                        </button>
+                                        <button class="mdc-tab mdc-tab" tabindex="0">
+                                            <span class="mdc-tab__content">
+                                            <span class="mdc-tab__text-label text-xs fw-600">{{__('longtermsubscribe')}}</span>
+                                            </span>
+                                            <span class="mdc-tab-indicator mdc-tab-indicator">
+                                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                                            </span>
+                                            <span class="mdc-tab__ripple"></span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                     <div class="tab-content tab-content--active">
                         <div class="row">
                             @foreach($statics as $static)

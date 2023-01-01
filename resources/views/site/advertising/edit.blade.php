@@ -70,12 +70,12 @@
                                             <h1 class="fw-500 text-center">{{__('create_ad_title')}}</h1>
                                         </div>
 
-                                        @if (!str_contains(request()->path(), 'required_for_rent'))
-                                            <a href="{{ route('Main.buyPackage',app()->getLocale()) }}"
-                                               class="w-100 px-2 mb-3 primary-color links">
-                                                {{__('buy_package_title')}}
-                                            </a>
-                                        @endif
+{{--                                        @if (!str_contains(request()->path(), 'required_for_rent'))--}}
+{{--                                            <a href="{{ route('Main.buyPackage',app()->getLocale()) }}"--}}
+{{--                                               class="w-100 px-2 mb-3 primary-color links">--}}
+{{--                                                {{__('buy_package_title')}}--}}
+{{--                                            </a>--}}
+{{--                                        @endif--}}
 
                                         @else
                                             <form action="{{ route('site.advertising.updateAdvertising', app()->getLocale()) }}"
@@ -93,46 +93,9 @@
                                                 @if (str_contains(request()->path(), 'required_for_rent'))
                                                     <input type="hidden" name="advertising_type" value="normal">
                                                 @else
-                                                    <div
-                                                        class="col-xs-12 mb-2 p-0  @if(!str_contains(request()->path(), 'create')) d-none @endif ">
-                                                        <p class="uppercase m-2 fw-500">{{__('ADVERTISE_TYPE')}}</p>
-                                                        <div class="mdc-form-field w-100">
-                                                            <div class="mdc-radio">
-                                                                <input class="mdc-radio__native-control" type="radio" id="normal"
-                                                                       name="advertising_type" value="normal"
-                                                                    {{ old('advertising_type', @$advertising->advertising_type) =="normal" ? 'checked' : '' }} {{
-                                                (!@$advertising && $credit['count_normal_advertising'] <= 0) ? 'disabled' : '' }}>
-                                                                <div class="mdc-radio__background">
-                                                                    <div class="mdc-radio__outer-circle"></div>
-                                                                    <div class="mdc-radio__inner-circle"></div>
-                                                                </div>
-                                                            </div>
-                                                            <label for="normal">
-                                                                {{__('normal_title')}}
-                                                                @if($credit['count_normal_advertising'] > 0)
-                                                                    <span
-                                                                        class="text-success m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
-                                                                        {{__('remaining_title')}}</span>
-                                                                @else
-                                                                    <span
-                                                                        class="text-danger m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
-                                                                        {{__('remaining_title')}}</span>
-                                                                @endif
-                                                            </label>
-                                                        </div>
-                                                        <br>
-
-                                                        <div class="mdc-form-field">
-                                                            <div class="mdc-radio">
-                                                                <input class="mdc-radio__native-control" type="radio" id="premium"
-                                                                       name="advertising_type" value="premium"
-                                                                    {{ old('advertising_type', @$advertising->advertising_type )=="premium" ? 'checked' : '' }} {{
-                                                    (!@$advertising && $credit['count_premium_advertising'] <= 0) ? 'disabled' : '' }}>
-                                                                <div class="mdc-radio__background">
-                                                                    <div class="mdc-radio__outer-circle"></div>
-                                                                    <div class="mdc-radio__inner-circle"></div>
-                                                                </div>
-                                                            </div>
+                                                    @if(env('NORMAL_ADS_FREE' , false))
+                                                        @if( old('advertising_type',request()->get('type')) == "premium" )
+                                                            <input type="hidden" name="advertising_type" value="premium">
                                                             <label for="premium">{{__('premium_short')}}</label>
                                                             @if($credit['count_premium_advertising'] > 0)
                                                                 <span
@@ -143,14 +106,72 @@
                                                                     class="text-danger m{{$unSide}}-5">{{$credit['count_premium_advertising']}}
                                                                     {{__('remaining_title')}}</span>
                                                             @endif
+                                                            <a href="{{ route('Main.buyPackage',app()->getLocale()) }}" class="w-100 px-2 mb-3 primary-color links">
+                                                                {{__('buy_package_title')}}
+                                                            </a>
+                                                        @else
+                                                            <input type="hidden" name="advertising_type" value="normal">
+                                                        @endif
+                                                    @else
+                                                        <div
+                                                            class="col-xs-12 mb-2 p-0  @if(!str_contains(request()->path(), 'create')) d-none @endif ">
+                                                            <p class="uppercase m-2 fw-500">{{__('ADVERTISE_TYPE')}}</p>
+                                                            <div class="mdc-form-field w-100">
+                                                                <div class="mdc-radio">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="normal"
+                                                                           name="advertising_type" value="normal"
+                                                                        {{ old('advertising_type', @$advertising->advertising_type) =="normal" ? 'checked' : '' }} {{
+                                                    (!@$advertising && $credit['count_normal_advertising'] <= 0) ? 'disabled' : '' }}>
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <label for="normal">
+                                                                    {{__('normal_title')}}
+                                                                    @if($credit['count_normal_advertising'] > 0)
+                                                                        <span
+                                                                            class="text-success m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
+                                                                            {{__('remaining_title')}}</span>
+                                                                    @else
+                                                                        <span
+                                                                            class="text-danger m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
+                                                                            {{__('remaining_title')}}</span>
+                                                                    @endif
+                                                                </label>
+                                                            </div>
+                                                            <br>
+
+                                                            <div class="mdc-form-field">
+                                                                <div class="mdc-radio">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="premium"
+                                                                           name="advertising_type" value="premium"
+                                                                        {{ old('advertising_type', @$advertising->advertising_type )=="premium" ? 'checked' : '' }} {{
+                                                        (!@$advertising && $credit['count_premium_advertising'] <= 0) ? 'disabled' : '' }}>
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <label for="premium">{{__('premium_short')}}</label>
+                                                                @if($credit['count_premium_advertising'] > 0)
+                                                                    <span
+                                                                        class="text-success m{{$unSide}}-5">{{$credit['count_premium_advertising']}}
+                                                                        {{__('remaining_title')}}</span>
+                                                                @else
+                                                                    <span
+                                                                        class="text-danger m{{$unSide}}-5">{{$credit['count_premium_advertising']}}
+                                                                        {{__('remaining_title')}}</span>
+                                                                @endif
+                                                            </div>
+                                                            <br>
+                                                            @error('advertising_type')
+                                                            <span class="invalid-feedback warn-color d-inline-block">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                                            @enderror
                                                         </div>
-                                                        <br>
-                                                        @error('advertising_type')
-                                                        <span class="invalid-feedback warn-color d-inline-block">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                                        @enderror
-                                                    </div>
+                                                    @endif
                                                 @endif
                                                 @if (str_contains(request()->path(), 'required_for_rent'))
                                                     <div class="col-xs-12 w-100">
