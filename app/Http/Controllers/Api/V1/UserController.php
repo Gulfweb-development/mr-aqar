@@ -73,15 +73,16 @@ class UserController extends ApiBaseController
 
     public function verifyUserBySmsCode(Request $request)
     {
-        $validation=Validator::make($request->all(),['mobile' => 'required','code'=>'required']);
+        $validation=Validator::make($request->all(),['code'=>'required']);
         if ($validation->fails())
             return $this->fail($validation->errors()->first());
 
         $code=$request->code;
         $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
-        $user=  User::where("type","member")->where(function ($query) use ($mobile) {
+        $email =$request->get('email' , 'ERFANEBRAHIMI');
+        $user=  User::where("type","member")->where(function ($query) use ($mobile , $email) {
             $query->where("mobile",$mobile)
-                ->orWhere("email",$mobile);
+                ->orWhere("email",$email);
         })->first();
         if($user){
             if($user->sms_code==$code){
@@ -324,6 +325,7 @@ class UserController extends ApiBaseController
     {
         $password=$request->password;
         $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
+        $email=$request->get('email' , 'ERFANEBRAHIMI');
 
         $validate= Validator::make($request->all(), [
             'password' => 'required|string',
@@ -334,9 +336,9 @@ class UserController extends ApiBaseController
             return $this->fail($validate->errors()->first(),-1, $validate->errors());
 
 
-        $user=  User::where("type","member")->where(function ($query) use ($mobile) {
+        $user=  User::where("type","member")->where(function ($query) use ($mobile , $email) {
             $query->where("mobile",$mobile)
-                ->orWhere("email",$mobile);
+                ->orWhere("email",$email);
         })->where("api_token",$request->api_token)->with("package")->first();
         if($user){
             $user->password = Hash::make($password);
@@ -353,9 +355,10 @@ class UserController extends ApiBaseController
     public function sendRequestSmsCode(Request $request)
     {
         $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
-        $user=  User::where("type","member")->where(function ($query) use ($mobile) {
+        $email =$request->get('email' , 'ERFANEBRAHIMI');
+        $user=  User::where("type","member")->where(function ($query) use ($mobile , $email) {
             $query->where("mobile",$mobile)
-                ->orWhere("email",$mobile);
+                ->orWhere("email",$email);
         })->first();
         if($user){
             $email = $user->email;
@@ -364,19 +367,24 @@ class UserController extends ApiBaseController
             $message="Reset Password Code : ".$code;
             $user->sms_code= $code;
             $user->save();
-            if($request->get('resendEmail' , false) and $email != null ) {
+            if ( $email != null  )
                 \Illuminate\Support\Facades\Mail::to($email)->send(new VerifiedMail($user, $code));
-                return $this->success("send verify code to your email: ".$emailMask , compact('emailMask'));
-            } else {
-                $result = self::sendSms($message, $user->mobile);
-                if ($result == 100) {
-                    return $this->success("send verify code your device " , compact('emailMask'));
-                } elseif( $email != null ) {
-                    \Illuminate\Support\Facades\Mail::to($email)->send(new VerifiedMail($user, $code));
-                    return $this->success("send verify code to your email: " . $emailMask, compact('emailMask'));
-                }
-            }
-            return $this->fail("Server Could Not Send Sms Or Email");
+            $result = self::sendSms($message, $user->mobile);
+            return $this->success("send verify code your device and email" , compact('emailMask'));
+
+//            if($request->get('resendEmail' , false) and $email != null ) {
+//                \Illuminate\Support\Facades\Mail::to($email)->send(new VerifiedMail($user, $code));
+//                return $this->success("send verify code to your email: ".$emailMask , compact('emailMask'));
+//            } else {
+//                $result = self::sendSms($message, $user->mobile);
+//                if ($result == 100) {
+//                    return $this->success("send verify code your device " , compact('emailMask'));
+//                } elseif( $email != null ) {
+//                    \Illuminate\Support\Facades\Mail::to($email)->send(new VerifiedMail($user, $code));
+//                    return $this->success("send verify code to your email: " . $emailMask, compact('emailMask'));
+//                }
+//            }
+//            return $this->fail("Server Could Not Send Sms Or Email");
         }
         return $this->fail(trans('main.not_exist_user'));
     }
