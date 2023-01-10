@@ -95,9 +95,8 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                             @if (str_contains(request()->path(), 'required_for_rent'))
                                 <input type="hidden" name="advertising_type" value="normal">
                             @else
-                            
-                                @if(env('NORMAL_ADS_FREE' , false) && !@request()->show_ad_type_option)
-                                    @if( old('advertising_type',request()->get('type')) == "premium" )
+                                @if(env('NORMAL_ADS_FREE' , false) && !str_contains(request()->path(), 'create'))
+                                    @if( in_array("premium",[old('advertising_type',request()->get('type') ) , @$advertising->advertising_type]) )
                                         <input type="hidden" name="advertising_type" value="premium">
                                         <label for="premium">{{__('premium_short')}}</label>
                                         @if($credit['count_premium_advertising'] > 0)
