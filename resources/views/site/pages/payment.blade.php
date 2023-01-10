@@ -59,7 +59,7 @@
                                 <strong>{{ __('date') }}:</strong>&ensp;
                             </td>
                             <td>
-                                {{@$payment->created_at ? date('Y-m-d H:i:s', strtotime($payment->created_at)) : '' }}
+                                {{@$payment->created_at ? date('Y-m-d H:i:s', strtotime(@$payment->created_at)) : '' }}
                             </td>
                         </tr>
 
@@ -90,7 +90,46 @@
                         </tr>
                     </tbody>
                 </table>
+                <br>
+                <br>
+                @php
+                $static = auth()->user()->package;
+                @endphp
+                <div class="row ">
+                    <div style="width: 50%">
+                        <div class="mdc-card pricing-card text-center border-accent p-0 h-100">
+                            <div class="bg-accent pricing-header px-2">
+                                <p class="desc mb-2">
+                                    @if(app()->getLocale()=="en"){{$static->title_en}}@else{{$static->title_ar}}@endif
+                                </p>
+                            </div>
+                            <div class="px-2 ad-plan-bottom">
+                                <div>
+                                    <input type="hidden" class="form-control" name="payment_type" value="CBKPay">
+                                    <div class="mdc-text-field mdc-text-field--outlined w-100 custom-field mb-1">
+                                        
+                                    </div>
+                                </div>
 
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width: 50%">
+                        <div class="c w-100 " style="height: calc(100% - 40px)">
+                            <div class="text-center f-d-column">
+                                <div class="d-block pb-2">
+                                    <div class="c">
+                                        <a href="/{{ app()->getLocale() }}/advertising/create?type=premium&show_ad_type_option=true"
+                                            class="pe-auto text-decoration-none bg-orange rounded-full ar-eq w-40px c d-inline-block mx-auto">
+                                            <i class="material-icons text-white">add</i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <p>{{ __('premium_ad') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 @else
                 <p class="card-text">
                     {{__('result')}}: <strong style="color: red;">

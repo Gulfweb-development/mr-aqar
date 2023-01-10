@@ -53,3 +53,48 @@
 .font-1rem{
 	font-size: 1rem;
 }
+.bg-navy-blue {
+    background-color: #052755;
+}
+.bg-navy-blue-forced {
+    background-color: #052755 !important;
+}
+.bg-white{
+	background-color: #fff ;
+}
+.mdc-button--outlined-white{
+	background-color: transparent !important;
+	border: 1px solid #fff !important;
+	color: white !important;
+}
+.text-light{
+	color: rgba(224, 224, 224, 0.911) !important;
+}
+.c{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.f-d-column{
+	display: flex;
+	flex-direction: column;
+}
+.pe-auto{
+	cursor: pointer;
+}
+.text-decoration-none{
+	text-decoration: none;
+}
+.ar-eq{
+	aspect-ratio: 1/1;
+}
+.w-40px{
+	width: 40px;
+}
+.bg-orange{
+	background-color: rgb(255, 126, 34)
+}
+
+.text-orange{
+	color: rgb(255, 126, 34);
+}

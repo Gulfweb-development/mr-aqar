@@ -327,7 +327,7 @@ class AdvertisingController extends Controller
         } catch (\Exception $exception) {
             DB::rollback();
             if(config('app.env') !== 'production') dd($exception);
-            // return $this->fail($exception->getMessage(), -1, $request->all());
+            return $this->fail($exception->getMessage(), -1, $request->all());
             return redirect()->back()->withInput()->with('status', 'unsuccess');
         }
     }

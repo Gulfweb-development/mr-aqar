@@ -4,13 +4,13 @@
 namespace App\Http\Controllers\Api\V1;
 use App\Events\UserRegistered;
 use App\Http\Controllers\site\CompanyController;
-use App\Mail\VerifiedMail;
 use App\Models\Package;
 use App\Models\PackageHistory;
 use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\Social;
 use App\User;
+use App\Mail\VerifiedMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -78,10 +78,12 @@ class UserController extends ApiBaseController
             return $this->fail($validation->errors()->first());
 
         $code=$request->code;
-        $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
+        // $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
+        $mobile='';
         $email =$request->get('email' , 'ERFANEBRAHIMI');
         $user=  User::where("type","member")->where(function ($query) use ($mobile , $email) {
-            $query->where("mobile",$mobile)
+            $query
+            // ->where("mobile",$mobile)
                 ->orWhere("email",$email);
         })->first();
         if($user){
@@ -324,7 +326,8 @@ class UserController extends ApiBaseController
     public function resetPassword(Request $request)
     {
         $password=$request->password;
-        $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
+        $mobile='';
+        // $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
         $email=$request->get('email' , 'ERFANEBRAHIMI');
 
         $validate= Validator::make($request->all(), [
@@ -337,7 +340,8 @@ class UserController extends ApiBaseController
 
 
         $user=  User::where("type","member")->where(function ($query) use ($mobile , $email) {
-            $query->where("mobile",$mobile)
+            $query
+            // ->where("mobile",$mobile)
                 ->orWhere("email",$email);
         })->where("api_token",$request->api_token)->with("package")->first();
         if($user){
@@ -354,10 +358,12 @@ class UserController extends ApiBaseController
 
     public function sendRequestSmsCode(Request $request)
     {
-        $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
+        $mobile= '';
+        // $mobile=$request->get('mobile' , 'ERFANEBRAHIMI');
         $email =$request->get('email' , 'ERFANEBRAHIMI');
         $user=  User::where("type","member")->where(function ($query) use ($mobile , $email) {
-            $query->where("mobile",$mobile)
+            $query
+            // ->where("mobile",$mobile)
                 ->orWhere("email",$email);
         })->first();
         if($user){
@@ -369,7 +375,7 @@ class UserController extends ApiBaseController
             $user->save();
             if ( $email != null  )
                 \Illuminate\Support\Facades\Mail::to($email)->send(new VerifiedMail($user, $code));
-            $result = self::sendSms($message, $user->mobile);
+            // $result = self::sendSms($message, $user->mobile);
             return $this->success("send verify code your device and email" , compact('emailMask'));
 
 //            if($request->get('resendEmail' , false) and $email != null ) {
@@ -614,7 +620,6 @@ class UserController extends ApiBaseController
             Social::insert($socials);
         }
     }
-
 
 
     public function report($id){
