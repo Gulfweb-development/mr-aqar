@@ -121,9 +121,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                             <div class="mdc-radio">
                                                 <input class="mdc-radio__native-control" type="radio" id="normal"
                                                     name="advertising_type" value="normal" {{ old('advertising_type',
-                                                    @$advertising->advertising_type) =="normal" ? 'checked' : '' }} {{
-                                                (!@$advertising && $credit['count_normal_advertising'] <= 0)
-                                                    ? 'disabled' : '' }}>
+                                                    @$advertising->advertising_type) =="normal" ? 'checked' : '' }}>
                                                     <div class="mdc-radio__background">
                                                         <div class="mdc-radio__outer-circle"></div>
                                                         <div class="mdc-radio__inner-circle"></div>
@@ -131,7 +129,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                             </div>
                                             <label for="normal">
                                                 {{__('normal_title')}}
-                                                @if($credit['count_normal_advertising'] > 0)
+                                                {{-- @if($credit['count_normal_advertising'] > 0)
                                                     <span
                                                     class="text-success m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
                                                     {{__('remaining_title')}}</span>
@@ -139,7 +137,7 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                                     <span
                                                     class="text-danger m{{$unSide}}-5">{{$credit['count_normal_advertising']}}
                                                     {{__('remaining_title')}}</span>
-                                                @endif
+                                                @endif --}}
                                             </label>
                                         </div>
                                         <br>
@@ -147,9 +145,9 @@ $unSide = app()->getLocale() === 'en' ? 'l' : 'r';
                                         <div class="mdc-form-field">
                                             <div class="mdc-radio">
                                                 <input class="mdc-radio__native-control" type="radio" id="premium"
-                                                    name="advertising_type" value="premium" {{ (old('advertising_type',
-                                                    @$advertising->advertising_type ) || request()->type) =="premium" ? 'checked' : '' }} {{
-                                                (!@$advertising && $credit['count_premium_advertising'] <= 0)
+                                                    name="advertising_type" value="premium" 
+                                                    {{ ((old('advertising_type', @$advertising->advertising_type ) || request()->type) =="premium") && $credit['count_premium_advertising'] > 0 ? 'checked' : '' }} 
+                                                    {{ (!@$advertising && $credit['count_premium_advertising'] <= 0)
                                                     ? 'disabled' : '' }}>
                                                     <div class="mdc-radio__background">
                                                         <div class="mdc-radio__outer-circle"></div>

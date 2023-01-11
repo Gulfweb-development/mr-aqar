@@ -1,57 +1,57 @@
 @font-face {
-	font-family: 'Ge-flow';
-	src: URL('/fonts/ge-flow.ttf') format('truetype');
-  }
-.mr-n2{
-	margin-right: -1.5rem!important;
+    font-family: "Ge-flow";
+    src: URL("/fonts/ge-flow.ttf") format("truetype");
 }
-.cdropdown-menu{
-	font-weight: 400;
-	line-height: 1.5;
-	box-sizing: border-box;
-	z-index: 1000;
-	float: left;
-	/* min-width: 5rem; */
-	padding: .2rem 0;
-	margin: .125rem 0 0;
-	font-size: 1rem;
-	color: #212529;
-	text-align: left;
-	list-style: none;
-	background-color: #fff;
-	background-clip: padding-box;
-	border: 1px solid rgba(0,0,0,.15);
-	border-radius: .25rem;
-	right: auto;
-	bottom: auto;
-	display: none;
-	position: absolute;
-	/* transform: translate3d(0px, 38px, 0px); */
-	top: 18px;
-	right: -12px;
-	will-change: transform;
+.mr-n2 {
+    margin-right: -1.5rem !important;
 }
-.cdropdown-item{
-	display: block;
-	width: 100%;
-	padding: .25rem 1.5rem;
-	clear: both;
-	font-weight: 400;
-	color: #212529;
-	text-align: inherit;
-	white-space: nowrap;
-	background-color: transparent;
-	border: 0;
-	font-size: .8rem;
+.cdropdown-menu {
+    font-weight: 400;
+    line-height: 1.5;
+    box-sizing: border-box;
+    z-index: 1000;
+    float: left;
+    /* min-width: 5rem; */
+    padding: 0.2rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    right: auto;
+    bottom: auto;
+    display: none;
+    position: absolute;
+    /* transform: translate3d(0px, 38px, 0px); */
+    top: 18px;
+    right: -12px;
+    will-change: transform;
 }
-.cdropdown{
-    position:relative;
+.cdropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    font-size: 0.8rem;
 }
-.font-ge-flow{
-	font-family: ge-flow;
+.cdropdown {
+    position: relative;
 }
-.font-1rem{
-	font-size: 1rem;
+.font-ge-flow {
+    font-family: ge-flow;
+}
+.font-1rem {
+    font-size: 1rem;
 }
 .bg-navy-blue {
     background-color: #013668;
@@ -59,42 +59,42 @@
 .bg-navy-blue-forced {
     background-color: #013668 !important;
 }
-.bg-white{
-	background-color: #fff ;
+.bg-white {
+    background-color: #fff;
 }
-.mdc-button--outlined-white{
-	background-color: transparent !important;
-	border: 1px solid #fff !important;
-	color: white !important;
+.mdc-button--outlined-white {
+    background-color: transparent !important;
+    border: 1px solid #fff !important;
+    color: white !important;
 }
-.text-light{
-	color: rgba(224, 224, 224, 0.911) !important;
+.text-light {
+    color: rgba(224, 224, 224, 0.911) !important;
 }
-.c{
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.c {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.f-d-column{
-	display: flex;
-	flex-direction: column;
+.f-d-column {
+    display: flex;
+    flex-direction: column;
 }
-.pe-auto{
-	cursor: pointer;
+.pe-auto {
+    cursor: pointer;
 }
-.text-decoration-none{
-	text-decoration: none;
+.text-decoration-none {
+    text-decoration: none;
 }
-.ar-eq{
-	aspect-ratio: 1/1;
+.ar-eq {
+    aspect-ratio: 1/1;
 }
-.w-40px{
-	width: 40px;
+.w-40px {
+    width: 40px;
 }
-.bg-orange{
-	background-color: rgb(255, 126, 34)
+.bg-orange {
+    background-color: rgb(255, 126, 34);
 }
 
-.text-orange{
-	color: rgb(255, 126, 34);
+.text-orange {
+    color: rgb(255, 126, 34);
 }

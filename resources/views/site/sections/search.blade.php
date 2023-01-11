@@ -111,7 +111,7 @@
                     </div>
                     @endif
                     <span class="row center-xs middle-xs p-2 col-md-2 d-md-flex d-lg-flex w-100">
-                        <button @click="search(true)" class="mdc-button mdc-button--raised w-100" type="submit">
+                        <button @click="search(true)" class="mdc-button mdc-button--raised w-100 bg-blue-forced" type="submit">
                             <span class="mdc-button__ripple"></span>
                             <i class="material-icons mdc-button__icon">search</i>
                             <span class="mdc-button__label">{{__('search')}}</span>
